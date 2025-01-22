@@ -9,8 +9,8 @@ using I_am_Hero_API.Models;
 
 namespace I_am_Hero_API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
