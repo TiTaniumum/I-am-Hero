@@ -15,6 +15,6 @@
     ports:
       - "8080:8080"
     environment:
-      ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=I_am_Hero;User=sa;Password=Qwerty@12345;TrustServerCertificate=True;"
+      ConnectionStrings__DefaultConnection: "Server=mssql;Database=I_am_Hero;User=sa;Password=Qwerty@12345;TrustServerCertificate=True;"
     depends_on:
       - mssql
