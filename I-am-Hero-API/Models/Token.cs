@@ -10,7 +10,6 @@ namespace I_am_Hero_API.Models
         [Required]
         public string token { get; set; }
         public User User { get; set; }
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime CreateDate { get; set; }
     }
 }

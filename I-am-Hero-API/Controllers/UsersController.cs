@@ -88,7 +88,7 @@ namespace I_am_Hero_API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser(UserRegistrationDto userRegistrationDto)
         {
-            _context.Users.Add(new User { Email = userRegistrationDto.Email, PasswordHash = userRegistrationDto.Password, Token = ""});
+            _context.Users.Add(new User { Email = userRegistrationDto.Email, PasswordHash = userRegistrationDto.Password});
             await _context.SaveChangesAsync();
             return Ok("Registered");
         }
