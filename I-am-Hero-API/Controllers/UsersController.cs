@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using I_am_Hero_API.Models;
+using I_am_Hero_API.DTO;
 
 namespace I_am_Hero_API.Controllers
 {
@@ -81,6 +82,15 @@ namespace I_am_Hero_API.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
+        }
+
+        // POST: api/Users/register
+        [HttpPost("register")]
+        public async Task<IActionResult> RegisterUser(UserRegistrationDto userRegistrationDto)
+        {
+            _context.Users.Add(new User { Email = userRegistrationDto.Email, PasswordHash = userRegistrationDto.Password, Token = ""});
+            await _context.SaveChangesAsync();
+            return Ok("Registered");
         }
 
         // DELETE: api/Users/5
