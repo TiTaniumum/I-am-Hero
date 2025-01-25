@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using I_am_Hero_API.Models;
 using I_am_Hero_API.DTO;
+using System.Runtime.Intrinsics.Arm;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace I_am_Hero_API.Controllers
 {
@@ -88,9 +91,37 @@ namespace I_am_Hero_API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser(UserRegistrationDto userRegistrationDto)
         {
-            _context.Users.Add(new User { Email = userRegistrationDto.Email, PasswordHash = userRegistrationDto.Password});
-            await _context.SaveChangesAsync();
-            return Ok("Registered");
+            User? user = await _context.Users
+                    .Where(x => x.Email == userRegistrationDto.Email)
+                    .FirstOrDefaultAsync();
+            if (user == null)
+            {
+                _context.Users.Add(new User { Email = userRegistrationDto.Email, PasswordHash = userRegistrationDto.Password, Token = "" });
+                await _context.SaveChangesAsync();
+                return Ok("Registered");
+            }
+            return Conflict(new
+                {
+                    error = "UserAlreadyExists",
+                    message = "A user with this email already exists. Please try logging in instead."
+                }
+            );
+        }
+
+        // POST: api/Users/login
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginUser(UserRegistrationDto userRegistrationDto)
+        {
+            User? user = await _context.Users
+                    .Where(x => x.Email == userRegistrationDto.Email && x.PasswordHash == userRegistrationDto.Password)
+                    .FirstOrDefaultAsync();
+            if (user != null)
+            {
+                user.Token = ComputeSha256Hash(user.Email+new DateTime().GetHashCode());
+                await _context.SaveChangesAsync();
+                return Ok(user.Token);
+            }
+            return NotFound("couldn't find such user or foulty password");
         }
 
         // DELETE: api/Users/5
@@ -112,6 +143,25 @@ namespace I_am_Hero_API.Controllers
         private bool UserExists(int id)
         {
             return _context.Users.Any(e => e.Id == id);
+        }
+
+        static string ComputeSha256Hash(string rawData)
+        {
+            // Create a SHA256 object
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                // Compute the hash as a byte array
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+
+                // Convert the byte array to a string
+                StringBuilder builder = new StringBuilder();
+                foreach (var b in bytes)
+                {
+                    builder.Append(b.ToString("x2")); // Convert to hex format
+                }
+
+                return builder.ToString();
+            }
         }
     }
 }
