@@ -15,9 +15,15 @@ namespace I_am_Hero_API.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>()
+                .Property(x => x.IsEmailVerified)
+                .HasDefaultValue(false);
             modelBuilder.Entity<Token>()
                 .Property(b => b.CreateDate)
-                .HasDefaultValueSql("getdate()");
+                .HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<Token>()
+                .Property(b => b.ExpireDate)
+                .HasComputedColumnSql("DATEADD(DAY,14,[CreateDate])");
         }
     }
 }
