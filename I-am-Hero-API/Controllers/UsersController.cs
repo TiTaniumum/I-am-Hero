@@ -33,7 +33,7 @@ namespace I_am_Hero_API.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<User>> GetUser(long id)
         {
             var user = await _context.Users.FindAsync(id);
 
@@ -48,7 +48,7 @@ namespace I_am_Hero_API.Controllers
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        public async Task<IActionResult> PutUser(long id, User user)
         {
             if (id != user.Id)
             {
@@ -96,15 +96,15 @@ namespace I_am_Hero_API.Controllers
                     .FirstOrDefaultAsync();
             if (user == null)
             {
-                _context.Users.Add(new User { Email = userRegistrationDto.Email, PasswordHash = userRegistrationDto.Password, Token = "" });
+                _context.Users.Add(new User { Email = userRegistrationDto.Email, PasswordHash = userRegistrationDto.Password });
                 await _context.SaveChangesAsync();
                 return Ok("Registered");
             }
             return Conflict(new
-                {
-                    error = "UserAlreadyExists",
-                    message = "A user with this email already exists. Please try logging in instead."
-                }
+            {
+                error = "UserAlreadyExists",
+                message = "A user with this email already exists. Please try logging in instead."
+            }
             );
         }
 
@@ -117,16 +117,30 @@ namespace I_am_Hero_API.Controllers
                     .FirstOrDefaultAsync();
             if (user != null)
             {
-                user.Token = ComputeSha256Hash(user.Email+new DateTime().GetHashCode());
+                Token? token = user.Tokens.Where(x => x.ExpireDate>DateTime.Now).FirstOrDefault();
+
+                string computedTokenHash = ComputeSha256Hash(user.Email+new DateTime().GetHashCode());
+                DateTime now = DateTime.Now;
+
+                if (token != null)
+                {
+                    token.CreateDate = now;
+                    token.token = computedTokenHash;
+                }
+                else
+                {
+                    Token newToken = new Token { token = computedTokenHash, CreateDate = now };
+                    user.Tokens.Add(newToken);
+                }
                 await _context.SaveChangesAsync();
-                return Ok(user.Token);
+                return Ok(computedTokenHash);
             }
             return NotFound("couldn't find such user or foulty password");
         }
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(long id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null)
@@ -140,7 +154,7 @@ namespace I_am_Hero_API.Controllers
             return NoContent();
         }
 
-        private bool UserExists(int id)
+        private bool UserExists(long id)
         {
             return _context.Users.Any(e => e.Id == id);
         }
