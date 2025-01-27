@@ -1,4 +1,4 @@
-using I_am_Hero_API.Models;
+using I_am_Hero_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 

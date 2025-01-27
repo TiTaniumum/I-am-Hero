@@ -1,14 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using I_am_Hero_API.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata;
 
-namespace I_am_Hero_API.Models
+namespace I_am_Hero_API.Data
 {
     public class ApplicationDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Token> Tokens { get; set; }
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options): base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
         }

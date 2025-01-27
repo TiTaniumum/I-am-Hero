@@ -10,6 +10,7 @@ using I_am_Hero_API.DTO;
 using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using System.Text;
+using I_am_Hero_API.Data;
 
 namespace I_am_Hero_API.Controllers
 {
