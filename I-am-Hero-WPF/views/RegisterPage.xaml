@@ -1,0 +1,17 @@
+﻿<Page x:Class="I_am_Hero_WPF.Views.RegisterPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Register Page">
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
+            <Button Content="Назад" Click="GoToLoginPage" Width="75" HorizontalAlignment="Left"/>
+            <TextBlock Text="Регистрация" FontSize="20" Margin="0,0,0,20" HorizontalAlignment="Center" />
+
+            <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" />
+            <PasswordBox x:Name="PasswordBox" Margin="0,0,0,10" PasswordChanged="PasswordBox_PasswordChanged" />
+            <PasswordBox x:Name="ConfirmPasswordBox" Margin="0,0,0,10" PasswordChanged="ConfirmPasswordBox_PasswordChanged" />
+
+            <Button Content="Зарегистрироваться" Command="{Binding RegisterCommand}" />
+        </StackPanel>
+    </Grid>
+</Page>
