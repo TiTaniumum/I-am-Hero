@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "I-am-Hero-WPF", "I-am-Hero-WPF.csproj", "{78264A50-9A8B-46A8-BB27-D3CB77971E34}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{78264A50-9A8B-46A8-BB27-D3CB77971E34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78264A50-9A8B-46A8-BB27-D3CB77971E34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78264A50-9A8B-46A8-BB27-D3CB77971E34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78264A50-9A8B-46A8-BB27-D3CB77971E34}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
