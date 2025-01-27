@@ -13,5 +13,7 @@ namespace I_am_Hero_API.Models
         [Comment("Подтверждение пользователем свой почты.")]
         public bool IsEmailVerified { get; set; }
         public ICollection<Token> Tokens { get; set; } = new List<Token>();
+        public Hero Hero { get; set; }
+        public ICollection<HeroSkill> HeroSkills { get; set; }
     }
 }
