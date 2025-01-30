@@ -60,7 +60,7 @@ public class RegisterViewModel : ViewModelBase
     {
         var result = await _apiService.Register(Email, Password);
 
-        if (result.Contains("успешна"))
+        if (result.Contains("Registered"))
         {
             MessageBox.Show(result, "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
             // Переход на страницу авторизации

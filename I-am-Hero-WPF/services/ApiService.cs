@@ -58,16 +58,16 @@ public class ApiService
         }
     }
 
-    //public async Task<bool> IsTokenValid()
-    //{
-    //    string token = TokenStorage.LoadToken();
-    //    if (string.IsNullOrEmpty(token)) return false;
+    public async Task<bool> IsTokenValid()
+    {
+        string token = TokenStorage.LoadToken();
+        if (string.IsNullOrEmpty(token)) return false;
 
-    //    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-    //    HttpResponseMessage response = await _httpClient.GetAsync("api/Users/validate");
-    //    return response.IsSuccessStatusCode;
-    //}
+        HttpResponseMessage response = await _httpClient.GetAsync("api/Users/validate");
+        return response.IsSuccessStatusCode;
+    }
 
     //public async Task<bool> RefreshToken()
     //{
