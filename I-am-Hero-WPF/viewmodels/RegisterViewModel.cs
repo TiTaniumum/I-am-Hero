@@ -4,17 +4,17 @@ using I_am_Hero_WPF.Views;
 
 public class RegisterViewModel : ViewModelBase
 {
-    private string _username;
+    private string _email;
     private string _password;
     private string _confirmPassword;
     private readonly ApiService _apiService;
 
-    public string Username
+    public string Email
     {
-        get => _username;
+        get => _email;
         set
         {
-            SetProperty(ref _username, value);
+            SetProperty(ref _email, value);
             RegisterCommand.RaiseCanExecuteChanged();
         }
     }
@@ -50,7 +50,7 @@ public class RegisterViewModel : ViewModelBase
 
     private bool CanRegister()
     {
-        return !string.IsNullOrEmpty(Username) &&
+        return !string.IsNullOrEmpty(Email) &&
                !string.IsNullOrEmpty(Password) &&
                !string.IsNullOrEmpty(ConfirmPassword) &&
                Password == ConfirmPassword;
@@ -58,7 +58,7 @@ public class RegisterViewModel : ViewModelBase
 
     private async Task Register()
     {
-        var result = await _apiService.Register(Username, Password);
+        var result = await _apiService.Register(Email, Password);
 
         if (result.Contains("успешна"))
         {

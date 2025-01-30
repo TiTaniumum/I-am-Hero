@@ -1,19 +1,17 @@
 ﻿using System.Windows;
+using I_am_Hero_WPF.Views;
 
 public class MainViewModel : ViewModelBase
 {
-    public string Username { get; set; }
-
     public RelayCommand LogoutCommand { get; }
 
-    public MainViewModel(string username)
+    public MainViewModel()
     {
-        Username = username;
 
         LogoutCommand = new RelayCommand(_ =>
         {
-            // Доработать логику выхода
-            Application.Current.Shutdown(); 
+            TokenStorage.DeleteToken(); // Удаление токена перед выходом из аккаунта
+            Application.Current.MainWindow.Content = new LoginPage(); // Возвращение на страницу входа
         });
     }
 }

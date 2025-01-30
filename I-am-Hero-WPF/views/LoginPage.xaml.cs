@@ -4,9 +4,6 @@ using System.Windows.Navigation;
 
 namespace I_am_Hero_WPF.Views
 {
-    /// <summary>
-    /// Логика взаимодействия для LoginPage.xaml
-    /// </summary>
     public partial class LoginPage : Page
     {
         public LoginPage()
@@ -24,7 +21,10 @@ namespace I_am_Hero_WPF.Views
 
         private void GoToRegisterPage(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new RegisterPage());
+            Application.Current.MainWindow.Content = new RegisterPage
+            {
+                DataContext = new RegisterViewModel()
+            };
         }
 
     }

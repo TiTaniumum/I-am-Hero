@@ -5,7 +5,6 @@
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBlock Text="Добро пожаловать!" FontSize="24" HorizontalAlignment="Center" />
-            <TextBlock Text="{Binding Username}" FontSize="20" HorizontalAlignment="Center" />
             <Button Content="Выйти" Command="{Binding LogoutCommand}" Margin="0,20,0,0" />
         </StackPanel>
     </Grid>
