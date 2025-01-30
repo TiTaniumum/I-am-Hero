@@ -10,6 +10,7 @@ using I_am_Hero_API.DTO;
 using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using System.Text;
+using I_am_Hero_API.Data;
 
 namespace I_am_Hero_API.Controllers
 {
@@ -129,7 +130,13 @@ namespace I_am_Hero_API.Controllers
                 }
                 else
                 {
-                    Token newToken = new Token { token = computedTokenHash, CreateDate = now };
+                    Application? application = await _context.Applications
+                            .Where(x => x.Id == userRegistrationDto.ApplicationId)
+                            .FirstOrDefaultAsync();
+                    if (application == null) {
+                        application = await _context.Applications.Where(x => x.Id == 1L).FirstAsync();
+                    }
+                    Token newToken = new Token { token = computedTokenHash, CreateDate = now, Application = application};
                     user.Tokens.Add(newToken);
                 }
                 await _context.SaveChangesAsync();

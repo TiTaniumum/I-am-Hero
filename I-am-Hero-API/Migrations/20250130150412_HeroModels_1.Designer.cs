@@ -4,6 +4,7 @@ using I_am_Hero_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace I_am_Hero_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250130150412_HeroModels_1")]
+    partial class HeroModels_1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,28 +40,6 @@ namespace I_am_Hero_API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Applications");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            Name = "I-am-Hero-Web"
-                        },
-                        new
-                        {
-                            Id = 2L,
-                            Name = "I-am-Hero-WPF"
-                        },
-                        new
-                        {
-                            Id = 3L,
-                            Name = "I-am-Hero-Android"
-                        },
-                        new
-                        {
-                            Id = 4L,
-                            Name = "I-am-Hero-IOS"
-                        });
                 });
 
             modelBuilder.Entity("I_am_Hero_API.Models.Hero", b =>
