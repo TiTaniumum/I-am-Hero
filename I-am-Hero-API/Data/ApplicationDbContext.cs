@@ -30,11 +30,14 @@ namespace I_am_Hero_API.Data
                 .Property(x => x.IsEmailVerified)
                 .HasDefaultValue(false);
             modelBuilder.Entity<Token>()
-                .Property(b => b.CreateDate)
+                .Property(x => x.CreateDate)
                 .HasDefaultValueSql("GETDATE()");
             modelBuilder.Entity<Token>()
-                .Property(b => b.ExpireDate)
+                .Property(x => x.ExpireDate)
                 .HasComputedColumnSql("DATEADD(DAY,14,[CreateDate])");
+            modelBuilder.Entity<HeroBioPiece>()
+                .Property(x => x.CreateDate)
+                .HasDefaultValueSql("GETDATE()");
         }
     }
 }
