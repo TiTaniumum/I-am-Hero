@@ -8,7 +8,9 @@ namespace I_am_Hero_API.Data
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Token> Tokens { get; set; }
-
+        public DbSet<Hero> Heroes {  get; set; }
+        public DbSet<HeroSkill> HeroSkills { get; set; }
+        public DbSet<cLevelCalculationType> cLevelCalculationTypes { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 

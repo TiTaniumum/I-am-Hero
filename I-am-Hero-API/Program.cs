@@ -1,4 +1,4 @@
-using I_am_Hero_API.Data;
+ï»¿using I_am_Hero_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -27,7 +27,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-if (app.Environment.IsDevelopment() || true) // swagger íóæíî óáðàòü true ïîòîì ïîñëå îêîí÷àíèÿ äåâåëîïèíãà.
+if (app.Environment.IsDevelopment() || true) // swagger Ð±ÑƒÐ´ÐµÑ‚ Ð²ÐºÐ»ÑŽÑ‡ÐµÐ½ Ð·Ð° ÑÑ‡ÐµÑ‚ Ð·Ð°Ð½Ð°Ñ‡ÐµÐ½Ð¸Ñ true
 {
     app.UseSwagger();
     app.UseSwaggerUI(options =>
