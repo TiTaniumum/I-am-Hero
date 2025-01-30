@@ -21,6 +21,11 @@ namespace I_am_Hero_WPF
         public MainWindow()
         {
             InitializeComponent();
+            LoadStartupPage();
+        }
+        private async void LoadStartupPage()
+        {
+            this.Content = await AuthManager.GetStartupPage();
         }
     }
 }

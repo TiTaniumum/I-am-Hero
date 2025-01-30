@@ -21,7 +21,10 @@ namespace I_am_Hero_WPF.Views
 
         private void GoToRegisterPage(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new RegisterPage());
+            Application.Current.MainWindow.Content = new RegisterPage
+            {
+                DataContext = new RegisterViewModel()
+            };
         }
 
     }

@@ -10,7 +10,7 @@ namespace I_am_Hero_WPF.Views
         public MainPage()
         {
             InitializeComponent();
-            this.DataContext = new LoginViewModel();
+            this.DataContext = new MainViewModel();
         }
     }
 }

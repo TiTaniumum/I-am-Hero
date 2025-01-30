@@ -36,12 +36,8 @@ public class LoginViewModel : ViewModelBase
         if (!string.IsNullOrEmpty(token) && !token.StartsWith("Ошибка"))
         {
             TokenStorage.SaveToken(token);
-            MessageBox.Show($"Добро пожаловать, {Email}!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            Application.Current.MainWindow.Content = new MainPage
-            {
-                DataContext = new MainViewModel(Email)
-            };
+            
+            Application.Current.MainWindow.Content = new MainPage();
         }
         else
         {

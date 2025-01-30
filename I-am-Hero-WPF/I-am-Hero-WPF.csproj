@@ -92,6 +92,7 @@
     </ApplicationDefinition>
     <Compile Include="Command\RelayCommand.cs" />
     <Compile Include="services\ApiService.cs" />
+    <Compile Include="services\AuthManager.cs" />
     <Compile Include="services\TokenStorage.cs" />
     <Compile Include="viewmodels\LoginViewModel.cs" />
     <Compile Include="viewmodels\MainViewModel.cs" />

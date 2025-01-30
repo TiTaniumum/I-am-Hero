@@ -30,7 +30,10 @@ namespace I_am_Hero_WPF.Views
 
         private void GoToLoginPage(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new LoginPage());
+            Application.Current.MainWindow.Content = new LoginPage
+            {
+                DataContext = new LoginViewModel()
+            };
         }
 
     }

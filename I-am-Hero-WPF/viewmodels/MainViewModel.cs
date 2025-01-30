@@ -3,12 +3,10 @@ using I_am_Hero_WPF.Views;
 
 public class MainViewModel : ViewModelBase
 {
-    public string Email { get; set; }
     public RelayCommand LogoutCommand { get; }
 
-    public MainViewModel(string email)
+    public MainViewModel()
     {
-        Email = email;
 
         LogoutCommand = new RelayCommand(_ =>
         {
