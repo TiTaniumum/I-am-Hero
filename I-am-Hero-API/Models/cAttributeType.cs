@@ -2,7 +2,7 @@
 
 namespace I_am_Hero_API.Models
 {
-    public class cLevelCalculationType
+    public class cAttributeType
     {
         public long Id { get; set; }
         [Required]
