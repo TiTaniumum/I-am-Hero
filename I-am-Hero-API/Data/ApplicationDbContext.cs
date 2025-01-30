@@ -38,6 +38,14 @@ namespace I_am_Hero_API.Data
             modelBuilder.Entity<HeroBioPiece>()
                 .Property(x => x.CreateDate)
                 .HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<Application>()
+                .HasData(
+                    new Application { Id = 1, Name = "I-am-Hero-Web" },
+                    new Application { Id = 2, Name = "I-am-Hero-WPF" },
+                    new Application { Id = 3, Name = "I-am-Hero-Android" },
+                    new Application { Id = 4, Name = "I-am-Hero-IOS" }
+                );
+                
         }
     }
 }
