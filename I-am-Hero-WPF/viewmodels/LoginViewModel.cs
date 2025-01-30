@@ -4,14 +4,14 @@ using I_am_Hero_WPF.Views;
 
 public class LoginViewModel : ViewModelBase
 {
-    private string _username;
+    private string _email;
     private string _password;
     private readonly ApiService _apiService;
 
-    public string Username
+    public string Email
     {
-        get => _username;
-        set => SetProperty(ref _username, value);
+        get => _email;
+        set => SetProperty(ref _email, value);
     }
 
     public string Password
@@ -31,21 +31,21 @@ public class LoginViewModel : ViewModelBase
 
     private async Task Login()
     {
-        var result = await _apiService.Login(Username, Password);
+        var token = await _apiService.Login(Email, Password);
 
-        if (!string.IsNullOrEmpty(result) && !result.Contains("Ошибка"))
+        if (!string.IsNullOrEmpty(token) && !token.StartsWith("Ошибка"))
         {
-            MessageBox.Show($"Добро пожаловать, {result}!");
+            TokenStorage.SaveToken(token);
+            MessageBox.Show($"Добро пожаловать, {Email}!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
 
-            // Переход
             Application.Current.MainWindow.Content = new MainPage
             {
-                DataContext = new MainViewModel(result)
+                DataContext = new MainViewModel(Email)
             };
         }
         else
         {
-            MessageBox.Show(result, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(token, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

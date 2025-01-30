@@ -7,7 +7,7 @@
             <Button Content="Назад" Click="GoToLoginPage" Width="75" HorizontalAlignment="Left"/>
             <TextBlock Text="Регистрация" FontSize="20" Margin="0,0,0,20" HorizontalAlignment="Center" />
 
-            <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" />
+            <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" />
             <PasswordBox x:Name="PasswordBox" Margin="0,0,0,10" PasswordChanged="PasswordBox_PasswordChanged" />
             <PasswordBox x:Name="ConfirmPasswordBox" Margin="0,0,0,10" PasswordChanged="ConfirmPasswordBox_PasswordChanged" />
 

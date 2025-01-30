@@ -4,9 +4,6 @@ using System.Windows.Navigation;
 
 namespace I_am_Hero_WPF.Views
 {
-    /// <summary>
-    /// Логика взаимодействия для LoginPage.xaml
-    /// </summary>
     public partial class LoginPage : Page
     {
         public LoginPage()

@@ -6,7 +6,7 @@
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
             <TextBlock Text="Авторизация" FontSize="20" Margin="0,0,0,20" HorizontalAlignment="Center" />
 
-            <TextBox Text="{Binding Username}" Margin="0,0,0,10" />
+            <TextBox Text="{Binding Email}" Margin="0,0,0,10" />
             <PasswordBox x:Name="PasswordBox" Margin="0,0,0,10"
                          PasswordChanged="PasswordBox_PasswordChanged" />
 

@@ -45,18 +45,23 @@ public class ApiService
             "application/json"
         );
 
-        var response = await _httpClient.PostAsync("api/Users/login", content);
+        try
+        {
+            HttpResponseMessage response = await _httpClient.PostAsync("api/Users/login", content);
 
-        if (response.IsSuccessStatusCode)
-        {
-            var responseData = await response.Content.ReadAsStringAsync();
-            var json = JsonSerializer.Deserialize<JsonElement>(responseData);
-            return json.GetProperty("Email").GetString();
+            if (response.IsSuccessStatusCode)
+            {
+                string token = await response.Content.ReadAsStringAsync();
+                return token;
+            }
+            else
+            {
+                return "Ошибка: " + response.StatusCode;
+            }
         }
-        else
+        catch (Exception ex)
         {
-            var error = await response.Content.ReadAsStringAsync();
-            return error;
+            return "Ошибка подключения: " + ex.Message;
         }
     }
 }

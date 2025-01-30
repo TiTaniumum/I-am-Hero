@@ -4,9 +4,6 @@ using System.Windows.Navigation;
 
 namespace I_am_Hero_WPF.Views
 {
-    /// <summary>
-    /// Логика взаимодействия для RegisterPage.xaml
-    /// </summary>
     public partial class RegisterPage : Page
     {
         public RegisterPage()
