@@ -29,6 +29,9 @@ namespace I_am_Hero_API.Data
             modelBuilder.Entity<User>()
                 .Property(x => x.IsEmailVerified)
                 .HasDefaultValue(false);
+            modelBuilder.Entity<User>()
+                .Property(x => x.RegistrationDate)
+                .HasDefaultValueSql("GETDATE()");
             modelBuilder.Entity<Token>()
                 .Property(x => x.CreateDate)
                 .HasDefaultValueSql("GETDATE()");
@@ -45,7 +48,15 @@ namespace I_am_Hero_API.Data
                     new Application { Id = 3, Name = "I-am-Hero-Android" },
                     new Application { Id = 4, Name = "I-am-Hero-IOS" }
                 );
-                
+            modelBuilder.Entity<cLevelCalculationType>()
+                .HasData(
+                    new cLevelCalculationType { Id = 1, NameRu = "Экспаненциальный", NameEn = "Exponential" },
+                    new cLevelCalculationType { Id = 2, NameRu = "Постоянный", NameEn = "Constant"},
+                    new cLevelCalculationType { Id = 3, NameRu = "Нерастущий", NameEn = "Non-growing"}
+                );
+            modelBuilder.Entity<Hero>()
+                .Property(x => x.cLevelCalculationTypeId)
+                .HasDefaultValue(1);
         }
     }
 }

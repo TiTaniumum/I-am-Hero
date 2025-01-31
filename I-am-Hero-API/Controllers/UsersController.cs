@@ -97,7 +97,8 @@ namespace I_am_Hero_API.Controllers
                     .FirstOrDefaultAsync();
             if (user == null)
             {
-                _context.Users.Add(new User { Email = userRegistrationDto.Email, PasswordHash = userRegistrationDto.Password });
+                User newUser = new User { Email = userRegistrationDto.Email, PasswordHash = userRegistrationDto.Password };
+                _context.Users.Add(newUser);
                 await _context.SaveChangesAsync();
                 return Ok("Registered");
             }
