@@ -33,13 +33,11 @@ namespace I_am_Hero_API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] AuthDto dto)
         {
-            User? user = await authService.GetUser(new UserDto(dto));
-            if (user == null)
+            Token? token = await authService.Login(dto);
+            if (token == null)
             {
                 return BadRequest("Such user does not exist or wrong password");
             }
-            string tokenHash = authService.GenerateToken(user);
-            Token token = await authService.CreateToken(user, tokenHash, dto.ApplicationId);
             return Ok(token.token);
         }
     }
