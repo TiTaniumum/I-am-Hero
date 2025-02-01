@@ -19,10 +19,12 @@ namespace I_am_Hero_API.Services
         private readonly ApplicationDbContext context;
         private readonly PasswordHasher<object> hasher = new();
         private readonly IConfiguration configuration;
+        private readonly int applicationsCount;
         public AuthService(ApplicationDbContext context, IConfiguration configuration)
         {
             this.context = context;
             this.configuration = configuration;
+            applicationsCount = context.Applications.Count();
         }
         public async Task<Token?> RegenerateToken(HttpContext httpContext)
         {
@@ -54,6 +56,8 @@ namespace I_am_Hero_API.Services
         }
         public async Task<Token?> Login(AuthDto dto) 
         {
+            if (dto.ApplicationId <= 0 || dto.ApplicationId > applicationsCount)
+                throw new ArgumentOutOfRangeException("ApplicationId is out of range");
             User? user = await GetUser(new UserDto(dto));
             if(user == null) return null;
             Token? existingToken = await context.Tokens.FirstOrDefaultAsync(x => x.UserId == user.Id && x.ApplicationId == dto.ApplicationId);

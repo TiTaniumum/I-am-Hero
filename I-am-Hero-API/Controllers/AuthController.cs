@@ -2,6 +2,7 @@
 using I_am_Hero_API.Services.Interfaces;
 using I_am_Hero_API.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace I_am_Hero_API.Controllers
 {
@@ -33,12 +34,19 @@ namespace I_am_Hero_API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] AuthDto dto)
         {
-            Token? token = await authService.Login(dto);
-            if (token == null)
+            try
             {
-                return BadRequest("Such user does not exist or wrong password");
+                Token? token = await authService.Login(dto);
+                if (token == null)
+                {
+                    return BadRequest("Such user does not exist or wrong password");
+                }
+                return Ok(token.token);
             }
-            return Ok(token.token);
+            catch (ArgumentOutOfRangeException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

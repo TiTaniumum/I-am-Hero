@@ -2,7 +2,7 @@
 
 namespace I_am_Hero_API.Services.Interfaces
 {
-    internal interface IHeroService
+    public interface IHeroService
     {
         void SetUser(User user);
         Task CreateHero(string heroName);

@@ -17,9 +17,10 @@ namespace I_am_Hero_API.Controllers
         private readonly ApplicationDbContext context;
         private readonly IAuthService authService;
         private readonly IHeroService heroService;
-        public HeroController(ApplicationDbContext context, IAuthService authService) {
+        public HeroController(ApplicationDbContext context, IAuthService authService, IHeroService heroService) {
             this.context = context;
             this.authService = authService;
+            this.heroService = heroService;
         }
 
         // api/Hero/create
