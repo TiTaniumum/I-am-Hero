@@ -14,11 +14,9 @@ namespace I_am_Hero_API.Controllers
     [Route("api/[controller]")]
     public class HeroController : ControllerBase
     {
-        private readonly ApplicationDbContext context;
         private readonly IAuthService authService;
         private readonly IHeroService heroService;
-        public HeroController(ApplicationDbContext context, IAuthService authService, IHeroService heroService) {
-            this.context = context;
+        public HeroController(IAuthService authService, IHeroService heroService) {
             this.authService = authService;
             this.heroService = heroService;
         }
