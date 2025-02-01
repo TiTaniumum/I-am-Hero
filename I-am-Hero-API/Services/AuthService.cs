@@ -4,6 +4,9 @@ using I_am_Hero_API.Models;
 using I_am_Hero_API.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -13,10 +16,26 @@ namespace I_am_Hero_API.Services
     {
         private readonly ApplicationDbContext context;
         private readonly PasswordHasher<object> hasher = new();
-
-        public AuthService(ApplicationDbContext context)
+        private readonly IConfiguration configuration;
+        public AuthService(ApplicationDbContext context, IConfiguration configuration)
         {
             this.context = context;
+            this.configuration = configuration;
+        }
+
+        public async Task<Token?> RegenerateToken(HttpContext httpContext)
+        {
+            Token? token = await GetToken(httpContext);
+            if (token == null || token.CreateDate.AddDays(1) > DateTime.Now)
+                return null;
+            User? user = await GetUser(httpContext);
+            if (user == null) 
+                return null;
+            string tokenHash = GenerateToken(user);
+            token.token = tokenHash;
+            token.CreateDate = DateTime.Now;
+            await context.SaveChangesAsync();
+            return token;
         }
 
         public async Task<User?> RegisterUser(UserDto dto)
@@ -54,6 +73,12 @@ namespace I_am_Hero_API.Services
             Token? token = await context.Tokens.FirstOrDefaultAsync(x => x.token == tokenHash && x.ExpireDate > DateTime.Now);
             return token?.User;
         }
+        public async Task<User?> GetUser(HttpContext httpContext)
+        {
+            string? userEmail = httpContext.User.FindFirst(ClaimTypes.Email)?.Value;
+            User? user = await context.Users.FirstOrDefaultAsync(x => x.Email == userEmail);
+            return user;
+        }
         public async Task<Token> CreateToken(User user, string tokenHash, long ApplicationId)
         {
             Token token = new Token { token = tokenHash, ApplicationId = ApplicationId };
@@ -61,9 +86,38 @@ namespace I_am_Hero_API.Services
             await context.SaveChangesAsync();
             return token;
         }
-        private Token? GetToken(User? user, long ApplicationId)
+
+        public string GenerateToken(User user)
         {
-            return user?.Tokens.FirstOrDefault(x => x.ExpireDate > DateTime.Now && x.ApplicationId == ApplicationId);
+            var jwtKey = configuration["Jwt:Key"];
+            var jwtIssuer = configuration["Jwt:Issuer"];
+            var jwtAudience = configuration["Jwt:Audience"];
+            var claims = new List<Claim>
+            {
+               new Claim(ClaimTypes.Email, user.Email),
+               new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: jwtIssuer,
+                audience: jwtAudience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddDays(14),
+                signingCredentials: credentials
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private async Task<Token?> GetToken(HttpContext httpContext)
+        {
+            string authStr = httpContext.Request.Headers.Authorization.ToString();
+            string tokenHash = authStr.Split(" ")[1];
+            Token? token = await context.Tokens.FirstOrDefaultAsync(x => x.token == tokenHash);
+            return token;
         }
 
         private async Task<bool> DoUserExist(string Email)

@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using I_am_Hero_API.Models;
+using I_am_Hero_API.DTO;
+using System.Security.Claims;
+using I_am_Hero_API.Services.Interfaces;
 
 namespace I_am_Hero_API.Controllers
 {
@@ -11,26 +14,46 @@ namespace I_am_Hero_API.Controllers
     [Route("api/[controller]")]
     public class HeroController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-
-        public HeroController(ApplicationDbContext context) {
-            _context = context;
+        private readonly ApplicationDbContext context;
+        private readonly IAuthService authService;
+        private readonly IHeroService heroService;
+        public HeroController(ApplicationDbContext context, IAuthService authService) {
+            this.context = context;
+            this.authService = authService;
         }
 
         // api/Hero/create
-        //[Authorize]
+        [Authorize]
         [HttpPost("create")]
-        public async Task<IActionResult> CreateHero(long UserID, string HeroName) {
+        public async Task<IActionResult> CreateHero(string heroName) {
+            if (!await HandleEndpointEnter())
+                return BadRequest(new { Error = "User not found", Message = "Token had not existing user!" });
 
-            User? user = await _context.Users.FindAsync(UserID);
+            await heroService.CreateHero(heroName);
+
+            TokenDto tokenDto = new TokenDto();
+            await HandleTokenRegeneration(tokenDto);
+            return Ok(tokenDto);
+        }
+
+        private async Task<bool> HandleEndpointEnter()
+        {
+            User? user = await authService.GetUser(HttpContext);
             if (user == null)
             {
-                return BadRequest("Such user does not exist!");
+                return false;
             }
-            Hero newHero = new Hero { Name = HeroName };
-            user.Hero = newHero;
-            await _context.SaveChangesAsync();
-            return Ok();
+            heroService.SetUser(user);
+            return true;
+        }
+
+        private async Task HandleTokenRegeneration(TokenDto dto)
+        {
+            Token? token = await authService.RegenerateToken(HttpContext);
+            if (token == null)
+                return;
+            dto.Token = token.token;
+            return;
         }
     }
 }

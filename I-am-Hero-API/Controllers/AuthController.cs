@@ -9,11 +9,9 @@ namespace I_am_Hero_API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IJwtService jwtService;
         private readonly IAuthService authService;
-        public AuthController(IJwtService jwtService, IAuthService authService)
+        public AuthController(IAuthService authService)
         {
-            this.jwtService = jwtService;
             this.authService = authService;
         }
 
@@ -40,7 +38,7 @@ namespace I_am_Hero_API.Controllers
             {
                 return BadRequest("Such user does not exist or wrong password");
             }
-            string tokenHash = jwtService.GenerateToken(user);
+            string tokenHash = authService.GenerateToken(user);
             Token token = await authService.CreateToken(user, tokenHash, dto.ApplicationId);
             return Ok(token.token);
         }
