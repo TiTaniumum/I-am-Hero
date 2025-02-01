@@ -15,7 +15,7 @@ namespace I_am_Hero_API.Controllers
         {
             this.authService = authService;
         }
-
+        // api/Auth/register
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserDto dto)
         {
@@ -30,7 +30,7 @@ namespace I_am_Hero_API.Controllers
             }
             return Ok("Registered");
         }
-
+        // api/Auth/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] AuthDto dto)
         {

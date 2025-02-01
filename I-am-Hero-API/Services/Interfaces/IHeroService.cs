@@ -6,5 +6,6 @@ namespace I_am_Hero_API.Services.Interfaces
     {
         void SetUser(User user);
         Task CreateHero(string heroName);
+        Task<bool> IsHeroExist();
     }
 }

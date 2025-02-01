@@ -26,9 +26,11 @@ namespace I_am_Hero_API.Controllers
         // api/Hero/create
         [Authorize]
         [HttpPost("create")]
-        public async Task<IActionResult> CreateHero(string heroName) {
+        public async Task<ActionResult<TokenDto>> CreateHero(string heroName) {
             if (!await HandleEndpointEnter())
-                return BadRequest(new { Error = "User not found", Message = "Token had not existing user!" });
+                return BadRequest(new { error = "User not found", message = "Token had not existing user!" });
+            if (await heroService.IsHeroExist())
+                return BadRequest(new { error = "Hero exists", message = "User already has Hero!" });
 
             await heroService.CreateHero(heroName);
 

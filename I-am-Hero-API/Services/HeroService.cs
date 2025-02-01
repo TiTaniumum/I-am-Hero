@@ -1,6 +1,7 @@
 ﻿using I_am_Hero_API.Data;
 using I_am_Hero_API.Models;
 using I_am_Hero_API.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace I_am_Hero_API.Services
 {
@@ -23,6 +24,12 @@ namespace I_am_Hero_API.Services
             user.Hero = newHero;
             await context.SaveChangesAsync();
             return;
+        }
+
+        public async Task<bool> IsHeroExist()
+        {
+            Hero? hero = await context.Heroes.FirstOrDefaultAsync(x => x.UserId == user.Id);
+            return hero != null;
         }
     }
 }
