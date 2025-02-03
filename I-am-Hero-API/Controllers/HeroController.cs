@@ -71,6 +71,31 @@ namespace I_am_Hero_API.Controllers
             });
         }
 
+        // TODO:
+        //public async Task<ActionResult<TokenDto>> CreateHeroAttribute()
+        //public async Task<ActionResult<TokenDto>> GetHeroAttributes()
+        //public async Task<ActionResult<TokenDto>> EditHeroAttribute()
+        //public async Task<ActionResult<TokenDto>> DeleteHeroAttribute()
+        //public async Task<ActionResult<TokenDto>> CreateHeroAttributeStates()
+        //public async Task<ActionResult<TokenDto>> GetHeroAttributeStates()
+        //public async Task<ActionResult<TokenDto>> DeleteHeroAttributeStates()
+        //public async Task<ActionResult<TokenDto>> CreateHeroSkill()
+        //public async Task<ActionResult<TokenDto>> GetHeroSkills()
+        //public async Task<ActionResult<TokenDto>> EditHeroSkill()
+        //public async Task<ActionResult<TokenDto>> DeleteHeroSkill()
+        //public async Task<ActionResult<TokenDto>> CreateHeroStatusEffect()
+        //public async Task<ActionResult<TokenDto>> GetHeroStatusEffects()
+        //public async Task<ActionResult<TokenDto>> EditHeroStatusEffect()
+        //public async Task<ActionResult<TokenDto>> DeleteHeroStatusEffect()
+        //public async Task<ActionResult<TokenDto>> CreateHeroBioPiece()
+        //public async Task<ActionResult<TokenDto>> GetHeroBioPieces()
+        //public async Task<ActionResult<TokenDto>> EditHeroBioPiece()
+        //public async Task<ActionResult<TokenDto>> DeleteHeroBioPiece()
+        //public async Task<ActionResult<TokenDto>> CreateHeroAchievement()
+        //public async Task<ActionResult<TokenDto>> GetHeroAchievements()
+        //public async Task<ActionResult<TokenDto>> EditHeroAchievement()
+        //public async Task<ActionResult<TokenDto>> DeleteHeroAchievement()
+
         #region PrivateMethods
         /// <summary>
         /// Метод предназначен для задания контекста. 

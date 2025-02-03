@@ -1,6 +1,5 @@
 ﻿using I_am_Hero_API.Models;
 using I_am_Hero_API.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace I_am_Hero_API.Controllers
@@ -22,5 +21,9 @@ namespace I_am_Hero_API.Controllers
         {
             return Ok(commonService.GetAllcLevelCalculationTypes());
         }
+
+        //public ActionResult<IEnumerable> GetAllcAttributeTypes()
+        //public ActionResult<IEnumerable> GetAllcRarities()
+        //public ActionResult<IEnumerable> GetAllApplications()
     }
 }
