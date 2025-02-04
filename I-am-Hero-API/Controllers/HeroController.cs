@@ -34,6 +34,27 @@ namespace I_am_Hero_API.Controllers
                 return new TokenDto();
             });
         }
+        // api/Hero/get
+        [Authorize]
+        [HttpGet("get")]
+        public async Task<ActionResult<TokenDto>> GetHero()
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.GetHero();
+            });
+        }
+
+        [Authorize]
+        [HttpPost("edit")]
+        public async Task<ActionResult<TokenDto>> EditHero([FromBody] HeroDto heroDto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.EditHero(heroDto);
+                return new TokenDto();
+            });
+        }
 
         // api/Hero/edit-heroName
         [Authorize]
@@ -119,6 +140,10 @@ namespace I_am_Hero_API.Controllers
             catch (ArgumentOutOfRangeException ex)
             {
                 return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Exception: "+ex.Message);
             }
         }
 

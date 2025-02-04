@@ -35,6 +35,24 @@ namespace I_am_Hero_API.Services
             return;
         }
 
+        public async Task<HeroDto> GetHero()
+        {
+            Hero hero = await userHero.FirstAsync();
+            return new HeroDto(hero);
+        }
+
+        public async Task EditHero(HeroDto dto)
+        {
+            if(dto.cLevelCalculationTypeId != null && !await context.cLevelCalculationTypes.AnyAsync(x => x.Id == dto.cLevelCalculationTypeId))
+                throw new ArgumentOutOfRangeException("cLevelCalculationTypeId is out of range");
+            if (dto.Name != null)
+                await userHero.ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Name, dto.Name));
+            if (dto.cLevelCalculationTypeId != null)
+                await userHero.ExecuteUpdateAsync(setters => setters.SetProperty(x => x.cLevelCalculationTypeId, dto.cLevelCalculationTypeId));
+            if (dto.Experience != null)
+                await userHero.ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Experience, dto.Experience));
+        }
+
         public async Task EditHeroName(string newHeroName)
         {
             await userHero.ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Name, newHeroName));

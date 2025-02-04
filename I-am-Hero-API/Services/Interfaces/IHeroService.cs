@@ -10,6 +10,8 @@ namespace I_am_Hero_API.Services.Interfaces
         ActionResult<TokenDto>? GetResultOrDefault();
         void SetUser(User user);
         Task CreateHero(string heroName);
+        Task<HeroDto> GetHero();
+        Task EditHero(HeroDto dto);
         Task EditHeroName(string newHeroName);
         Task EditHeroLevelCalculationType(long levelCalculationTypeId);
         Task EditHeroExperience(long exp);
