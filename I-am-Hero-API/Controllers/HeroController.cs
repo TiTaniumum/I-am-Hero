@@ -91,15 +91,30 @@ namespace I_am_Hero_API.Controllers
                 return new TokenDto();
             });
         }
-
-        // TODO:
-        //public async Task<ActionResult<TokenDto>> CreateHeroAttribute()
-        //public async Task<ActionResult<TokenDto>> GetHeroAttributes()
+        [Authorize]
+        [HttpPost("create/HeroAtrribute")]
+        public async Task<ActionResult<TokenDto>> CreateHeroAttribute(HeroAttributeDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.CreateHeroAttribute(dto);
+            });
+        }
+        [Authorize]
+        [HttpGet("get/HeroAttributes")]
+        public async Task<ActionResult<TokenDto>> GetHeroAttributes(long? id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.GetHeroAttributes(id);
+            });
+        }
         //public async Task<ActionResult<TokenDto>> EditHeroAttribute()
         //public async Task<ActionResult<TokenDto>> DeleteHeroAttribute()
         //public async Task<ActionResult<TokenDto>> CreateHeroAttributeStates()
         //public async Task<ActionResult<TokenDto>> GetHeroAttributeStates()
         //public async Task<ActionResult<TokenDto>> DeleteHeroAttributeStates()
+        // TODO:
         //public async Task<ActionResult<TokenDto>> CreateHeroSkill()
         //public async Task<ActionResult<TokenDto>> GetHeroSkills()
         //public async Task<ActionResult<TokenDto>> EditHeroSkill()

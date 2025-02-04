@@ -16,5 +16,9 @@ namespace I_am_Hero_API.Services
         {
             return context.cLevelCalculationTypes.ToList();
         }
+        public IEnumerable<cAttributeType> GetAllcAttributeTypes()
+        {
+            return context.cAttributeTypes.ToList();
+        }
     }
 }

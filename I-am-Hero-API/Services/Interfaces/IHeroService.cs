@@ -16,5 +16,7 @@ namespace I_am_Hero_API.Services.Interfaces
         Task EditHeroLevelCalculationType(long levelCalculationTypeId);
         Task EditHeroExperience(long exp);
         Task<bool> IsHeroExist();
+        Task<IdDto> CreateHeroAttribute(HeroAttributeDto dto);
+        Task<HeroAttributesDto> GetHeroAttributes(long? id);
     }
 }

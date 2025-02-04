@@ -14,6 +14,7 @@ namespace I_am_Hero_API.Services
         private User user = null!;
         private ActionResult<TokenDto>? result;
         private IQueryable<Hero> userHero { get => context.Heroes.Where(x => x.UserId == user.Id); }
+        private IQueryable<HeroAttribute> userHeroAttribute { get => context.HeroAttributes.Where(x => x.UserId == user.Id); }
         public HeroService(ApplicationDbContext context)
         {
             this.context = context;
@@ -43,7 +44,7 @@ namespace I_am_Hero_API.Services
 
         public async Task EditHero(HeroDto dto)
         {
-            if(dto.cLevelCalculationTypeId != null && !await context.cLevelCalculationTypes.AnyAsync(x => x.Id == dto.cLevelCalculationTypeId))
+            if (dto.cLevelCalculationTypeId != null && !await context.cLevelCalculationTypes.AnyAsync(x => x.Id == dto.cLevelCalculationTypeId))
                 throw new ArgumentOutOfRangeException("cLevelCalculationTypeId is out of range");
             if (dto.Name != null)
                 await userHero.ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Name, dto.Name));
@@ -60,7 +61,7 @@ namespace I_am_Hero_API.Services
 
         public async Task EditHeroLevelCalculationType(long levelCalculationTypeId)
         {
-            if(!await context.cLevelCalculationTypes.AnyAsync(x=>x.Id == levelCalculationTypeId))
+            if (!await context.cLevelCalculationTypes.AnyAsync(x => x.Id == levelCalculationTypeId))
                 throw new ArgumentOutOfRangeException("cLevelCalculationTypeId is out of range");
             await userHero.ExecuteUpdateAsync(setters => setters.SetProperty(x => x.cLevelCalculationTypeId, levelCalculationTypeId));
         }
@@ -72,6 +73,38 @@ namespace I_am_Hero_API.Services
         {
             Hero? hero = await context.Heroes.FirstOrDefaultAsync(x => x.UserId == user.Id);
             return hero != null;
+        }
+
+        public async Task<IdDto> CreateHeroAttribute(HeroAttributeDto dto)
+        {
+            if (dto.Name == null)
+                throw new NullReferenceException("The 'Name' field cannot be empty when creating a new hero attribute.");
+            var heroAttribute = new HeroAttribute()
+            {
+                UserId = user.Id,
+                Name = dto.Name,
+                Description = dto.Description,
+                cAttributeTypeId = dto.cAttributeTypeId ?? 1L,
+                MinValue = dto.MinValue,
+                Value = dto.Value,
+                MaxValue = dto.MaxValue,
+                CurrentStateId = null,
+            };
+            await context.HeroAttributes.AddAsync(heroAttribute);
+            await context.SaveChangesAsync();
+            return new IdDto { Id = heroAttribute.Id };
+        }
+        public async Task<HeroAttributesDto> GetHeroAttributes(long? id)
+        {
+            List<HeroAttributeDto> list = new List<HeroAttributeDto>();
+            HeroAttribute[] arr;
+            if (id != null)
+                arr = await userHeroAttribute.Where(x => x.Id == id).ToArrayAsync();
+            else
+                arr = await userHeroAttribute.ToArrayAsync();
+            foreach (HeroAttribute i in arr)
+                list.Add(new HeroAttributeDto(i));
+            return new HeroAttributesDto(list);
         }
     }
 }
