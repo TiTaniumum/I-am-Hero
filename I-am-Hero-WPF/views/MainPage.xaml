@@ -1,11 +1,25 @@
 ﻿<Page x:Class="I_am_Hero_WPF.Views.MainPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       Title="Main Page">
-    <Grid>
+
+    <Grid Background="{DynamicResource MaterialDesignPaper}">
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Text="Добро пожаловать!" FontSize="24" HorizontalAlignment="Center" />
-            <Button Content="Выйти" Command="{Binding LogoutCommand}" Margin="0,20,0,0" />
+            <!-- Приветствие -->
+            <TextBlock Text="Добро пожаловать!" 
+                       FontSize="28" 
+                       FontWeight="Bold" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,20" 
+                       Foreground="{DynamicResource MaterialDesignBody}"/>
+
+            <Button Content="Выйти" 
+                    Command="{Binding LogoutCommand}" 
+                    Style="{StaticResource MaterialDesignRaisedButton}" 
+                    HorizontalAlignment="Center" 
+                    Width="200" 
+                    Margin="0,20,0,0" />
         </StackPanel>
     </Grid>
 </Page>
