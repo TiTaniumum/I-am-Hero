@@ -4,14 +4,26 @@
       Title="Login Page">
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
-            <TextBlock Text="Авторизация" FontSize="20" Margin="0,0,0,20" HorizontalAlignment="Center" />
 
-            <TextBox Text="{Binding Email}" Margin="0,0,0,10" />
-            <PasswordBox x:Name="PasswordBox" Margin="0,0,0,10"
-                         PasswordChanged="PasswordBox_PasswordChanged" />
+            <TextBlock Text="Авторизация" FontSize="20" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center" />
 
-            <Button Content="Войти" Command="{Binding LoginCommand}" />
-            <Button Content="Регистрация" Margin="0,10,0,0" Click="GoToRegisterPage" />
+            <TextBlock Text="Email" Margin="0,0,0,5" FontSize="14" />
+            <TextBox Text="{Binding Email}" Style="{StaticResource CustomTextBoxStyle}" />
+
+            <TextBlock Text="Пароль" Margin="0,10,0,5" FontSize="14" />
+            <PasswordBox x:Name="PasswordBox" 
+                         PasswordChanged="PasswordBox_PasswordChanged"
+                         Style="{StaticResource CustomPasswordBoxStyle}" />
+
+            <Button Content="Войти" Command="{Binding LoginCommand}" 
+                    Style="{StaticResource CustomButtonStyle}" Margin="0,10,0,0"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                <TextBlock Text="Нет аккаунта?" VerticalAlignment="Center" FontSize="14"/>
+                <TextBlock Text=" Зарегистрироваться" Foreground="Blue" Cursor="Hand" FontSize="14"
+                           TextDecorations="Underline" MouseDown="GoToRegisterPage"/>
+            </StackPanel>
+
         </StackPanel>
     </Grid>
 </Page>

@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using ControlzEx.Standard;
 
 namespace I_am_Hero_WPF.Views
 {
@@ -15,6 +16,7 @@ namespace I_am_Hero_WPF.Views
         {
             if (DataContext is RegisterViewModel viewModel)
             {
+                //MessageBox.Show(((PasswordBox)sender).Password, "Password changed", MessageBoxButton.OK, MessageBoxImage.Information);
                 viewModel.Password = ((PasswordBox)sender).Password;
             }
         }
