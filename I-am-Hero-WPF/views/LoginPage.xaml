@@ -23,7 +23,6 @@
                 <TextBlock Text=" Зарегистрироваться" Foreground="Blue" Cursor="Hand" FontSize="14"
                            TextDecorations="Underline" MouseDown="GoToRegisterPage"/>
             </StackPanel>
-
         </StackPanel>
     </Grid>
 </Page>

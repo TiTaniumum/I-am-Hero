@@ -13,13 +13,17 @@
 
         <!-- Верхняя панель: кнопка выхода справа -->
         <Grid Grid.Row="0" Margin="10">
-            <Button HorizontalAlignment="Right" VerticalAlignment="Top"
-                    Command="{Binding LogoutCommand}"
-                    Style="{StaticResource MaterialDesignIconButton}" 
-                    ToolTip="Выход" 
-                    Width="40" Height="40">
-                <materialDesign:PackIcon Kind="Close" Width="24" Height="24" />
-            </Button>
+            <Label Content="I am Hero" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource PrimaryHueMidBrush}" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <!-- Кнопка выхода -->
+                <TextBlock Text="Log out" VerticalAlignment="Center" Margin="5,0,0,0" FontSize="14"/>
+                <Button Command="{Binding LogoutCommand}"
+                Style="{StaticResource MaterialDesignIconButton}" 
+                ToolTip="Выход" 
+                Width="40" Height="40">
+                    <materialDesign:PackIcon Kind="Close" Width="24" Height="24" />
+                </Button>
+            </StackPanel>
         </Grid>
 
         <!-- Основное содержимое -->
@@ -29,18 +33,18 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Шапка с информацией о пользователе -->
+            <!-- Профиль -->
             <StackPanel Orientation="Horizontal" Margin="20" Grid.Row="0">
-                <!-- Иконка пользователя -->
+                <!-- Аватарка -->
                 <materialDesign:PackIcon Kind="AccountCircle" Width="48" Height="48" 
                                          Foreground="{DynamicResource PrimaryHueMidBrush}" />
                 <!-- Блок с данными пользователя -->
                 <StackPanel Orientation="Vertical" Margin="10,0,0,0" VerticalAlignment="Center">
-                    <TextBlock Text="Имя пользователя" FontSize="20" FontWeight="Bold" />
+                    <TextBlock Text="{Binding HeroName}" FontSize="20" FontWeight="Bold" />
                     <TextBlock Text="Уровень: 10" FontSize="14" />
-                    <!-- Прогресс-бар опыта -->
-                    <ProgressBar Minimum="0" Maximum="100" Value="50" Height="20" Width="200" Margin="0,5,0,0"/>
-                    <TextBlock Text="50/100 exp" FontSize="12" Foreground="Gray"/>
+                    <!-- Прогресс-бар -->
+                    <ProgressBar Minimum="0" Maximum="100" Value="{Binding Experience}" Height="20" Width="200" Margin="0,5,0,0"/>
+                    <TextBlock Text="{Binding Experience, StringFormat='{}{0}/100 exp'}" FontSize="12" Foreground="Gray"/>
                 </StackPanel>
             </StackPanel>
 
@@ -52,16 +56,16 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Левый блок: Календарь -->
+                <!-- Левый блок: Календари -->
                 <Border Grid.Column="0" Background="White" CornerRadius="4" Margin="5" Padding="10">
                     <StackPanel>
                         <TextBlock Text="Календарь" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
-                        <!-- Стандартный элемент Calendar для mock-отметок -->
+                        <!-- Временный Стандартный Calendar -->
                         <Calendar DisplayMode="Month" IsTodayHighlighted="True" />
                     </StackPanel>
                 </Border>
 
-                <!-- Центральный блок: Ежедневные квесты -->
+                <!-- Центральный блок: Дейлики -->
                 <Border Grid.Column="1" Background="White" CornerRadius="4" Margin="5" Padding="10">
                     <StackPanel>
                         <TextBlock Text="Ежедневные квесты" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
@@ -73,7 +77,7 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Правый блок: Общие квесты -->
+                <!-- Правый блок: Квесты -->
                 <Border Grid.Column="2" Background="White" CornerRadius="4" Margin="5" Padding="10">
                     <StackPanel>
                         <TextBlock Text="Общие квесты" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>

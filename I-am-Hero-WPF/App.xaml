@@ -13,10 +13,9 @@
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Определение цветовой схемы -->
-            <materialDesign:BundledTheme x:Key="AppTheme" 
-                                         BaseTheme="Light" 
-                                         PrimaryColor="DeepPurple"
-                                         SecondaryColor="Lime" />
+            <materialDesign:BundledTheme x:Key="AppTheme"
+                             BaseTheme="Light"/>
+
 
             <!-- Глобальный стиль для кнопок -->
             <Style x:Key="CustomButtonStyle" TargetType="Button"

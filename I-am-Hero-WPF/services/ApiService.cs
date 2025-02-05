@@ -23,6 +23,7 @@ public class ApiService
         }
     }
 
+    //Auth
     public async Task<string> Register(string email, string password)
     {
         var content = new StringContent(
@@ -58,6 +59,20 @@ public class ApiService
         }
     }
 
+    //Hero
+    public async Task<HttpResponseMessage> GetHeroAsync()
+    {
+        HttpResponseMessage response = await _httpClient.GetAsync("api/Hero/get");
+        return response;
+    }
+
+    public async Task<string> CreateHeroAsync(string heroName)
+    {
+        var response = await _httpClient.PostAsync($"api/Hero/create?heroName={Uri.EscapeDataString(heroName)}", null);
+
+        return await response.Content.ReadAsStringAsync();
+    }
+
     public async Task<bool> IsTokenValid()
     {
         string token = TokenStorage.LoadToken();
@@ -68,29 +83,6 @@ public class ApiService
         HttpResponseMessage response = await _httpClient.GetAsync("api/Auth/validate");
         return response.IsSuccessStatusCode;
     }
-
-    //public async Task<bool> RefreshToken()
-    //{
-    //    string refreshToken = TokenStorage.LoadToken(); // Нужно хранить refresh отдельно
-
-    //    if (string.IsNullOrEmpty(refreshToken))
-    //        return false;
-
-    //    var content = new StringContent(JsonSerializer.Serialize(new { Token = refreshToken }),
-    //        Encoding.UTF8, "application/json");
-
-    //    HttpResponseMessage response = await _httpClient.PostAsync("api/Users/refresh", content);
-
-    //    if (response.IsSuccessStatusCode)
-    //    {
-    //        string newToken = await response.Content.ReadAsStringAsync();
-    //        TokenStorage.SaveToken(newToken);
-    //        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", newToken);
-    //        return true;
-    //    }
-
-    //    return false; // Refresh не удался
-    //}
 
     public void Logout()
     {
