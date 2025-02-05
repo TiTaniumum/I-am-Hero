@@ -3,7 +3,9 @@ using I_am_Hero_API.DTO;
 using I_am_Hero_API.Models;
 using I_am_Hero_API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 namespace I_am_Hero_API.Services
 {
@@ -31,12 +33,12 @@ namespace I_am_Hero_API.Services
         }
         #endregion ServiceContext
         #region Hero
-        public async Task CreateHero(string heroName)
+        public async Task<IdDto> CreateHero(string heroName)
         {
             Hero newHero = new Hero { Name = heroName };
             user.Hero = newHero;
             await context.SaveChangesAsync();
-            return;
+            return new IdDto { Id = newHero.Id};
         }
 
         public async Task<HeroDto> GetHero()
@@ -143,6 +145,48 @@ namespace I_am_Hero_API.Services
                     .Where(x => x.Id == dto.Id)
                     .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.CurrentStateId, dto.CurrentStateId));
         }
+        public async Task DeleteHeroAttribute(long id)
+        {
+            await context.HeroAttributes.Where(x=>x.Id == id).ExecuteDeleteAsync();
+        }
         #endregion HeroAttribute
+        #region HeroAttributeState
+        public async Task<IdDto> CreateHeroAttributeState(HeroAttributeStateDto dto)
+        {
+            HeroAttributeState state = new HeroAttributeState
+            {
+                HeroAttributeId = dto.HeroAttributeId,
+                Name = dto.Name,
+            };
+            await context.HeroAttributeStates.AddAsync(state);
+            await context.SaveChangesAsync();
+            return new IdDto { Id = state.Id };
+        }
+        public async Task<IdsDto> CreateHeroAttributeStates(HeroAttributeStatesDto dto)
+        {
+            List<HeroAttributeState> list = new List<HeroAttributeState>();
+            foreach (HeroAttributeStateDto i in dto.HeroAttributeStates)
+            {
+                HeroAttributeState state = new HeroAttributeState
+                {
+                    HeroAttributeId = i.HeroAttributeId,
+                    Name = i.Name,
+                };
+                list.Add(state);
+            }
+            await context.HeroAttributeStates.AddRangeAsync(list);
+            await context.SaveChangesAsync();
+            return new IdsDto { Ids = list.Select(x => x.Id).ToArray() };
+        }
+        public async Task<HeroAttributeStatesDto> GetHeroAttributeStates(long heroAttributeId)
+        {
+            List<HeroAttributeState> list = await context.HeroAttributeStates.Where(x => x.HeroAttributeId == heroAttributeId).ToListAsync();
+            return new HeroAttributeStatesDto(list);
+        }
+        public async Task DeleteHeroAttributeState(long id)
+        {
+            await context.HeroAttributeStates.Where(x=>x.Id == id).ExecuteDeleteAsync();
+        }
+        #endregion HeroAttributeState
     }
 }
