@@ -18,5 +18,6 @@ namespace I_am_Hero_API.Services.Interfaces
         Task<bool> IsHeroExist();
         Task<IdDto> CreateHeroAttribute(HeroAttributeDto dto);
         Task<HeroAttributesDto> GetHeroAttributes(long? id);
+        Task EditHeroAttribute(HeroAttributeDto dto);
     }
 }

@@ -109,8 +109,26 @@ namespace I_am_Hero_API.Controllers
                 return await heroService.GetHeroAttributes(id);
             });
         }
-        //public async Task<ActionResult<TokenDto>> EditHeroAttribute()
-        //public async Task<ActionResult<TokenDto>> DeleteHeroAttribute()
+        [Authorize]
+        [HttpPost("edit/HeroAttriute")]
+        public async Task<ActionResult<TokenDto>> EditHeroAttribute(HeroAttributeDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.EditHeroAttribute(dto);
+                return new TokenDto();
+            });
+        }
+        [Authorize]
+        [HttpDelete("delete/HeroAttribute")]
+        public async Task<ActionResult<TokenDto>> DeleteHeroAttribute(long id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                //await heroService.DeleteHeroAttribute(id);
+                return new TokenDto();
+            });
+        }
         //public async Task<ActionResult<TokenDto>> CreateHeroAttributeStates()
         //public async Task<ActionResult<TokenDto>> GetHeroAttributeStates()
         //public async Task<ActionResult<TokenDto>> DeleteHeroAttributeStates()

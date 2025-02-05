@@ -19,6 +19,7 @@ namespace I_am_Hero_API.Services
         {
             this.context = context;
         }
+        #region ServiceContext
         public void SetResult(ActionResult<TokenDto> result)
         {
             this.result = result;
@@ -28,6 +29,8 @@ namespace I_am_Hero_API.Services
         {
             this.user = user;
         }
+        #endregion ServiceContext
+        #region Hero
         public async Task CreateHero(string heroName)
         {
             Hero newHero = new Hero { Name = heroName };
@@ -74,7 +77,8 @@ namespace I_am_Hero_API.Services
             Hero? hero = await context.Heroes.FirstOrDefaultAsync(x => x.UserId == user.Id);
             return hero != null;
         }
-
+        #endregion Hero
+        #region HeroAttribute
         public async Task<IdDto> CreateHeroAttribute(HeroAttributeDto dto)
         {
             if (dto.Name == null)
@@ -106,5 +110,39 @@ namespace I_am_Hero_API.Services
                 list.Add(new HeroAttributeDto(i));
             return new HeroAttributesDto(list);
         }
+        public async Task EditHeroAttribute(HeroAttributeDto dto)
+        {
+            if (dto.Id == null)
+                throw new NullReferenceException("Id cannot be null when editing HeroAttribute");
+            if (dto.Name != null)
+                await userHeroAttribute
+                    .Where(x => x.Id == dto.Id)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Name, dto.Name));
+            if (dto.Description != null)
+                await userHeroAttribute
+                    .Where(x => x.Id == dto.Id)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Description, dto.Description));
+            if (dto.cAttributeTypeId != null)
+                await userHeroAttribute
+                    .Where(x => x.Id == dto.Id)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.cAttributeTypeId, dto.cAttributeTypeId));
+            if (dto.MinValue != null)
+                await userHeroAttribute
+                    .Where(x => x.Id == dto.Id)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.MinValue, dto.MinValue));
+            if (dto.Value != null)
+                await userHeroAttribute
+                    .Where(x => x.Id == dto.Id)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Value, dto.Value));
+            if (dto.MaxValue != null)
+                await userHeroAttribute
+                    .Where(x => x.Id == dto.Id)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.MaxValue, dto.MaxValue));
+            if (dto.CurrentStateId != null)
+                await userHeroAttribute
+                    .Where(x => x.Id == dto.Id)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.CurrentStateId, dto.CurrentStateId));
+        }
+        #endregion HeroAttribute
     }
 }
