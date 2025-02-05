@@ -4,6 +4,7 @@ using I_am_Hero_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace I_am_Hero_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250130161128_InsertIntoApplications")]
+    partial class InsertIntoApplications
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,9 +83,7 @@ namespace I_am_Hero_API.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<long>("cLevelCalculationTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasDefaultValue(1L);
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -339,9 +340,7 @@ namespace I_am_Hero_API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("RegistrationDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -388,26 +387,6 @@ namespace I_am_Hero_API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("cLevelCalculationTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            NameEn = "Exponential",
-                            NameRu = "Экспаненциальный"
-                        },
-                        new
-                        {
-                            Id = 2L,
-                            NameEn = "Constant",
-                            NameRu = "Постоянный"
-                        },
-                        new
-                        {
-                            Id = 3L,
-                            NameEn = "Non-growing",
-                            NameRu = "Нерастущий"
-                        });
                 });
 
             modelBuilder.Entity("I_am_Hero_API.Models.cRarity", b =>

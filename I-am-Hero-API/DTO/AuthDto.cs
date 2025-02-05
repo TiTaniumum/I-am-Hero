@@ -1,6 +1,6 @@
 ﻿namespace I_am_Hero_API.DTO
 {
-    public class UserRegistrationDto
+    public class AuthDto
     {
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;

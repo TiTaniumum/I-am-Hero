@@ -16,5 +16,10 @@ namespace I_am_Hero_API.Models
         public DateTime ExpireDate { get; private set; }
         public long UserId { get; set; }
         public User User { get; set; } = null!;
+        public long ApplicationId { get; set; }
+        public Application Application { get; set; } = null!;
+        public void ExtendExpireDate() { 
+            ExpireDate = DateTime.Now.AddDays(14);
+        }
     }
 }
