@@ -5,21 +5,86 @@
       Title="Main Page">
 
     <Grid Background="{DynamicResource MaterialDesignPaper}">
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <!-- Приветствие -->
-            <TextBlock Text="Добро пожаловать!" 
-                       FontSize="28" 
-                       FontWeight="Bold" 
-                       HorizontalAlignment="Center" 
-                       Margin="0,0,0,20" 
-                       Foreground="{DynamicResource MaterialDesignBody}"/>
+        <!-- Верхняя панель для кнопки выхода -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-            <Button Content="Выйти" 
-                    Command="{Binding LogoutCommand}" 
-                    Style="{StaticResource MaterialDesignRaisedButton}" 
-                    HorizontalAlignment="Center" 
-                    Width="200" 
-                    Margin="0,20,0,0" />
-        </StackPanel>
+        <!-- Верхняя панель: кнопка выхода справа -->
+        <DockPanel Grid.Row="0" Margin="10">
+            <Button DockPanel.Dock="Right" 
+        Command="{Binding LogoutCommand}"
+        Style="{StaticResource MaterialDesignIconButton}" 
+        ToolTip="Выход" 
+        Width="40" Height="40">
+                <materialDesign:PackIcon Kind="Close" Width="24" Height="24" />
+            </Button>
+        </DockPanel>
+
+        <!-- Основное содержимое -->
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Шапка с информацией о пользователе -->
+            <StackPanel Orientation="Horizontal" Margin="20" Grid.Row="0">
+                <!-- Иконка пользователя -->
+                <materialDesign:PackIcon Kind="AccountCircle" Width="48" Height="48" 
+                                         Foreground="{DynamicResource PrimaryHueMidBrush}" />
+                <!-- Блок с данными пользователя -->
+                <StackPanel Orientation="Vertical" Margin="10,0,0,0" VerticalAlignment="Center">
+                    <TextBlock Text="Имя пользователя" FontSize="20" FontWeight="Bold" />
+                    <TextBlock Text="Уровень: 10" FontSize="14" />
+                    <!-- Прогресс-бар опыта -->
+                    <ProgressBar Minimum="0" Maximum="100" Value="50" Height="20" Width="200" Margin="0,5,0,0"/>
+                    <TextBlock Text="50/100 exp" FontSize="12" Foreground="Gray"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Основное содержимое: три блока -->
+            <Grid Grid.Row="1" Margin="20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Левый блок: Календарь -->
+                <Border Grid.Column="0" Background="White" CornerRadius="4" Margin="5" Padding="10">
+                    <StackPanel>
+                        <TextBlock Text="Календарь" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <!-- Стандартный элемент Calendar для mock-отметок -->
+                        <Calendar DisplayMode="Month" IsTodayHighlighted="True" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Центральный блок: Ежедневные квесты -->
+                <Border Grid.Column="1" Background="White" CornerRadius="4" Margin="5" Padding="10">
+                    <StackPanel>
+                        <TextBlock Text="Ежедневные квесты" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <ListBox>
+                            <ListBoxItem Content="Квест 1: Выполнить задачу A" />
+                            <ListBoxItem Content="Квест 2: Выполнить задачу B" />
+                            <ListBoxItem Content="Квест 3: Выполнить задачу C" />
+                        </ListBox>
+                    </StackPanel>
+                </Border>
+
+                <!-- Правый блок: Общие квесты -->
+                <Border Grid.Column="2" Background="White" CornerRadius="4" Margin="5" Padding="10">
+                    <StackPanel>
+                        <TextBlock Text="Общие квесты" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <ListBox>
+                            <ListBoxItem Content="Квест A: Собрать 100 монет" />
+                            <ListBoxItem Content="Квест B: Победить босса" />
+                            <ListBoxItem Content="Квест C: Найти секретное место" />
+                        </ListBox>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
     </Grid>
 </Page>
