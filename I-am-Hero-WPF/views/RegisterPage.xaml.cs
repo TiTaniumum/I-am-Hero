@@ -16,7 +16,6 @@ namespace I_am_Hero_WPF.Views
         {
             if (DataContext is RegisterViewModel viewModel)
             {
-                //MessageBox.Show(((PasswordBox)sender).Password, "Password changed", MessageBoxButton.OK, MessageBoxImage.Information);
                 viewModel.Password = ((PasswordBox)sender).Password;
             }
         }
