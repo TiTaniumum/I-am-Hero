@@ -57,6 +57,11 @@ namespace I_am_Hero_API.Data
             modelBuilder.Entity<Hero>()
                 .Property(x => x.cLevelCalculationTypeId)
                 .HasDefaultValue(1);
+            modelBuilder.Entity<cAttributeType>()
+                .HasData(
+                    new cAttributeType { Id = 1, NameEn = "Numerical", NameRu = "Численный" },
+                    new cAttributeType { Id = 2, NameEn = "State", NameRu = "Состояние" }
+                );
         }
     }
 }

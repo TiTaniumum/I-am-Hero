@@ -21,8 +21,11 @@ namespace I_am_Hero_API.Controllers
         {
             return Ok(commonService.GetAllcLevelCalculationTypes());
         }
-
-        //public ActionResult<IEnumerable> GetAllcAttributeTypes()
+        [HttpGet("all-cAttributeType")]
+        public ActionResult<IEnumerable<cAttributeType>> GetAllcAttributeTypes()
+        {
+            return Ok(commonService.GetAllcAttributeTypes());
+        }
         //public ActionResult<IEnumerable> GetAllcRarities()
         //public ActionResult<IEnumerable> GetAllApplications()
     }

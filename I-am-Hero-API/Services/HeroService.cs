@@ -3,7 +3,9 @@ using I_am_Hero_API.DTO;
 using I_am_Hero_API.Models;
 using I_am_Hero_API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 namespace I_am_Hero_API.Services
 {
@@ -14,10 +16,12 @@ namespace I_am_Hero_API.Services
         private User user = null!;
         private ActionResult<TokenDto>? result;
         private IQueryable<Hero> userHero { get => context.Heroes.Where(x => x.UserId == user.Id); }
+        private IQueryable<HeroAttribute> userHeroAttribute { get => context.HeroAttributes.Where(x => x.UserId == user.Id); }
         public HeroService(ApplicationDbContext context)
         {
             this.context = context;
         }
+        #region ServiceContext
         public void SetResult(ActionResult<TokenDto> result)
         {
             this.result = result;
@@ -27,12 +31,14 @@ namespace I_am_Hero_API.Services
         {
             this.user = user;
         }
-        public async Task CreateHero(string heroName)
+        #endregion ServiceContext
+        #region Hero
+        public async Task<IdDto> CreateHero(string heroName)
         {
             Hero newHero = new Hero { Name = heroName };
             user.Hero = newHero;
             await context.SaveChangesAsync();
-            return;
+            return new IdDto { Id = newHero.Id};
         }
 
         public async Task<HeroDto> GetHero()
@@ -43,7 +49,7 @@ namespace I_am_Hero_API.Services
 
         public async Task EditHero(HeroDto dto)
         {
-            if(dto.cLevelCalculationTypeId != null && !await context.cLevelCalculationTypes.AnyAsync(x => x.Id == dto.cLevelCalculationTypeId))
+            if (dto.cLevelCalculationTypeId != null && !await context.cLevelCalculationTypes.AnyAsync(x => x.Id == dto.cLevelCalculationTypeId))
                 throw new ArgumentOutOfRangeException("cLevelCalculationTypeId is out of range");
             if (dto.Name != null)
                 await userHero.ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Name, dto.Name));
@@ -60,7 +66,7 @@ namespace I_am_Hero_API.Services
 
         public async Task EditHeroLevelCalculationType(long levelCalculationTypeId)
         {
-            if(!await context.cLevelCalculationTypes.AnyAsync(x=>x.Id == levelCalculationTypeId))
+            if (!await context.cLevelCalculationTypes.AnyAsync(x => x.Id == levelCalculationTypeId))
                 throw new ArgumentOutOfRangeException("cLevelCalculationTypeId is out of range");
             await userHero.ExecuteUpdateAsync(setters => setters.SetProperty(x => x.cLevelCalculationTypeId, levelCalculationTypeId));
         }
@@ -73,5 +79,114 @@ namespace I_am_Hero_API.Services
             Hero? hero = await context.Heroes.FirstOrDefaultAsync(x => x.UserId == user.Id);
             return hero != null;
         }
+        #endregion Hero
+        #region HeroAttribute
+        public async Task<IdDto> CreateHeroAttribute(HeroAttributeDto dto)
+        {
+            if (dto.Name == null)
+                throw new NullReferenceException("The 'Name' field cannot be empty when creating a new hero attribute.");
+            var heroAttribute = new HeroAttribute()
+            {
+                UserId = user.Id,
+                Name = dto.Name,
+                Description = dto.Description,
+                cAttributeTypeId = dto.cAttributeTypeId ?? 1L,
+                MinValue = dto.MinValue,
+                Value = dto.Value,
+                MaxValue = dto.MaxValue,
+                CurrentStateId = null,
+            };
+            await context.HeroAttributes.AddAsync(heroAttribute);
+            await context.SaveChangesAsync();
+            return new IdDto { Id = heroAttribute.Id };
+        }
+        public async Task<HeroAttributesDto> GetHeroAttributes(long? id)
+        {
+            List<HeroAttributeDto> list = new List<HeroAttributeDto>();
+            HeroAttribute[] arr;
+            if (id != null)
+                arr = await userHeroAttribute.Where(x => x.Id == id).ToArrayAsync();
+            else
+                arr = await userHeroAttribute.ToArrayAsync();
+            foreach (HeroAttribute i in arr)
+                list.Add(new HeroAttributeDto(i));
+            return new HeroAttributesDto(list);
+        }
+        public async Task EditHeroAttribute(HeroAttributeDto dto)
+        {
+            if (dto.Id == null)
+                throw new NullReferenceException("Id cannot be null when editing HeroAttribute");
+            if (dto.Name != null)
+                await userHeroAttribute
+                    .Where(x => x.Id == dto.Id)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Name, dto.Name));
+            if (dto.Description != null)
+                await userHeroAttribute
+                    .Where(x => x.Id == dto.Id)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Description, dto.Description));
+            if (dto.cAttributeTypeId != null)
+                await userHeroAttribute
+                    .Where(x => x.Id == dto.Id)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.cAttributeTypeId, dto.cAttributeTypeId));
+            if (dto.MinValue != null)
+                await userHeroAttribute
+                    .Where(x => x.Id == dto.Id)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.MinValue, dto.MinValue));
+            if (dto.Value != null)
+                await userHeroAttribute
+                    .Where(x => x.Id == dto.Id)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Value, dto.Value));
+            if (dto.MaxValue != null)
+                await userHeroAttribute
+                    .Where(x => x.Id == dto.Id)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.MaxValue, dto.MaxValue));
+            if (dto.CurrentStateId != null)
+                await userHeroAttribute
+                    .Where(x => x.Id == dto.Id)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.CurrentStateId, dto.CurrentStateId));
+        }
+        public async Task DeleteHeroAttribute(long id)
+        {
+            await context.HeroAttributes.Where(x=>x.Id == id).ExecuteDeleteAsync();
+        }
+        #endregion HeroAttribute
+        #region HeroAttributeState
+        public async Task<IdDto> CreateHeroAttributeState(HeroAttributeStateDto dto)
+        {
+            HeroAttributeState state = new HeroAttributeState
+            {
+                HeroAttributeId = dto.HeroAttributeId,
+                Name = dto.Name,
+            };
+            await context.HeroAttributeStates.AddAsync(state);
+            await context.SaveChangesAsync();
+            return new IdDto { Id = state.Id };
+        }
+        public async Task<IdsDto> CreateHeroAttributeStates(HeroAttributeStatesDto dto)
+        {
+            List<HeroAttributeState> list = new List<HeroAttributeState>();
+            foreach (HeroAttributeStateDto i in dto.HeroAttributeStates)
+            {
+                HeroAttributeState state = new HeroAttributeState
+                {
+                    HeroAttributeId = i.HeroAttributeId,
+                    Name = i.Name,
+                };
+                list.Add(state);
+            }
+            await context.HeroAttributeStates.AddRangeAsync(list);
+            await context.SaveChangesAsync();
+            return new IdsDto { Ids = list.Select(x => x.Id).ToArray() };
+        }
+        public async Task<HeroAttributeStatesDto> GetHeroAttributeStates(long heroAttributeId)
+        {
+            List<HeroAttributeState> list = await context.HeroAttributeStates.Where(x => x.HeroAttributeId == heroAttributeId).ToListAsync();
+            return new HeroAttributeStatesDto(list);
+        }
+        public async Task DeleteHeroAttributeState(long id)
+        {
+            await context.HeroAttributeStates.Where(x=>x.Id == id).ExecuteDeleteAsync();
+        }
+        #endregion HeroAttributeState
     }
 }
