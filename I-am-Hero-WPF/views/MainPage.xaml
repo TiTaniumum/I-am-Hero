@@ -12,15 +12,15 @@
         </Grid.RowDefinitions>
 
         <!-- Верхняя панель: кнопка выхода справа -->
-        <DockPanel Grid.Row="0" Margin="10">
-            <Button DockPanel.Dock="Right" 
-        Command="{Binding LogoutCommand}"
-        Style="{StaticResource MaterialDesignIconButton}" 
-        ToolTip="Выход" 
-        Width="40" Height="40">
+        <Grid Grid.Row="0" Margin="10">
+            <Button HorizontalAlignment="Right" VerticalAlignment="Top"
+                    Command="{Binding LogoutCommand}"
+                    Style="{StaticResource MaterialDesignIconButton}" 
+                    ToolTip="Выход" 
+                    Width="40" Height="40">
                 <materialDesign:PackIcon Kind="Close" Width="24" Height="24" />
             </Button>
-        </DockPanel>
+        </Grid>
 
         <!-- Основное содержимое -->
         <Grid Grid.Row="1">

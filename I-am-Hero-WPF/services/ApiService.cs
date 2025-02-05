@@ -31,19 +31,19 @@ public class ApiService
             "application/json"
         );
 
-        var response = await _httpClient.PostAsync("api/Users/register", content);
+        var response = await _httpClient.PostAsync("api/Auth/register", content);
         return await response.Content.ReadAsStringAsync();
     }
 
     public async Task<string> Login(string email, string password)
     {
         var content = new StringContent(
-            JsonSerializer.Serialize(new { Email = email, Password = password }),
+            JsonSerializer.Serialize(new { Email = email, Password = password, ApplicationId = 2 }),
             Encoding.UTF8,
             "application/json"
         );
 
-        HttpResponseMessage response = await _httpClient.PostAsync("api/Users/login", content);
+        HttpResponseMessage response = await _httpClient.PostAsync("api/Auth/login", content);
 
         if (response.IsSuccessStatusCode)
         {
@@ -65,7 +65,7 @@ public class ApiService
 
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        HttpResponseMessage response = await _httpClient.GetAsync("api/Users/validate");
+        HttpResponseMessage response = await _httpClient.GetAsync("api/Auth/validate");
         return response.IsSuccessStatusCode;
     }
 
