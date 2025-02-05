@@ -12,11 +12,7 @@ namespace I_am_Hero_API.DTO
         }
         public HeroAttributeStatesDto(List<HeroAttributeState> heroAttributeStates)
         {
-            HeroAttributeStates = new List<HeroAttributeStateDto>();
-            foreach (var heroAttributeState in heroAttributeStates)
-            {
-                ((List<HeroAttributeStateDto>)HeroAttributeStates).Add(new HeroAttributeStateDto(heroAttributeState));
-            }
+            HeroAttributeStates = heroAttributeStates.Select(x => new HeroAttributeStateDto(x));
         }
     }
 }

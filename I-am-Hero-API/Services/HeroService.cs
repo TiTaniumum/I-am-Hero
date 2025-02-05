@@ -17,6 +17,7 @@ namespace I_am_Hero_API.Services
         private ActionResult<TokenDto>? result;
         private IQueryable<Hero> userHero { get => context.Heroes.Where(x => x.UserId == user.Id); }
         private IQueryable<HeroAttribute> userHeroAttribute { get => context.HeroAttributes.Where(x => x.UserId == user.Id); }
+        private IQueryable<HeroSkill> userHeroSkill { get => context.HeroSkills.Where(x => x.UserId == user.Id); }
         public HeroService(ApplicationDbContext context)
         {
             this.context = context;
@@ -51,12 +52,16 @@ namespace I_am_Hero_API.Services
         {
             if (dto.cLevelCalculationTypeId != null && !await context.cLevelCalculationTypes.AnyAsync(x => x.Id == dto.cLevelCalculationTypeId))
                 throw new ArgumentOutOfRangeException("cLevelCalculationTypeId is out of range");
+            Hero? hero = await userHero.FirstOrDefaultAsync();
+            if (hero == null)
+                throw new NullReferenceException("Hero not found");
             if (dto.Name != null)
-                await userHero.ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Name, dto.Name));
+                hero.Name = dto.Name;
             if (dto.cLevelCalculationTypeId != null)
-                await userHero.ExecuteUpdateAsync(setters => setters.SetProperty(x => x.cLevelCalculationTypeId, dto.cLevelCalculationTypeId));
+                hero.cLevelCalculationTypeId = dto.cLevelCalculationTypeId.Value;
             if (dto.Experience != null)
-                await userHero.ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Experience, dto.Experience));
+                hero.Experience = dto.Experience.Value;
+            await context.SaveChangesAsync();
         }
 
         public async Task EditHeroName(string newHeroName)
@@ -116,34 +121,24 @@ namespace I_am_Hero_API.Services
         {
             if (dto.Id == null)
                 throw new NullReferenceException("Id cannot be null when editing HeroAttribute");
+            HeroAttribute? attribute = await userHeroAttribute.FirstOrDefaultAsync(x => x.Id == dto.Id);
+            if (attribute == null)
+                throw new NullReferenceException("HeroAttribute with this Id not found");
             if (dto.Name != null)
-                await userHeroAttribute
-                    .Where(x => x.Id == dto.Id)
-                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Name, dto.Name));
+                attribute.Name = dto.Name;
             if (dto.Description != null)
-                await userHeroAttribute
-                    .Where(x => x.Id == dto.Id)
-                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Description, dto.Description));
+                attribute.Description = dto.Description;
             if (dto.cAttributeTypeId != null)
-                await userHeroAttribute
-                    .Where(x => x.Id == dto.Id)
-                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.cAttributeTypeId, dto.cAttributeTypeId));
+                attribute.cAttributeTypeId = dto.cAttributeTypeId.Value;
             if (dto.MinValue != null)
-                await userHeroAttribute
-                    .Where(x => x.Id == dto.Id)
-                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.MinValue, dto.MinValue));
+                attribute.MinValue = dto.MinValue;
             if (dto.Value != null)
-                await userHeroAttribute
-                    .Where(x => x.Id == dto.Id)
-                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Value, dto.Value));
+                attribute.Value = dto.Value;
             if (dto.MaxValue != null)
-                await userHeroAttribute
-                    .Where(x => x.Id == dto.Id)
-                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.MaxValue, dto.MaxValue));
+                attribute.MaxValue = dto.MaxValue;
             if (dto.CurrentStateId != null)
-                await userHeroAttribute
-                    .Where(x => x.Id == dto.Id)
-                    .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.CurrentStateId, dto.CurrentStateId));
+                attribute.CurrentStateId = dto.CurrentStateId;
+            await context.SaveChangesAsync();
         }
         public async Task DeleteHeroAttribute(long id)
         {
@@ -188,5 +183,55 @@ namespace I_am_Hero_API.Services
             await context.HeroAttributeStates.Where(x=>x.Id == id).ExecuteDeleteAsync();
         }
         #endregion HeroAttributeState
+        #region HeroSkill
+        public async Task<IdDto> CreateHeroSkill(HeroSkillDto dto)
+        {
+            if(dto.Id == null)
+                throw new NullReferenceException("Id cannot be null when creating HeroSkill");
+            if (dto.Name == null)
+                throw new NullReferenceException("Name cannot be null when creating HeroSkill");
+            HeroSkill skill = new HeroSkill
+            {
+                UserId = user.Id,
+                Name = dto.Name,
+                Description = dto.Description,
+                Experience = dto.Experience ?? 0,
+                cLevelCalculationTypeId = 1
+            };
+            await context.HeroSkills.AddAsync(skill);
+            await context.SaveChangesAsync();
+            return new IdDto { Id = skill.Id };
+        }
+
+        public async Task<HeroSkillsDto> GetHeroSkills(long? id)
+        {
+            if(id != null)
+                return new HeroSkillsDto(await context.HeroSkills.Where(x => x.Id == id).ToArrayAsync());
+            return new HeroSkillsDto(await userHeroSkill.ToArrayAsync());
+        }
+
+        public async Task EditHeroSkill(HeroSkillDto dto)
+        {
+            if (dto.Id == null)
+                throw new NullReferenceException("Id cannot be null when editing HeroSkill");
+            HeroSkill? skill = await userHeroSkill.FirstOrDefaultAsync(x => x.Id == dto.Id);
+            if (skill == null)
+                throw new NullReferenceException("HeroSkill with this Id not found");
+            if (dto.Name != null)
+                skill.Name = dto.Name;
+            if (dto.Description != null)
+                skill.Description = dto.Description;
+            if (dto.Experience != null)
+                skill.Experience = dto.Experience.Value;
+            if (dto.cLevelCalculationTypeId != null)
+                skill.cLevelCalculationTypeId = dto.cLevelCalculationTypeId.Value;
+            await context.SaveChangesAsync();
+        }
+
+        public async Task DeleteHeroSkill(long id)
+        {
+            await context.HeroSkills.Where(x => x.Id == id).ExecuteDeleteAsync();
+        }
+        #endregion HeroSkill
     }
 }
