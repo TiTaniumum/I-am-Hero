@@ -28,5 +28,17 @@ namespace I_am_Hero_API.Services.Interfaces
         Task<HeroSkillsDto> GetHeroSkills(long? id);
         Task EditHeroSkill(HeroSkillDto dto);
         Task DeleteHeroSkill(long id);
+        Task<IdDto> CreateHeroStatusEffect(HeroStatusEffectDto dto);
+        Task<HeroStatusEffectsDto> GetHeroStatusEffects(long? id);
+        Task EditHeroStatusEffect(HeroStatusEffectDto dto);
+        Task DeleteHeroStatusEffect(long id);
+        Task<IdDto> CreateHeroBioPiece(HeroBioPieceDto dto);
+        Task<HeroBioPiecesDto> GetHeroBioPieces(long? id);
+        Task EditHeroBioPiece(HeroBioPieceDto dto);
+        Task DeleteHeroBioPiece(long id);
+        Task<IdDto> CreateHeroAchievement(HeroAchievementDto dto);
+        Task<HeroAchievementsDto> GetHeroAchievements(long? id);
+        Task EditHeroAchievement(HeroAchievementDto dto);
+        Task DeleteHeroAchievement(long id);
     }
 }

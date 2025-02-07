@@ -18,6 +18,9 @@ namespace I_am_Hero_API.Services
         private IQueryable<Hero> userHero { get => context.Heroes.Where(x => x.UserId == user.Id); }
         private IQueryable<HeroAttribute> userHeroAttribute { get => context.HeroAttributes.Where(x => x.UserId == user.Id); }
         private IQueryable<HeroSkill> userHeroSkill { get => context.HeroSkills.Where(x => x.UserId == user.Id); }
+        private IQueryable<HeroStatusEffect> userHeroStatusEffect { get => context.HeroStatusEffects.Where(x => x.UserId == user.Id); }
+        private IQueryable<HeroBioPiece> userHeroBioPiece { get => context.HeroBioPieces.Where(x => x.UserId == user.Id); }
+        private IQueryable<HeroAchievement> userHeroAchievement { get => context.HeroAchievements.Where(x => x.UserId == user.Id); }
         public HeroService(ApplicationDbContext context)
         {
             this.context = context;
@@ -39,7 +42,7 @@ namespace I_am_Hero_API.Services
             Hero newHero = new Hero { Name = heroName };
             user.Hero = newHero;
             await context.SaveChangesAsync();
-            return new IdDto { Id = newHero.Id};
+            return new IdDto { Id = newHero.Id };
         }
 
         public async Task<HeroDto> GetHero()
@@ -142,7 +145,7 @@ namespace I_am_Hero_API.Services
         }
         public async Task DeleteHeroAttribute(long id)
         {
-            await context.HeroAttributes.Where(x=>x.Id == id).ExecuteDeleteAsync();
+            await context.HeroAttributes.Where(x => x.Id == id).ExecuteDeleteAsync();
         }
         #endregion HeroAttribute
         #region HeroAttributeState
@@ -180,13 +183,13 @@ namespace I_am_Hero_API.Services
         }
         public async Task DeleteHeroAttributeState(long id)
         {
-            await context.HeroAttributeStates.Where(x=>x.Id == id).ExecuteDeleteAsync();
+            await context.HeroAttributeStates.Where(x => x.Id == id).ExecuteDeleteAsync();
         }
         #endregion HeroAttributeState
         #region HeroSkill
         public async Task<IdDto> CreateHeroSkill(HeroSkillDto dto)
         {
-            if(dto.Id == null)
+            if (dto.Id == null)
                 throw new NullReferenceException("Id cannot be null when creating HeroSkill");
             if (dto.Name == null)
                 throw new NullReferenceException("Name cannot be null when creating HeroSkill");
@@ -205,7 +208,7 @@ namespace I_am_Hero_API.Services
 
         public async Task<HeroSkillsDto> GetHeroSkills(long? id)
         {
-            if(id != null)
+            if (id != null)
                 return new HeroSkillsDto(await context.HeroSkills.Where(x => x.Id == id).ToArrayAsync());
             return new HeroSkillsDto(await userHeroSkill.ToArrayAsync());
         }
@@ -233,5 +236,132 @@ namespace I_am_Hero_API.Services
             await context.HeroSkills.Where(x => x.Id == id).ExecuteDeleteAsync();
         }
         #endregion HeroSkill
+        #region HeroStatusEffect
+        public async Task<IdDto> CreateHeroStatusEffect(HeroStatusEffectDto dto)
+        {
+            if (dto.Name == null)
+                throw new NullReferenceException("Name cannot be null when creating HeroStatusEffect");
+            HeroStatusEffect effect = new HeroStatusEffect 
+            { 
+                UserId = user.Id, 
+                Name = dto.Name, 
+                Description = dto.Description, 
+                Value = dto.Value 
+            };
+            await context.HeroStatusEffects.AddAsync(effect);
+            await context.SaveChangesAsync();
+            return new IdDto { Id = effect.Id };
+        }
+
+        public async Task<HeroStatusEffectsDto> GetHeroStatusEffects(long? id)
+        {
+            if(id != null)
+                return new HeroStatusEffectsDto(await context.HeroStatusEffects.Where(x => x.Id == id).ToArrayAsync());
+            return new HeroStatusEffectsDto(await userHeroStatusEffect.ToArrayAsync());
+        }
+
+        public async Task EditHeroStatusEffect(HeroStatusEffectDto dto)
+        {
+            if (dto.Id == null)
+                throw new NullReferenceException("Id cannot be null when editing HeroStatusEffect");
+            HeroStatusEffect? effect = await userHeroStatusEffect.FirstOrDefaultAsync(x => x.Id == dto.Id);
+            if (effect == null)
+                throw new NullReferenceException("HeroStatusEffect with this Id not found");
+            if (dto.Name != null)
+                effect.Name = dto.Name;
+            if (dto.Description != null)
+                effect.Description = dto.Description;
+            if (dto.Value != null)
+                effect.Value = dto.Value.Value;
+            await context.SaveChangesAsync();
+        }
+
+        public async Task DeleteHeroStatusEffect(long id)
+        {
+            await context.HeroStatusEffects.Where(x => x.Id == id).ExecuteDeleteAsync();
+        }
+        #endregion HeroStatusEffect
+        #region HeroBioPiece
+        public async Task<IdDto> CreateHeroBioPiece(HeroBioPieceDto dto)
+        {
+            if (dto.Text == null)
+                throw new NullReferenceException("Text cannot be null when creating HeroBioPiece");
+            HeroBioPiece piece = new HeroBioPiece { UserId = user.Id, Text = dto.Text};
+            await context.HeroBioPieces.AddAsync(piece);
+            await context.SaveChangesAsync();
+            return new IdDto { Id = piece.Id };
+        }
+
+        public async Task<HeroBioPiecesDto> GetHeroBioPieces(long? id)
+        {
+            if (id != null)
+                return new HeroBioPiecesDto(await context.HeroBioPieces.Where(x => x.Id == id).ToArrayAsync());
+            return new HeroBioPiecesDto(await userHeroBioPiece.ToArrayAsync());
+        }
+
+        public async Task EditHeroBioPiece(HeroBioPieceDto dto)
+        {
+            if (dto.Id == null)
+                throw new NullReferenceException("Id cannot be null when editing HeroBioPiece");
+            HeroBioPiece? piece = await context.HeroBioPieces.FirstOrDefaultAsync(x => x.Id == dto.Id);
+            if (piece == null)
+                throw new NullReferenceException("HeroBioPiece with this Id not found");
+            if (dto.Text != null)
+                piece.Text = dto.Text;
+            if (dto.CreateDate != null)
+                piece.CreateDate = dto.CreateDate.Value;
+            await context.SaveChangesAsync();
+        }
+
+        public async Task DeleteHeroBioPiece(long id)
+        {
+            await context.HeroBioPieces.Where(x => x.Id == id).ExecuteDeleteAsync();
+        }
+        #endregion HeroBioPiece
+        #region HeroAchievement
+        public async Task<IdDto> CreateHeroAchievement(HeroAchievementDto dto)
+        {
+            if (dto.Name == null)
+                throw new NullReferenceException("Name cannot be null when creating HeroAchievement");
+            HeroAchievement achievement = new HeroAchievement
+            {
+                UserId = user.Id,
+                Name = dto.Name,
+                Description = dto.Description,
+                cRarityId = dto.cRarityId
+            };
+            await context.HeroAchievements.AddAsync(achievement);
+            await context.SaveChangesAsync();
+            return new IdDto { Id = achievement.Id };
+        }
+
+        public async Task<HeroAchievementsDto> GetHeroAchievements(long? id)
+        {
+            if (id != null)
+                return new HeroAchievementsDto(await context.HeroAchievements.Where(x => x.Id == id).ToArrayAsync());
+            return new HeroAchievementsDto(await userHeroAchievement.ToArrayAsync());
+        }
+
+        public async Task EditHeroAchievement(HeroAchievementDto dto)
+        {
+            if (dto.Id == null)
+                throw new NullReferenceException("Id cannot be null when editing HeroAchievement");
+            HeroAchievement? achievement = await context.HeroAchievements.FirstOrDefaultAsync(x => x.Id == dto.Id);
+            if (achievement == null)
+                throw new NullReferenceException("HeroAchievement with this Id not found");
+            if (dto.Name != null)
+                achievement.Name = dto.Name;
+            if (dto.Description != null)
+                achievement.Description = dto.Description;
+            if (dto.cRarityId != null)
+                achievement.cRarityId = dto.cRarityId;
+            await context.SaveChangesAsync();
+        }
+
+        public async Task DeleteHeroAchievement(long id)
+        {
+            await context.HeroAchievements.Where(x => x.Id == id).ExecuteDeleteAsync();
+        }
+        #endregion HeroAchievement
     }
 }

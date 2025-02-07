@@ -19,16 +19,23 @@ namespace I_am_Hero_API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserDto dto)
         {
-            User? user = await authService.RegisterUser(dto);
-            if (user == null)
+            try
             {
-                Conflict(new
+                User? user = await authService.RegisterUser(dto);
+                if (user == null)
                 {
-                    error = "UserAlreadyExists",
-                    message = "A user with this email already exists. Please try logging in instead."
-                });
+                    Conflict(new
+                    {
+                        error = "UserAlreadyExists",
+                        message = "A user with this email already exists. Please try logging in instead."
+                    });
+                }
+                return Ok("Registered");
             }
-            return Ok("Registered");
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         // api/Auth/login
         [HttpPost("login")]
@@ -44,6 +51,10 @@ namespace I_am_Hero_API.Controllers
                 return Ok(token.token);
             }
             catch (ArgumentOutOfRangeException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
