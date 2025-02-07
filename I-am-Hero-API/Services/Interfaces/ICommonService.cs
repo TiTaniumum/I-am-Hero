@@ -6,5 +6,7 @@ namespace I_am_Hero_API.Services.Interfaces
     {
         IEnumerable<cLevelCalculationType> GetAllcLevelCalculationTypes();
         IEnumerable<cAttributeType> GetAllcAttributeTypes();
+        IEnumerable<Application> GetAllApplications();
+        IEnumerable<cRarity> GetAllcRarities();
     }
 }

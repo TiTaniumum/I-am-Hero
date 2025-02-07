@@ -20,5 +20,13 @@ namespace I_am_Hero_API.Services
         {
             return context.cAttributeTypes.ToList();
         }
+        public IEnumerable<Application> GetAllApplications()
+        {
+            return context.Applications.ToList();
+        }
+        public IEnumerable<cRarity> GetAllcRarities()
+        {
+            return context.cRarities.ToList();
+        }
     }
 }

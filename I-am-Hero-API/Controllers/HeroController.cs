@@ -45,7 +45,7 @@ namespace I_am_Hero_API.Controllers
         }
         // api/Hero/edit
         [Authorize]
-        [HttpPost("edit")]
+        [HttpPut("edit")]
         public async Task<ActionResult<TokenDto>> EditHero([FromBody] HeroDto heroDto)
         {
             return await HandleEndpoint(async () =>
@@ -56,7 +56,7 @@ namespace I_am_Hero_API.Controllers
         }
         // api/Hero/edit-heroName
         [Authorize]
-        [HttpPost("edit-heroName")]
+        [HttpPut("edit-heroName")]
         public async Task<ActionResult<TokenDto>> EditHeroName(string newHerName)
         {
             return await HandleEndpoint(async () =>
@@ -67,7 +67,7 @@ namespace I_am_Hero_API.Controllers
         }
         // api/Hero/edit-heroLevelCalculationType
         [Authorize]
-        [HttpPost("edit-heroLevelCalculationType")]
+        [HttpPut("edit-heroLevelCalculationType")]
         public async Task<ActionResult<TokenDto>> EditHeroLevelCalculationType(long levelCalculationTypeId)
         {
             return await HandleEndpoint(async () =>
@@ -78,7 +78,7 @@ namespace I_am_Hero_API.Controllers
         }
         // api/Hero/edit-heroExperience
         [Authorize]
-        [HttpPost("edit-heroExperience")]
+        [HttpPut("edit-heroExperience")]
         public async Task<ActionResult<TokenDto>> EditHeroExperience(long exp)
         {
             return await HandleEndpoint(async () =>
@@ -109,7 +109,7 @@ namespace I_am_Hero_API.Controllers
         }
         // api/Hero/edit/HeroAttribute
         [Authorize]
-        [HttpPost("edit/HeroAttriute")]
+        [HttpPut("edit/HeroAttriute")]
         public async Task<ActionResult<TokenDto>> EditHeroAttribute(HeroAttributeDto dto)
         {
             return await HandleEndpoint(async () =>
@@ -171,189 +171,189 @@ namespace I_am_Hero_API.Controllers
             });
         }
 
-        //// api/Hero/create/HeroSkill
-        //[Authorize]
-        //[HttpPost("create/HeroSkill")]
-        //public async Task<ActionResult<TokenDto>> CreateHeroSkill(HeroSkillDto dto)
-        //{
-        //    return await HandleEndpoint(async () =>
-        //    {
-        //        return await heroService.CreateHeroSkill(dto);
-        //    });
-        //}
+        // api/Hero/create/HeroSkill
+        [Authorize]
+        [HttpPost("create/HeroSkill")]
+        public async Task<ActionResult<TokenDto>> CreateHeroSkill(HeroSkillDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.CreateHeroSkill(dto);
+            });
+        }
 
-        //// api/Hero/get/HeroSkills
-        //[Authorize]
-        //[HttpGet("get/HeroSkills")]
-        //public async Task<ActionResult<TokenDto>> GetHeroSkills(long? id)
-        //{
-        //    return await HandleEndpoint(async () =>
-        //    {
-        //        return await heroService.GetHeroSkills(id);
-        //    });
-        //}
+        // api/Hero/get/HeroSkills
+        [Authorize]
+        [HttpGet("get/HeroSkills")]
+        public async Task<ActionResult<TokenDto>> GetHeroSkills(long? id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.GetHeroSkills(id);
+            });
+        }
 
-        //// api/Hero/edit/HeroSkill
-        //[Authorize]
-        //[HttpPost("edit/HeroSkill")]
-        //public async Task<ActionResult<TokenDto>> EditHeroSkill(HeroSkillDto dto)
-        //{
-        //    return await HandleEndpoint(async () =>
-        //    {
-        //        await heroService.EditHeroSkill(dto);
-        //        return new TokenDto();
-        //    });
-        //}
+        // api/Hero/edit/HeroSkill
+        [Authorize]
+        [HttpPut("edit/HeroSkill")]
+        public async Task<ActionResult<TokenDto>> EditHeroSkill(HeroSkillDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.EditHeroSkill(dto);
+                return new TokenDto();
+            });
+        }
 
-        //// api/Hero/delete/HeroSkill
-        //[Authorize]
-        //[HttpDelete("delete/HeroSkill")]
-        //public async Task<ActionResult<TokenDto>> DeleteHeroSkill(long id)
-        //{
-        //    return await HandleEndpoint(async () =>
-        //    {
-        //        await heroService.DeleteHeroSkill(id);
-        //        return new TokenDto();
-        //    });
-        //}
+        // api/Hero/delete/HeroSkill
+        [Authorize]
+        [HttpDelete("delete/HeroSkill")]
+        public async Task<ActionResult<TokenDto>> DeleteHeroSkill(long id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.DeleteHeroSkill(id);
+                return new TokenDto();
+            });
+        }
 
-        //// api/Hero/create/HeroStatusEffect
-        //[Authorize]
-        //[HttpPost("create/HeroStatusEffect")]
-        //public async Task<ActionResult<TokenDto>> CreateHeroStatusEffect(HeroStatusEffectDto dto)
-        //{
-        //    return await HandleEndpoint(async () =>
-        //    {
-        //        return await heroService.CreateHeroStatusEffect(dto);
-        //    });
-        //}
+        // api/Hero/create/HeroStatusEffect
+        [Authorize]
+        [HttpPost("create/HeroStatusEffect")]
+        public async Task<ActionResult<TokenDto>> CreateHeroStatusEffect(HeroStatusEffectDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.CreateHeroStatusEffect(dto);
+            });
+        }
 
-        //// api/Hero/get/HeroStatusEffects
-        //[Authorize]
-        //[HttpGet("get/HeroStatusEffects")]
-        //public async Task<ActionResult<TokenDto>> GetHeroStatusEffects(long? id)
-        //{
-        //    return await HandleEndpoint(async () =>
-        //    {
-        //        return await heroService.GetHeroStatusEffects(id);
-        //    });
-        //}
+        // api/Hero/get/HeroStatusEffects
+        [Authorize]
+        [HttpGet("get/HeroStatusEffects")]
+        public async Task<ActionResult<TokenDto>> GetHeroStatusEffects(long? id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.GetHeroStatusEffects(id);
+            });
+        }
 
-        //// api/Hero/edit/HeroStatusEffect
-        //[Authorize]
-        //[HttpPost("edit/HeroStatusEffect")]
-        //public async Task<ActionResult<TokenDto>> EditHeroStatusEffect(HeroStatusEffectDto dto)
-        //{
-        //    return await HandleEndpoint(async () =>
-        //    {
-        //        await heroService.EditHeroStatusEffect(dto);
-        //        return new TokenDto();
-        //    });
-        //}
+        // api/Hero/edit/HeroStatusEffect
+        [Authorize]
+        [HttpPut("edit/HeroStatusEffect")]
+        public async Task<ActionResult<TokenDto>> EditHeroStatusEffect(HeroStatusEffectDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.EditHeroStatusEffect(dto);
+                return new TokenDto();
+            });
+        }
 
-        //// api/Hero/delete/HeroStatusEffect
-        //[Authorize]
-        //[HttpDelete("delete/HeroStatusEffect")]
-        //public async Task<ActionResult<TokenDto>> DeleteHeroStatusEffect(long id)
-        //{
-        //    return await HandleEndpoint(async () =>
-        //    {
-        //        await heroService.DeleteHeroStatusEffect(id);
-        //        return new TokenDto();
-        //    });
-        //}
+        // api/Hero/delete/HeroStatusEffect
+        [Authorize]
+        [HttpDelete("delete/HeroStatusEffect")]
+        public async Task<ActionResult<TokenDto>> DeleteHeroStatusEffect(long id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.DeleteHeroStatusEffect(id);
+                return new TokenDto();
+            });
+        }
 
-        //// api/Hero/create/HeroBioPiece
-        //[Authorize]
-        //[HttpPost("create/HeroBioPiece")]
-        //public async Task<ActionResult<TokenDto>> CreateHeroBioPiece(HeroBioPieceDto dto)
-        //{
-        //    return await HandleEndpoint(async () =>
-        //    {
-        //        return await heroService.CreateHeroBioPiece(dto);
-        //    });
-        //}
+        // api/Hero/create/HeroBioPiece
+        [Authorize]
+        [HttpPost("create/HeroBioPiece")]
+        public async Task<ActionResult<TokenDto>> CreateHeroBioPiece(HeroBioPieceDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.CreateHeroBioPiece(dto);
+            });
+        }
 
-        //// api/Hero/get/HeroBioPieces
-        //[Authorize]
-        //[HttpGet("get/HeroBioPieces")]
-        //public async Task<ActionResult<TokenDto>> GetHeroBioPieces(long? id)
-        //{
-        //    return await HandleEndpoint(async () =>
-        //    {
-        //        return await heroService.GetHeroBioPieces(id);
-        //    });
-        //}
+        // api/Hero/get/HeroBioPieces
+        [Authorize]
+        [HttpGet("get/HeroBioPieces")]
+        public async Task<ActionResult<TokenDto>> GetHeroBioPieces(long? id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.GetHeroBioPieces(id);
+            });
+        }
 
-        //// api/Hero/edit/HeroBioPiece
-        //[Authorize]
-        //[HttpPost("edit/HeroBioPiece")]
-        //public async Task<ActionResult<TokenDto>> EditHeroBioPiece(HeroBioPieceDto dto)
-        //{
-        //    return await HandleEndpoint(async () =>
-        //    {
-        //        await heroService.EditHeroBioPiece(dto);
-        //        return new TokenDto();
-        //    });
-        //}
+        // api/Hero/edit/HeroBioPiece
+        [Authorize]
+        [HttpPut("edit/HeroBioPiece")]
+        public async Task<ActionResult<TokenDto>> EditHeroBioPiece(HeroBioPieceDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.EditHeroBioPiece(dto);
+                return new TokenDto();
+            });
+        }
 
-        //// api/Hero/delete/HeroBioPiece
-        //[Authorize]
-        //[HttpDelete("delete/HeroBioPiece")]
-        //public async Task<ActionResult<TokenDto>> DeleteHeroBioPiece(long id)
-        //{
-        //    return await HandleEndpoint(async () =>
-        //    {
-        //        await heroService.DeleteHeroBioPiece(id);
-        //        return new TokenDto();
-        //    });
-        //}
+        // api/Hero/delete/HeroBioPiece
+        [Authorize]
+        [HttpDelete("delete/HeroBioPiece")]
+        public async Task<ActionResult<TokenDto>> DeleteHeroBioPiece(long id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.DeleteHeroBioPiece(id);
+                return new TokenDto();
+            });
+        }
 
-        //// api/Hero/create/HeroAchievement
-        //[Authorize]
-        //[HttpPost("create/HeroAchievement")]
-        //public async Task<ActionResult<TokenDto>> CreateHeroAchievement(HeroAchievementDto dto)
-        //{
-        //    return await HandleEndpoint(async () =>
-        //    {
-        //        return await heroService.CreateHeroAchievement(dto);
-        //    });
-        //}
+        // api/Hero/create/HeroAchievement
+        [Authorize]
+        [HttpPost("create/HeroAchievement")]
+        public async Task<ActionResult<TokenDto>> CreateHeroAchievement(HeroAchievementDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.CreateHeroAchievement(dto);
+            });
+        }
 
-        //// api/Hero/get/HeroAchievements
-        //[Authorize]
-        //[HttpGet("get/HeroAchievements")]
-        //public async Task<ActionResult<TokenDto>> GetHeroAchievements(long? id)
-        //{
-        //    return await HandleEndpoint(async () =>
-        //    {
-        //        return await heroService.GetHeroAchievements(id);
-        //    });
-        //}
+        // api/Hero/get/HeroAchievements
+        [Authorize]
+        [HttpGet("get/HeroAchievements")]
+        public async Task<ActionResult<TokenDto>> GetHeroAchievements(long? id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.GetHeroAchievements(id);
+            });
+        }
 
-        //// api/Hero/edit/HeroAchievement
-        //[Authorize]
-        //[HttpPost("edit/HeroAchievement")]
-        //public async Task<ActionResult<TokenDto>> EditHeroAchievement(HeroAchievementDto dto)
-        //{
-        //    return await HandleEndpoint(async () =>
-        //    {
-        //        await heroService.EditHeroAchievement(dto);
-        //        return new TokenDto();
-        //    });
-        //}
+        // api/Hero/edit/HeroAchievement
+        [Authorize]
+        [HttpPut("edit/HeroAchievement")]
+        public async Task<ActionResult<TokenDto>> EditHeroAchievement(HeroAchievementDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.EditHeroAchievement(dto);
+                return new TokenDto();
+            });
+        }
 
-        //// api/Hero/delete/HeroAchievement
-        //[Authorize]
-        //[HttpDelete("delete/HeroAchievement")]
-        //public async Task<ActionResult<TokenDto>> DeleteHeroAchievement(long id)
-        //{
-        //    return await HandleEndpoint(async () =>
-        //    {
-        //        await heroService.DeleteHeroAchievement(id);
-        //        return new TokenDto();
-        //    });
-        //}
+        // api/Hero/delete/HeroAchievement
+        [Authorize]
+        [HttpDelete("delete/HeroAchievement")]
+        public async Task<ActionResult<TokenDto>> DeleteHeroAchievement(long id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.DeleteHeroAchievement(id);
+                return new TokenDto();
+            });
+        }
 
         #region PrivateMethods
         /// <summary>
@@ -381,7 +381,7 @@ namespace I_am_Hero_API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Exception: "+ex.Message);
+                return BadRequest("Exception: " + ex.Message);
             }
         }
 
