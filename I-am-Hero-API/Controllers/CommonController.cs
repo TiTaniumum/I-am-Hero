@@ -21,12 +21,23 @@ namespace I_am_Hero_API.Controllers
         {
             return Ok(commonService.GetAllcLevelCalculationTypes());
         }
+        // api/Common/all-cAttributeType
         [HttpGet("all-cAttributeType")]
         public ActionResult<IEnumerable<cAttributeType>> GetAllcAttributeTypes()
         {
             return Ok(commonService.GetAllcAttributeTypes());
         }
-        //public ActionResult<IEnumerable> GetAllcRarities()
-        //public ActionResult<IEnumerable> GetAllApplications()
+        // api/Common/all-cSkillType
+        [HttpGet("all-Application")]
+        public ActionResult<IEnumerable<Application>> GetAllApplications()
+        {
+            return Ok(commonService.GetAllApplications());
+        }
+        // api/Common/all-cRarity
+        [HttpGet("all-cRarity")]
+        public ActionResult<IEnumerable<cRarity>> GetAllcRarities()
+        {
+            return Ok(commonService.GetAllcRarities());
+        }
     }
 }
