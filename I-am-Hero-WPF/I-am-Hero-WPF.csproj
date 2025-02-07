@@ -114,10 +114,16 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Command\RelayCommand.cs" />
-    <Compile Include="models\Hero.cs" />
-    <Compile Include="services\ApiService.cs" />
-    <Compile Include="services\AuthManager.cs" />
-    <Compile Include="services\TokenStorage.cs" />
+    <Compile Include="Models\Hero.cs" />
+    <Compile Include="Properties\Strings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Services\ApiService.cs" />
+    <Compile Include="Services\AuthManager.cs" />
+    <Compile Include="Services\LocalizationService.cs" />
+    <Compile Include="Services\TokenStorage.cs" />
     <Compile Include="viewmodels\CreateHeroViewModel.cs" />
     <Compile Include="viewmodels\LoginViewModel.cs" />
     <Compile Include="viewmodels\MainViewModel.cs" />
@@ -165,7 +171,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="models\User.cs" />
+    <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -183,6 +189,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Strings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Strings.ru.resx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -191,6 +202,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\MaterialDesignThemes.5.2.1\build\MaterialDesignThemes.targets" Condition="Exists('packages\MaterialDesignThemes.5.2.1\build\MaterialDesignThemes.targets')" />
