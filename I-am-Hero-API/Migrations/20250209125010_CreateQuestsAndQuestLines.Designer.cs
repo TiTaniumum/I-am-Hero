@@ -4,6 +4,7 @@ using I_am_Hero_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace I_am_Hero_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250209125010_CreateQuestsAndQuestLines")]
+    partial class CreateQuestsAndQuestLines
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -328,9 +331,9 @@ namespace I_am_Hero_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompletionQuestBehaviourId");
-
-                    b.HasIndex("FailureQuestBehaviourId");
+                    b.HasIndex("FailureQuestBehaviourId")
+                        .IsUnique()
+                        .HasFilter("[FailureQuestBehaviourId] IS NOT NULL");
 
                     b.HasIndex("QuestLineId");
 
@@ -364,9 +367,6 @@ namespace I_am_Hero_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("Value")
                         .HasColumnType("bigint");
 
@@ -375,8 +375,6 @@ namespace I_am_Hero_API.Migrations
                     b.HasIndex("HeroAttributeId");
 
                     b.HasIndex("HeroSkillId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("QuestBehaviours");
                 });
@@ -430,9 +428,9 @@ namespace I_am_Hero_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompletionQuestBehaviourId");
-
-                    b.HasIndex("FailureQuestBehaviourId");
+                    b.HasIndex("FailureQuestBehaviourId")
+                        .IsUnique()
+                        .HasFilter("[FailureQuestBehaviourId] IS NOT NULL");
 
                     b.HasIndex("UserId");
 
@@ -955,15 +953,9 @@ namespace I_am_Hero_API.Migrations
 
             modelBuilder.Entity("I_am_Hero_API.Models.Quest", b =>
                 {
-                    b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "CompletionQuestBehaviour")
-                        .WithMany()
-                        .HasForeignKey("CompletionQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "FailureQuestBehaviour")
-                        .WithMany()
-                        .HasForeignKey("FailureQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                    b.HasOne("I_am_Hero_API.Models.QuestBehaviour", null)
+                        .WithOne("Quest")
+                        .HasForeignKey("I_am_Hero_API.Models.Quest", "FailureQuestBehaviourId");
 
                     b.HasOne("I_am_Hero_API.Models.QuestLine", "QuestLine")
                         .WithMany("Quests")
@@ -982,10 +974,6 @@ namespace I_am_Hero_API.Migrations
                     b.HasOne("I_am_Hero_API.Models.cQuestStatus", "cQuestStatus")
                         .WithMany()
                         .HasForeignKey("cQuestStatusId");
-
-                    b.Navigation("CompletionQuestBehaviour");
-
-                    b.Navigation("FailureQuestBehaviour");
 
                     b.Navigation("QuestLine");
 
@@ -1006,30 +994,16 @@ namespace I_am_Hero_API.Migrations
                         .WithMany()
                         .HasForeignKey("HeroSkillId");
 
-                    b.HasOne("I_am_Hero_API.Models.User", "User")
-                        .WithMany("QuestBehaviours")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("HeroAttribute");
 
                     b.Navigation("HeroSkill");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("I_am_Hero_API.Models.QuestLine", b =>
                 {
-                    b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "CompletionQuestBehaviour")
-                        .WithMany()
-                        .HasForeignKey("CompletionQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "FailureQuestBehaviour")
-                        .WithMany()
-                        .HasForeignKey("FailureQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                    b.HasOne("I_am_Hero_API.Models.QuestBehaviour", null)
+                        .WithOne("QuestLine")
+                        .HasForeignKey("I_am_Hero_API.Models.QuestLine", "FailureQuestBehaviourId");
 
                     b.HasOne("I_am_Hero_API.Models.User", "User")
                         .WithMany("QuestsLines")
@@ -1044,10 +1018,6 @@ namespace I_am_Hero_API.Migrations
                     b.HasOne("I_am_Hero_API.Models.cQuestStatus", "cQuestStatus")
                         .WithMany()
                         .HasForeignKey("cQuestStatusId");
-
-                    b.Navigation("CompletionQuestBehaviour");
-
-                    b.Navigation("FailureQuestBehaviour");
 
                     b.Navigation("User");
 
@@ -1080,6 +1050,13 @@ namespace I_am_Hero_API.Migrations
                     b.Navigation("HeroAttributeStates");
                 });
 
+            modelBuilder.Entity("I_am_Hero_API.Models.QuestBehaviour", b =>
+                {
+                    b.Navigation("Quest");
+
+                    b.Navigation("QuestLine");
+                });
+
             modelBuilder.Entity("I_am_Hero_API.Models.QuestLine", b =>
                 {
                     b.Navigation("Quests");
@@ -1098,8 +1075,6 @@ namespace I_am_Hero_API.Migrations
                     b.Navigation("HeroSkills");
 
                     b.Navigation("HeroStatusEffects");
-
-                    b.Navigation("QuestBehaviours");
 
                     b.Navigation("Quests");
 

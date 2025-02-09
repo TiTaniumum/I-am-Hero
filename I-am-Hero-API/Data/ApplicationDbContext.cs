@@ -19,6 +19,11 @@ namespace I_am_Hero_API.Data
         public DbSet<HeroBioPiece> HeroBioPieces { get; set; }
         public DbSet<HeroAchievement> HeroAchievements { get; set; }
         public DbSet<cRarity> cRarities { get; set; }
+        public DbSet<cQuestStatus> cQuestStatuses { get; set; }
+        public DbSet<cDifficulty> cDifficulties { get; set; }
+        public DbSet<QuestBehaviour> QuestBehaviours { get; set; }
+        public DbSet<QuestLine> QuestLines { get; set; }
+        public DbSet<Quest> Quests { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
@@ -79,6 +84,55 @@ namespace I_am_Hero_API.Data
                     new cRarity { Id = 13, NameEn = "Inappreciable", NameRu = "Недооцененный" },
                     new cRarity { Id = 14, NameEn = "Impossible", NameRu = "Невозможный" }
                 );
+            modelBuilder.Entity<QuestLine>()
+                .Property(x => x.CreateDate)
+                .HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<Quest>()
+                .Property(x => x.CreateDate)
+                .HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<cDifficulty>()
+                .HasData(
+                    new cDifficulty { Id = 1, NameEn = "Easy", NameRu = "Легко" },
+                    new cDifficulty { Id = 2, NameEn = "Normal", NameRu = "Нормально" },
+                    new cDifficulty { Id = 3, NameEn = "Hard", NameRu = "Сложно" },
+                    new cDifficulty { Id = 4, NameEn = "Very hard", NameRu = "Очень сложно" },
+                    new cDifficulty { Id = 5, NameEn = "Impossible", NameRu = "Невозможно" },
+                    new cDifficulty { Id = 6, NameEn = "Lifegoal", NameRu = "Жизненная цель" },
+                    new cDifficulty { Id = 7, NameEn = "Life-threatening", NameRu = "Угрожающий жизни" }
+                );
+            modelBuilder.Entity<cQuestStatus>()
+                .HasData(
+                    new cQuestStatus { Id = 1, NameEn = "Not started", NameRu = "Не начато" },
+                    new cQuestStatus { Id = 2, NameEn = "Active", NameRu = "Активно" },
+                    new cQuestStatus { Id = 3, NameEn = "Completed", NameRu = "Завершено" },
+                    new cQuestStatus { Id = 4, NameEn = "Failed", NameRu = "Провалено" },
+                    new cQuestStatus { Id = 5, NameEn = "Canceled", NameRu = "Отменено" },
+                    new cQuestStatus { Id = 6, NameEn = "Archived", NameRu = "Архивировано" },
+                    new cQuestStatus { Id = 7, NameEn = "Deleted", NameRu = "Удалено" },
+                    new cQuestStatus { Id = 8, NameEn = "Abandoned", NameRu = "Покинуто" },
+                    new cQuestStatus { Id = 9, NameEn = "Paused", NameRu = "Приостановлено" },
+                    new cQuestStatus { Id = 10, NameEn = "Hidden", NameRu = "Скрыто" }
+                );
+            modelBuilder.Entity<QuestLine>()
+                .HasOne(q => q.CompletionQuestBehaviour)
+                .WithMany()
+                .HasForeignKey(q => q.CompletionQuestBehaviourId)
+                .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<QuestLine>()
+                .HasOne(q => q.FailureQuestBehaviour)
+                .WithMany()
+                .HasForeignKey(q => q.FailureQuestBehaviourId)
+                .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Quest>()
+                .HasOne(q => q.CompletionQuestBehaviour)
+                .WithMany()
+                .HasForeignKey(q => q.CompletionQuestBehaviourId)
+                .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Quest>()
+                .HasOne(q => q.FailureQuestBehaviour)
+                .WithMany()
+                .HasForeignKey(q => q.FailureQuestBehaviourId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
