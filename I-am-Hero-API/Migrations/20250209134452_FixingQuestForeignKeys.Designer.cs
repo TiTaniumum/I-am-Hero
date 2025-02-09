@@ -4,6 +4,7 @@ using I_am_Hero_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace I_am_Hero_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250209134452_FixingQuestForeignKeys")]
+    partial class FixingQuestForeignKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -364,9 +367,6 @@ namespace I_am_Hero_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("Value")
                         .HasColumnType("bigint");
 
@@ -375,8 +375,6 @@ namespace I_am_Hero_API.Migrations
                     b.HasIndex("HeroAttributeId");
 
                     b.HasIndex("HeroSkillId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("QuestBehaviours");
                 });
@@ -958,12 +956,12 @@ namespace I_am_Hero_API.Migrations
                     b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "CompletionQuestBehaviour")
                         .WithMany()
                         .HasForeignKey("CompletionQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "FailureQuestBehaviour")
                         .WithMany()
                         .HasForeignKey("FailureQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("I_am_Hero_API.Models.QuestLine", "QuestLine")
                         .WithMany("Quests")
@@ -1006,17 +1004,9 @@ namespace I_am_Hero_API.Migrations
                         .WithMany()
                         .HasForeignKey("HeroSkillId");
 
-                    b.HasOne("I_am_Hero_API.Models.User", "User")
-                        .WithMany("QuestBehaviours")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("HeroAttribute");
 
                     b.Navigation("HeroSkill");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("I_am_Hero_API.Models.QuestLine", b =>
@@ -1024,12 +1014,12 @@ namespace I_am_Hero_API.Migrations
                     b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "CompletionQuestBehaviour")
                         .WithMany()
                         .HasForeignKey("CompletionQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "FailureQuestBehaviour")
                         .WithMany()
                         .HasForeignKey("FailureQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("I_am_Hero_API.Models.User", "User")
                         .WithMany("QuestsLines")
@@ -1098,8 +1088,6 @@ namespace I_am_Hero_API.Migrations
                     b.Navigation("HeroSkills");
 
                     b.Navigation("HeroStatusEffects");
-
-                    b.Navigation("QuestBehaviours");
 
                     b.Navigation("Quests");
 
