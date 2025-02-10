@@ -6,7 +6,7 @@ namespace I_am_Hero_API.DTO
 {
     public class HeroDto : TokenDto
     {
-        public long Id { get; set; }
+        public long? Id { get; set; }
         public string? Name { get; set; }
         public long? Experience { get; set; }
         public long? cLevelCalculationTypeId { get; set; }

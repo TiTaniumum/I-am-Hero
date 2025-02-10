@@ -4,6 +4,7 @@ using I_am_Hero_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace I_am_Hero_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250209135027_FixingQuestForeignKeys2")]
+    partial class FixingQuestForeignKeys2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1007,7 +1010,7 @@ namespace I_am_Hero_API.Migrations
                         .HasForeignKey("HeroSkillId");
 
                     b.HasOne("I_am_Hero_API.Models.User", "User")
-                        .WithMany("QuestBehaviours")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1098,8 +1101,6 @@ namespace I_am_Hero_API.Migrations
                     b.Navigation("HeroSkills");
 
                     b.Navigation("HeroStatusEffects");
-
-                    b.Navigation("QuestBehaviours");
 
                     b.Navigation("Quests");
 

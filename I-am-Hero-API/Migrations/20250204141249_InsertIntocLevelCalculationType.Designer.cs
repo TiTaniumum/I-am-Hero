@@ -4,6 +4,7 @@ using I_am_Hero_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace I_am_Hero_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250204141249_InsertIntocLevelCalculationType")]
+    partial class InsertIntocLevelCalculationType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -276,173 +279,6 @@ namespace I_am_Hero_API.Migrations
                     b.ToTable("HeroStatusEffects");
                 });
 
-            modelBuilder.Entity("I_am_Hero_API.Models.Quest", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime?>("ArchiveDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("CompletionQuestBehaviourId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("CreateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<DateTime?>("Deadline")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("Experinece")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("FailureQuestBehaviourId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int?>("Priority")
-                        .HasColumnType("int");
-
-                    b.Property<long?>("QuestLineId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("cDifficultyId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("cQuestStatusId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompletionQuestBehaviourId");
-
-                    b.HasIndex("FailureQuestBehaviourId");
-
-                    b.HasIndex("QuestLineId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("cDifficultyId");
-
-                    b.HasIndex("cQuestStatusId");
-
-                    b.ToTable("Quests");
-                });
-
-            modelBuilder.Entity("I_am_Hero_API.Models.QuestBehaviour", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long?>("HeroAttirbuteId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("HeroAttributeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("HeroSkillId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Sign")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Value")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HeroAttributeId");
-
-                    b.HasIndex("HeroSkillId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("QuestBehaviours");
-                });
-
-            modelBuilder.Entity("I_am_Hero_API.Models.QuestLine", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime?>("ArchiveDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("CompletionQuestBehaviourId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("CreateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<DateTime?>("Deadline")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("Experinece")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("FailureQuestBehaviourId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int?>("Priority")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("cDifficultyId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("cQuestStatusId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompletionQuestBehaviourId");
-
-                    b.HasIndex("FailureQuestBehaviourId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("cDifficultyId");
-
-                    b.HasIndex("cQuestStatusId");
-
-                    b.ToTable("QuestLines");
-                });
-
             modelBuilder.Entity("I_am_Hero_API.Models.Token", b =>
                 {
                     b.Property<long>("Id")
@@ -550,71 +386,6 @@ namespace I_am_Hero_API.Migrations
                         });
                 });
 
-            modelBuilder.Entity("I_am_Hero_API.Models.cDifficulty", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("NameEn")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NameRu")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("cDifficulties");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            NameEn = "Easy",
-                            NameRu = "Легко"
-                        },
-                        new
-                        {
-                            Id = 2L,
-                            NameEn = "Normal",
-                            NameRu = "Нормально"
-                        },
-                        new
-                        {
-                            Id = 3L,
-                            NameEn = "Hard",
-                            NameRu = "Сложно"
-                        },
-                        new
-                        {
-                            Id = 4L,
-                            NameEn = "Very hard",
-                            NameRu = "Очень сложно"
-                        },
-                        new
-                        {
-                            Id = 5L,
-                            NameEn = "Impossible",
-                            NameRu = "Невозможно"
-                        },
-                        new
-                        {
-                            Id = 6L,
-                            NameEn = "Lifegoal",
-                            NameRu = "Жизненная цель"
-                        },
-                        new
-                        {
-                            Id = 7L,
-                            NameEn = "Life-threatening",
-                            NameRu = "Угрожающий жизни"
-                        });
-                });
-
             modelBuilder.Entity("I_am_Hero_API.Models.cLevelCalculationType", b =>
                 {
                     b.Property<long>("Id")
@@ -656,89 +427,6 @@ namespace I_am_Hero_API.Migrations
                         });
                 });
 
-            modelBuilder.Entity("I_am_Hero_API.Models.cQuestStatus", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("NameEn")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NameRu")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("cQuestStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            NameEn = "Not started",
-                            NameRu = "Не начато"
-                        },
-                        new
-                        {
-                            Id = 2L,
-                            NameEn = "Active",
-                            NameRu = "Активно"
-                        },
-                        new
-                        {
-                            Id = 3L,
-                            NameEn = "Completed",
-                            NameRu = "Завершено"
-                        },
-                        new
-                        {
-                            Id = 4L,
-                            NameEn = "Failed",
-                            NameRu = "Провалено"
-                        },
-                        new
-                        {
-                            Id = 5L,
-                            NameEn = "Canceled",
-                            NameRu = "Отменено"
-                        },
-                        new
-                        {
-                            Id = 6L,
-                            NameEn = "Archived",
-                            NameRu = "Архивировано"
-                        },
-                        new
-                        {
-                            Id = 7L,
-                            NameEn = "Deleted",
-                            NameRu = "Удалено"
-                        },
-                        new
-                        {
-                            Id = 8L,
-                            NameEn = "Abandoned",
-                            NameRu = "Покинуто"
-                        },
-                        new
-                        {
-                            Id = 9L,
-                            NameEn = "Paused",
-                            NameRu = "Приостановлено"
-                        },
-                        new
-                        {
-                            Id = 10L,
-                            NameEn = "Hidden",
-                            NameRu = "Скрыто"
-                        });
-                });
-
             modelBuilder.Entity("I_am_Hero_API.Models.cRarity", b =>
                 {
                     b.Property<long>("Id")
@@ -758,92 +446,6 @@ namespace I_am_Hero_API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("cRarities");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            NameEn = "Common",
-                            NameRu = "Обычный"
-                        },
-                        new
-                        {
-                            Id = 2L,
-                            NameEn = "Uncommon",
-                            NameRu = "Необычный"
-                        },
-                        new
-                        {
-                            Id = 3L,
-                            NameEn = "Unique",
-                            NameRu = "Уникальный"
-                        },
-                        new
-                        {
-                            Id = 4L,
-                            NameEn = "Rare",
-                            NameRu = "Редкий"
-                        },
-                        new
-                        {
-                            Id = 5L,
-                            NameEn = "Epic",
-                            NameRu = "Эпический"
-                        },
-                        new
-                        {
-                            Id = 6L,
-                            NameEn = "Legendary",
-                            NameRu = "Легендарный"
-                        },
-                        new
-                        {
-                            Id = 7L,
-                            NameEn = "Titanic",
-                            NameRu = "Титанический"
-                        },
-                        new
-                        {
-                            Id = 8L,
-                            NameEn = "Mythical",
-                            NameRu = "Мифический"
-                        },
-                        new
-                        {
-                            Id = 9L,
-                            NameEn = "Godlike",
-                            NameRu = "Божественный"
-                        },
-                        new
-                        {
-                            Id = 10L,
-                            NameEn = "Secret",
-                            NameRu = "Секретный"
-                        },
-                        new
-                        {
-                            Id = 11L,
-                            NameEn = "Unknown",
-                            NameRu = "Неизвестный"
-                        },
-                        new
-                        {
-                            Id = 12L,
-                            NameEn = "Inconceivable",
-                            NameRu = "Непостижимый"
-                        },
-                        new
-                        {
-                            Id = 13L,
-                            NameEn = "Inappreciable",
-                            NameRu = "Недооцененный"
-                        },
-                        new
-                        {
-                            Id = 14L,
-                            NameEn = "Impossible",
-                            NameRu = "Невозможный"
-                        });
                 });
 
             modelBuilder.Entity("I_am_Hero_API.Models.Hero", b =>
@@ -953,109 +555,6 @@ namespace I_am_Hero_API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("I_am_Hero_API.Models.Quest", b =>
-                {
-                    b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "CompletionQuestBehaviour")
-                        .WithMany()
-                        .HasForeignKey("CompletionQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "FailureQuestBehaviour")
-                        .WithMany()
-                        .HasForeignKey("FailureQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("I_am_Hero_API.Models.QuestLine", "QuestLine")
-                        .WithMany("Quests")
-                        .HasForeignKey("QuestLineId");
-
-                    b.HasOne("I_am_Hero_API.Models.User", "User")
-                        .WithMany("Quests")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("I_am_Hero_API.Models.cDifficulty", "cDifficulty")
-                        .WithMany()
-                        .HasForeignKey("cDifficultyId");
-
-                    b.HasOne("I_am_Hero_API.Models.cQuestStatus", "cQuestStatus")
-                        .WithMany()
-                        .HasForeignKey("cQuestStatusId");
-
-                    b.Navigation("CompletionQuestBehaviour");
-
-                    b.Navigation("FailureQuestBehaviour");
-
-                    b.Navigation("QuestLine");
-
-                    b.Navigation("User");
-
-                    b.Navigation("cDifficulty");
-
-                    b.Navigation("cQuestStatus");
-                });
-
-            modelBuilder.Entity("I_am_Hero_API.Models.QuestBehaviour", b =>
-                {
-                    b.HasOne("I_am_Hero_API.Models.HeroAttribute", "HeroAttribute")
-                        .WithMany()
-                        .HasForeignKey("HeroAttributeId");
-
-                    b.HasOne("I_am_Hero_API.Models.HeroSkill", "HeroSkill")
-                        .WithMany()
-                        .HasForeignKey("HeroSkillId");
-
-                    b.HasOne("I_am_Hero_API.Models.User", "User")
-                        .WithMany("QuestBehaviours")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("HeroAttribute");
-
-                    b.Navigation("HeroSkill");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("I_am_Hero_API.Models.QuestLine", b =>
-                {
-                    b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "CompletionQuestBehaviour")
-                        .WithMany()
-                        .HasForeignKey("CompletionQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "FailureQuestBehaviour")
-                        .WithMany()
-                        .HasForeignKey("FailureQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("I_am_Hero_API.Models.User", "User")
-                        .WithMany("QuestsLines")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("I_am_Hero_API.Models.cDifficulty", "cDifficulty")
-                        .WithMany()
-                        .HasForeignKey("cDifficultyId");
-
-                    b.HasOne("I_am_Hero_API.Models.cQuestStatus", "cQuestStatus")
-                        .WithMany()
-                        .HasForeignKey("cQuestStatusId");
-
-                    b.Navigation("CompletionQuestBehaviour");
-
-                    b.Navigation("FailureQuestBehaviour");
-
-                    b.Navigation("User");
-
-                    b.Navigation("cDifficulty");
-
-                    b.Navigation("cQuestStatus");
-                });
-
             modelBuilder.Entity("I_am_Hero_API.Models.Token", b =>
                 {
                     b.HasOne("I_am_Hero_API.Models.Application", "Application")
@@ -1080,11 +579,6 @@ namespace I_am_Hero_API.Migrations
                     b.Navigation("HeroAttributeStates");
                 });
 
-            modelBuilder.Entity("I_am_Hero_API.Models.QuestLine", b =>
-                {
-                    b.Navigation("Quests");
-                });
-
             modelBuilder.Entity("I_am_Hero_API.Models.User", b =>
                 {
                     b.Navigation("Hero");
@@ -1098,12 +592,6 @@ namespace I_am_Hero_API.Migrations
                     b.Navigation("HeroSkills");
 
                     b.Navigation("HeroStatusEffects");
-
-                    b.Navigation("QuestBehaviours");
-
-                    b.Navigation("Quests");
-
-                    b.Navigation("QuestsLines");
 
                     b.Navigation("Tokens");
                 });
