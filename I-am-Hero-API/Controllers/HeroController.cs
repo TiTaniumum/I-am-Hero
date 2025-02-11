@@ -355,6 +355,112 @@ namespace I_am_Hero_API.Controllers
             });
         }
 
+        // api/Hero/create/Quest
+        [Authorize]
+        [HttpPost("create/Quest")]
+        public async Task<ActionResult<TokenDto>> CreateQuest(QuestDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.CreateQuest(dto);
+            });
+        }
+
+        // api/Hero/get/Quests
+        [Authorize]
+        [HttpGet("get/Quests")]
+        public async Task<ActionResult<TokenDto>> GetQuests(long? id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.GetQuests(id);
+            });
+        }
+
+        // api/Hero/edit/Quest
+        [Authorize]
+        [HttpPut("edit/Quest")]
+        public async Task<ActionResult<TokenDto>> EditQuest(QuestDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.EditQuest(dto);
+                return new TokenDto();
+            });
+        }
+
+        // api/Hero/delete/Quest
+        [Authorize]
+        [HttpDelete("delete/Quest")]
+        public async Task<ActionResult<TokenDto>> DeleteQuest(long id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.DeleteQuest(id);
+                return new TokenDto();
+            });
+        }
+
+        // api/Hero/delete/QuestBehaviour
+        [Authorize]
+        [HttpDelete("delete/QuestBehaviour")]
+        public async Task<ActionResult<TokenDto>> DeleteQuestBehaviour(long id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.DeleteQuestBehaviour(id);
+                return new TokenDto();
+            });
+        }
+
+        // api/Hero/create/QuestLine
+        [Authorize]
+        [HttpPost("create/QuestLine")]
+        public async Task<ActionResult<TokenDto>> CreateQuestLine(QuestLineDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.CreateQuestLine(dto);
+            });
+        }
+
+        // api/Hero/get/QuestLines
+        [Authorize]
+        [HttpGet("get/QuestLines")]
+        public async Task<ActionResult<TokenDto>> GetQuestLines(long? id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.GetQuestLines(id);
+            });
+        }
+
+        // api/Hero/edit/QuestLine
+        [Authorize]
+        [HttpPut("edit/QuestLine")]
+        public async Task<ActionResult<TokenDto>> EditQuestLine(QuestLineDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.EditQuestLine(dto);
+                return new TokenDto();
+            });
+        }
+
+        // api/Hero/delete/QuestLine
+        [Authorize]
+        [HttpDelete("delete/QuestLine")]
+        public async Task<ActionResult<TokenDto>> DeleteQuestLine(long id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.DeleteQuestLine(id);
+                return new TokenDto();
+            });
+        }
+
+        
+
         #region PrivateMethods
         /// <summary>
         /// Метод предназначен для задания контекста. 

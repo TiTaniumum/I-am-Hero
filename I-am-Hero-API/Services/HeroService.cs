@@ -21,6 +21,8 @@ namespace I_am_Hero_API.Services
         private IQueryable<HeroStatusEffect> userHeroStatusEffect { get => context.HeroStatusEffects.Where(x => x.UserId == user.Id); }
         private IQueryable<HeroBioPiece> userHeroBioPiece { get => context.HeroBioPieces.Where(x => x.UserId == user.Id); }
         private IQueryable<HeroAchievement> userHeroAchievement { get => context.HeroAchievements.Where(x => x.UserId == user.Id); }
+        private IQueryable<Quest> userQuest { get => context.Quests.Where(x => x.UserId == user.Id); }
+        private IQueryable<QuestBehaviour> userQuestBehaviour { get => context.QuestBehaviours.Where(x => x.UserId == user.Id); }
         public HeroService(ApplicationDbContext context)
         {
             this.context = context;
@@ -241,12 +243,12 @@ namespace I_am_Hero_API.Services
         {
             if (dto.Name == null)
                 throw new NullReferenceException("Name cannot be null when creating HeroStatusEffect");
-            HeroStatusEffect effect = new HeroStatusEffect 
-            { 
-                UserId = user.Id, 
-                Name = dto.Name, 
-                Description = dto.Description, 
-                Value = dto.Value 
+            HeroStatusEffect effect = new HeroStatusEffect
+            {
+                UserId = user.Id,
+                Name = dto.Name,
+                Description = dto.Description,
+                Value = dto.Value
             };
             await context.HeroStatusEffects.AddAsync(effect);
             await context.SaveChangesAsync();
@@ -255,7 +257,7 @@ namespace I_am_Hero_API.Services
 
         public async Task<HeroStatusEffectsDto> GetHeroStatusEffects(long? id)
         {
-            if(id != null)
+            if (id != null)
                 return new HeroStatusEffectsDto(await context.HeroStatusEffects.Where(x => x.Id == id).ToArrayAsync());
             return new HeroStatusEffectsDto(await userHeroStatusEffect.ToArrayAsync());
         }
@@ -286,7 +288,7 @@ namespace I_am_Hero_API.Services
         {
             if (dto.Text == null)
                 throw new NullReferenceException("Text cannot be null when creating HeroBioPiece");
-            HeroBioPiece piece = new HeroBioPiece { UserId = user.Id, Text = dto.Text};
+            HeroBioPiece piece = new HeroBioPiece { UserId = user.Id, Text = dto.Text };
             await context.HeroBioPieces.AddAsync(piece);
             await context.SaveChangesAsync();
             return new IdDto { Id = piece.Id };
@@ -363,5 +365,197 @@ namespace I_am_Hero_API.Services
             await context.HeroAchievements.Where(x => x.Id == id).ExecuteDeleteAsync();
         }
         #endregion HeroAchievement
+        #region Quest
+        public async Task<IdDto> CreateQuest(QuestDto dto)
+        {
+            if (dto.Id == null)
+                throw new NullReferenceException("Id cannot be null when creating Quest");
+            if (dto.Title == null)
+                throw new NullReferenceException("Title cannot be null when creating Quest");
+            QuestBehaviourDto? completionQuestBehaviourDto = dto.CompletionQuestBehaviour;
+            QuestBehaviour? completion = null;
+            if (completionQuestBehaviourDto != null
+                && (completionQuestBehaviourDto.HeroSkillId != null || completionQuestBehaviourDto.HeroAttirbuteId != null)
+                && completionQuestBehaviourDto.Sign != null
+                && completionQuestBehaviourDto.Value != null)
+            {
+                completion = new QuestBehaviour
+                {
+                    UserId = user.Id,
+                    HeroAttirbuteId = completionQuestBehaviourDto.HeroAttirbuteId,
+                    HeroSkillId = completionQuestBehaviourDto.HeroSkillId,
+                    Sign = completionQuestBehaviourDto.Sign,
+                    Value = completionQuestBehaviourDto.Value.Value
+                };
+            }
+            QuestBehaviourDto? failureQuestBehaviourDto = dto.FailureQuestBehaviour;
+            QuestBehaviour? failure = null;
+            if (failureQuestBehaviourDto != null
+                && (failureQuestBehaviourDto.HeroSkillId != null || failureQuestBehaviourDto.HeroAttirbuteId != null)
+                && failureQuestBehaviourDto.Sign != null
+                && failureQuestBehaviourDto.Value != null)
+            {
+                failure = new QuestBehaviour
+                {
+                    UserId = user.Id,
+                    HeroAttirbuteId = failureQuestBehaviourDto.HeroAttirbuteId,
+                    HeroSkillId = failureQuestBehaviourDto.HeroSkillId,
+                    Sign = failureQuestBehaviourDto.Sign,
+                    Value = failureQuestBehaviourDto.Value.Value
+                };
+            }
+            Quest quest = new Quest
+            {
+                UserId = user.Id,
+                Title = dto.Title,
+                Description = dto.Description,
+                Experinece = dto.Experinece ?? 0,
+                CompletionQuestBehaviour = completion,
+                FailureQuestBehaviour = failure,
+                Priority = dto.Priority ?? 1,
+                cDifficultyId = dto.cDifficultyId ?? 1,
+                cQuestStatusId = dto.cQuestStatusId ?? 1,
+                QuestLineId = dto.QuestLineId,
+                Deadline = dto.Deadline,
+                ArchiveDate = dto.ArchiveDate
+            };
+            await context.Quests.AddAsync(quest);
+            await context.SaveChangesAsync();
+            return new IdDto { Id = quest.Id };
+        }
+
+        public async Task<QuestsDto> GetQuests(long? id)
+        {
+            if (id != null)
+                return new QuestsDto(
+                    await context.Quests
+                        .Include(x => x.CompletionQuestBehaviour)
+                        .Include(x => x.FailureQuestBehaviour)
+                        .Where(x => x.Id == id)
+                        .ToArrayAsync()
+                );
+            return new QuestsDto(
+                await userQuest
+                    .Include(x => x.CompletionQuestBehaviour)
+                    .Include(x => x.FailureQuestBehaviour)
+                    .ToArrayAsync()
+            );
+        }
+
+        public async Task EditQuest(QuestDto dto)
+        {
+            if (dto.Id == null)
+                throw new NullReferenceException("Id cannot be null when editing Quest");
+            Quest? quest = await userQuest
+                .Include(x => x.CompletionQuestBehaviour)
+                .Include(x => x.FailureQuestBehaviour)
+                .FirstOrDefaultAsync(x => x.Id == dto.Id);
+            if (quest == null)
+                throw new NullReferenceException("Quest with this Id not found");
+            if (dto.Title != null)
+                quest.Title = dto.Title;
+            if (dto.Description != null)
+                quest.Description = dto.Description;
+            if (dto.Experinece != null)
+                quest.Experinece = dto.Experinece.Value;
+            if (dto.CompletionQuestBehaviour != null && dto.CompletionQuestBehaviour.Id != null)
+            {
+                QuestBehaviour? behaviour = quest.CompletionQuestBehaviour;
+                if (behaviour != null)
+                {
+                    if (dto.CompletionQuestBehaviour.HeroAttirbuteId != null)
+                        behaviour.HeroAttirbuteId = dto.CompletionQuestBehaviour.HeroAttirbuteId.Value;
+                    if (dto.CompletionQuestBehaviour.HeroSkillId != null)
+                        behaviour.HeroSkillId = dto.CompletionQuestBehaviour.HeroSkillId.Value;
+                    if (dto.CompletionQuestBehaviour.Sign != null)
+                        behaviour.Sign = dto.CompletionQuestBehaviour.Sign;
+                    if (dto.CompletionQuestBehaviour.Value != null)
+                        behaviour.Value = dto.CompletionQuestBehaviour.Value.Value;
+                }
+                else if ((dto.CompletionQuestBehaviour.HeroAttirbuteId != null || dto.CompletionQuestBehaviour.HeroSkillId != null)
+                        && dto.CompletionQuestBehaviour.Sign != null
+                        && dto.CompletionQuestBehaviour.Value != null)
+                {
+                    QuestBehaviour newBehaviour = new QuestBehaviour
+                    {
+                        UserId = user.Id,
+                        HeroAttirbuteId = dto.CompletionQuestBehaviour.HeroAttirbuteId,
+                        HeroSkillId = dto.CompletionQuestBehaviour.HeroSkillId,
+                        Sign = dto.CompletionQuestBehaviour.Sign,
+                        Value = dto.CompletionQuestBehaviour.Value.Value
+                    };
+                    quest.CompletionQuestBehaviour = newBehaviour;
+                }
+            }
+            if (dto.FailureQuestBehaviour != null)
+            {
+                QuestBehaviour? behaviour = quest.FailureQuestBehaviour;
+                if (behaviour != null)
+                {
+                    if (dto.FailureQuestBehaviour.HeroAttirbuteId != null)
+                        behaviour.HeroAttirbuteId = dto.FailureQuestBehaviour.HeroAttirbuteId.Value;
+                    if (dto.FailureQuestBehaviour.HeroSkillId != null)
+                        behaviour.HeroSkillId = dto.FailureQuestBehaviour.HeroSkillId.Value;
+                    if (dto.FailureQuestBehaviour.Sign != null)
+                        behaviour.Sign = dto.FailureQuestBehaviour.Sign;
+                    if (dto.FailureQuestBehaviour.Value != null)
+                        behaviour.Value = dto.FailureQuestBehaviour.Value.Value;
+                }
+                else if ((dto.FailureQuestBehaviour.HeroAttirbuteId != null || dto.FailureQuestBehaviour.HeroSkillId != null)
+                        && dto.FailureQuestBehaviour.Sign != null
+                        && dto.FailureQuestBehaviour.Value != null)
+                {
+                    QuestBehaviour newBehaviour = new QuestBehaviour
+                    {
+                        UserId = user.Id,
+                        HeroAttirbuteId = dto.FailureQuestBehaviour.HeroAttirbuteId,
+                        HeroSkillId = dto.FailureQuestBehaviour.HeroSkillId,
+                        Sign = dto.FailureQuestBehaviour.Sign,
+                        Value = dto.FailureQuestBehaviour.Value.Value
+                    };
+                    quest.FailureQuestBehaviour = newBehaviour;
+                }
+            }
+            if (dto.Priority != null)
+                quest.Priority = dto.Priority.Value;
+            if (dto.cDifficultyId != null)
+                quest.cDifficultyId = dto.cDifficultyId.Value;
+            if (dto.cQuestStatusId != null)
+                quest.cQuestStatusId = dto.cQuestStatusId.Value;
+            if (dto.QuestLineId != null)
+                quest.QuestLineId = dto.QuestLineId;
+            if (dto.Deadline != null)
+                quest.Deadline = dto.Deadline;
+            if (dto.ArchiveDate != null)
+                quest.ArchiveDate = dto.ArchiveDate;
+            await context.SaveChangesAsync();
+        }
+
+        public async Task DeleteQuest(long id)
+        {
+            Quest? quest = await userQuest.Include(x => x.CompletionQuestBehaviour).Include(x => x.FailureQuestBehaviour).Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (quest?.CompletionQuestBehaviour != null)
+                await context.QuestBehaviours.Where(x => x.Id == quest.CompletionQuestBehaviour.Id).ExecuteDeleteAsync();
+            if (quest?.FailureQuestBehaviour != null)
+                await context.QuestBehaviours.Where(x => x.Id == quest.FailureQuestBehaviour.Id).ExecuteDeleteAsync();
+            await context.Quests.Where(x => x.Id == id).ExecuteDeleteAsync();
+        }
+        #endregion Quest
+        #region QuestBehaviour
+        public async Task DeleteQuestBehaviour(long id)
+        {
+            await userQuestBehaviour.Where(x => x.Id == id).ExecuteDeleteAsync();
+        }
+        #endregion QuestBehaviour
+        #region QuestLine
+        public async Task<IdDto> CreateQuestLine(QuestLineDto dto)
+        {
+            if (dto.Title == null)
+                throw new NullReferenceException("Title cannot be null when creating QuestLine");
+            QuestBehaviourDto? completionQuestBehaviourDto = dto.CompletionQuestBehaviour;
+            QuestBehaviour? completion = null;
+            // TODO
+        }
+        #endregion QuestLine
     }
 }
