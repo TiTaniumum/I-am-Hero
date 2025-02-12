@@ -40,5 +40,11 @@ namespace I_am_Hero_API.Services.Interfaces
         Task<HeroAchievementsDto> GetHeroAchievements(long? id);
         Task EditHeroAchievement(HeroAchievementDto dto);
         Task DeleteHeroAchievement(long id);
+        Task<IdDto> CreateQuest(QuestDto dto);
+        Task<QuestsDto> GetQuests(long? id);
+        Task EditQuest(QuestDto dto);
+        Task DeleteQuest(long id);
+        Task DeleteQuestBehaviour(long id);
+        Task<IdDto> CreateQuestLine(QuestLineDto dto);
     }
 }
