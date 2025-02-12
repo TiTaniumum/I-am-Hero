@@ -80,7 +80,7 @@ public class ApiService
 
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        HttpResponseMessage response = await _httpClient.GetAsync("api/Auth/validate");
+        HttpResponseMessage response = await _httpClient.GetAsync("api/Hero/get");
         return response.IsSuccessStatusCode;
     }
 
