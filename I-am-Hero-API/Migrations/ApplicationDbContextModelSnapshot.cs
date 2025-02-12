@@ -351,9 +351,6 @@ namespace I_am_Hero_API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("HeroAttirbuteId")
-                        .HasColumnType("bigint");
-
                     b.Property<long?>("HeroAttributeId")
                         .HasColumnType("bigint");
 

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace I_am_Hero_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250212113009_InitialMigration")]
+    [Migration("20250212125633_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -353,9 +353,6 @@ namespace I_am_Hero_API.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long?>("HeroAttirbuteId")
-                        .HasColumnType("bigint");
 
                     b.Property<long?>("HeroAttributeId")
                         .HasColumnType("bigint");

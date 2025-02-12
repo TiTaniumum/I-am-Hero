@@ -327,7 +327,6 @@ namespace I_am_Hero_API.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<long>(type: "bigint", nullable: false),
-                    HeroAttirbuteId = table.Column<long>(type: "bigint", nullable: true),
                     HeroAttributeId = table.Column<long>(type: "bigint", nullable: true),
                     HeroSkillId = table.Column<long>(type: "bigint", nullable: true),
                     Sign = table.Column<string>(type: "nvarchar(max)", nullable: false),

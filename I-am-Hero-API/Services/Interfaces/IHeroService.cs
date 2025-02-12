@@ -46,5 +46,8 @@ namespace I_am_Hero_API.Services.Interfaces
         Task DeleteQuest(long id);
         Task DeleteQuestBehaviour(long id);
         Task<IdDto> CreateQuestLine(QuestLineDto dto);
+        Task<QuestLinesDto> GetQuestLines(long? id);
+        Task EditQuestLine(QuestLineDto dto);
+        Task DeleteQuestLine(long id);
     }
 }

@@ -15,7 +15,7 @@ namespace I_am_Hero_API.DTO
         public QuestBehaviourDto(QuestBehaviour questBehaviour)
         {
             Id = questBehaviour.Id;
-            HeroAttirbuteId = questBehaviour.HeroAttirbuteId;
+            HeroAttirbuteId = questBehaviour.HeroAttributeId;
             HeroSkillId = questBehaviour.HeroSkillId;
             Sign = questBehaviour.Sign;
             Value = questBehaviour.Value;

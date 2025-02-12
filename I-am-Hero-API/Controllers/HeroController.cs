@@ -424,42 +424,42 @@ namespace I_am_Hero_API.Controllers
             });
         }
 
-        //// api/Hero/get/QuestLines
-        //[Authorize]
-        //[HttpGet("get/QuestLines")]
-        //public async Task<ActionResult<TokenDto>> GetQuestLines(long? id)
-        //{
-        //    return await HandleEndpoint(async () =>
-        //    {
-        //        return await heroService.GetQuestLines(id);
-        //    });
-        //}
+        // api/Hero/get/QuestLines
+        [Authorize]
+        [HttpGet("get/QuestLines")]
+        public async Task<ActionResult<TokenDto>> GetQuestLines(long? id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.GetQuestLines(id);
+            });
+        }
 
-        //// api/Hero/edit/QuestLine
-        //[Authorize]
-        //[HttpPut("edit/QuestLine")]
-        //public async Task<ActionResult<TokenDto>> EditQuestLine(QuestLineDto dto)
-        //{
-        //    return await HandleEndpoint(async () =>
-        //    {
-        //        await heroService.EditQuestLine(dto);
-        //        return new TokenDto();
-        //    });
-        //}
+        // api/Hero/edit/QuestLine
+        [Authorize]
+        [HttpPut("edit/QuestLine")]
+        public async Task<ActionResult<TokenDto>> EditQuestLine(QuestLineDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.EditQuestLine(dto);
+                return new TokenDto();
+            });
+        }
 
-        //// api/Hero/delete/QuestLine
-        //[Authorize]
-        //[HttpDelete("delete/QuestLine")]
-        //public async Task<ActionResult<TokenDto>> DeleteQuestLine(long id)
-        //{
-        //    return await HandleEndpoint(async () =>
-        //    {
-        //        await heroService.DeleteQuestLine(id);
-        //        return new TokenDto();
-        //    });
-        //}
+        // api/Hero/delete/QuestLine
+        [Authorize]
+        [HttpDelete("delete/QuestLine")]
+        public async Task<ActionResult<TokenDto>> DeleteQuestLine(long id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.DeleteQuestLine(id);
+                return new TokenDto();
+            });
+        }
 
-        
+
 
         #region PrivateMethods
         /// <summary>
