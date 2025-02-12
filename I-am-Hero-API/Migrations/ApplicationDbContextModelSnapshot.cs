@@ -958,12 +958,12 @@ namespace I_am_Hero_API.Migrations
                     b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "CompletionQuestBehaviour")
                         .WithMany()
                         .HasForeignKey("CompletionQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "FailureQuestBehaviour")
                         .WithMany()
                         .HasForeignKey("FailureQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("I_am_Hero_API.Models.QuestLine", "QuestLine")
                         .WithMany("Quests")
@@ -1024,12 +1024,12 @@ namespace I_am_Hero_API.Migrations
                     b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "CompletionQuestBehaviour")
                         .WithMany()
                         .HasForeignKey("CompletionQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "FailureQuestBehaviour")
                         .WithMany()
                         .HasForeignKey("FailureQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("I_am_Hero_API.Models.User", "User")
                         .WithMany("QuestsLines")

@@ -117,22 +117,22 @@ namespace I_am_Hero_API.Data
                 .HasOne(q => q.CompletionQuestBehaviour)
                 .WithMany()
                 .HasForeignKey(q => q.CompletionQuestBehaviourId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<QuestLine>()
                 .HasOne(q => q.FailureQuestBehaviour)
                 .WithMany()
                 .HasForeignKey(q => q.FailureQuestBehaviourId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Quest>()
                 .HasOne(q => q.CompletionQuestBehaviour)
                 .WithMany()
                 .HasForeignKey(q => q.CompletionQuestBehaviourId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Quest>()
                 .HasOne(q => q.FailureQuestBehaviour)
                 .WithMany()
                 .HasForeignKey(q => q.FailureQuestBehaviourId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
