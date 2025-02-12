@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace I_am_Hero_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250209135027_FixingQuestForeignKeys2")]
-    partial class FixingQuestForeignKeys2
+    [Migration("20250212113009_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -961,12 +961,12 @@ namespace I_am_Hero_API.Migrations
                     b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "CompletionQuestBehaviour")
                         .WithMany()
                         .HasForeignKey("CompletionQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "FailureQuestBehaviour")
                         .WithMany()
                         .HasForeignKey("FailureQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("I_am_Hero_API.Models.QuestLine", "QuestLine")
                         .WithMany("Quests")
@@ -1010,7 +1010,7 @@ namespace I_am_Hero_API.Migrations
                         .HasForeignKey("HeroSkillId");
 
                     b.HasOne("I_am_Hero_API.Models.User", "User")
-                        .WithMany()
+                        .WithMany("QuestBehaviours")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1027,12 +1027,12 @@ namespace I_am_Hero_API.Migrations
                     b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "CompletionQuestBehaviour")
                         .WithMany()
                         .HasForeignKey("CompletionQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "FailureQuestBehaviour")
                         .WithMany()
                         .HasForeignKey("FailureQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("I_am_Hero_API.Models.User", "User")
                         .WithMany("QuestsLines")
@@ -1101,6 +1101,8 @@ namespace I_am_Hero_API.Migrations
                     b.Navigation("HeroSkills");
 
                     b.Navigation("HeroStatusEffects");
+
+                    b.Navigation("QuestBehaviours");
 
                     b.Navigation("Quests");
 

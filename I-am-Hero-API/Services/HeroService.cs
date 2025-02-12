@@ -5,6 +5,7 @@ using I_am_Hero_API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Identity.Client;
 
 namespace I_am_Hero_API.Services
@@ -554,7 +555,110 @@ namespace I_am_Hero_API.Services
                 throw new NullReferenceException("Title cannot be null when creating QuestLine");
             QuestBehaviourDto? completionQuestBehaviourDto = dto.CompletionQuestBehaviour;
             QuestBehaviour? completion = null;
-            // TODO
+            if (completionQuestBehaviourDto != null
+                && (completionQuestBehaviourDto.HeroSkillId != null || completionQuestBehaviourDto.HeroAttirbuteId != null)
+                && completionQuestBehaviourDto.Sign != null
+                && completionQuestBehaviourDto.Value != null)
+            {
+                completion = new QuestBehaviour
+                {
+                    UserId = user.Id,
+                    HeroAttirbuteId = completionQuestBehaviourDto.HeroAttirbuteId,
+                    HeroSkillId = completionQuestBehaviourDto.HeroSkillId,
+                    Sign = completionQuestBehaviourDto.Sign,
+                    Value = completionQuestBehaviourDto.Value.Value
+                };
+            }
+            QuestBehaviourDto? failureQuestBehaviourDto = dto.FailureQuestBehaviour;
+            QuestBehaviour? failure = null;
+            if (failureQuestBehaviourDto != null
+                && (failureQuestBehaviourDto.HeroSkillId != null || failureQuestBehaviourDto.HeroAttirbuteId != null)
+                && failureQuestBehaviourDto.Sign != null
+                && failureQuestBehaviourDto.Value != null)
+            {
+                failure = new QuestBehaviour
+                {
+                    UserId = user.Id,
+                    HeroAttirbuteId = failureQuestBehaviourDto.HeroAttirbuteId,
+                    HeroSkillId = failureQuestBehaviourDto.HeroSkillId,
+                    Sign = failureQuestBehaviourDto.Sign,
+                    Value = failureQuestBehaviourDto.Value.Value
+                };
+            }
+            //TODO
+            //QuestsDto? questsDto = dto.Quests;
+            //if (questsDto != null)
+            //{
+            //    List<QuestDto> qeusts = (List<QuestDto>)questsDto.Quests;
+            //    qeusts.ForEach(async x =>{
+            //        if (x.Title == null)
+            //            return;
+            //        QuestBehaviourDto? completionQuestBehaviourDto = x.CompletionQuestBehaviour;
+            //        QuestBehaviour? completion = null;
+            //        if (completionQuestBehaviourDto != null
+            //            && (completionQuestBehaviourDto.HeroSkillId != null || completionQuestBehaviourDto.HeroAttirbuteId != null)
+            //            && completionQuestBehaviourDto.Sign != null
+            //            && completionQuestBehaviourDto.Value != null)
+            //        {
+            //            completion = new QuestBehaviour
+            //            {
+            //                UserId = user.Id,
+            //                HeroAttirbuteId = completionQuestBehaviourDto.HeroAttirbuteId,
+            //                HeroSkillId = completionQuestBehaviourDto.HeroSkillId,
+            //                Sign = completionQuestBehaviourDto.Sign,
+            //                Value = completionQuestBehaviourDto.Value.Value
+            //            };
+            //        }
+            //        QuestBehaviourDto? failureQuestBehaviourDto = x.FailureQuestBehaviour;
+            //        QuestBehaviour? failure = null;
+            //        if (failureQuestBehaviourDto != null
+            //            && (failureQuestBehaviourDto.HeroSkillId != null || failureQuestBehaviourDto.HeroAttirbuteId != null)
+            //            && failureQuestBehaviourDto.Sign != null
+            //            && failureQuestBehaviourDto.Value != null)
+            //        {
+            //            failure = new QuestBehaviour
+            //            {
+            //                UserId = user.Id,
+            //                HeroAttirbuteId = failureQuestBehaviourDto.HeroAttirbuteId,
+            //                HeroSkillId = failureQuestBehaviourDto.HeroSkillId,
+            //                Sign = failureQuestBehaviourDto.Sign,
+            //                Value = failureQuestBehaviourDto.Value.Value
+            //            };
+            //        }
+            //        Quest quest = new Quest
+            //        {
+            //            UserId = user.Id,
+            //            Title = x.Title,
+            //            Description = x.Description,
+            //            Experinece = x.Experinece ?? 0,
+            //            CompletionQuestBehaviour = completion,
+            //            FailureQuestBehaviour = failure,
+            //            Priority = x.Priority ?? 1,
+            //            cDifficultyId = x.cDifficultyId ?? 1,
+            //            cQuestStatusId = x.cQuestStatusId ?? 1,
+            //            Deadline = x.Deadline,
+            //            ArchiveDate = x.ArchiveDate
+            //        };
+            //        await context.Quests.AddAsync(quest);
+            //    });
+            //}
+            QuestLine questLine = new QuestLine
+            {
+                UserId = user.Id,
+                Title = dto.Title,
+                Description = dto.Description,
+                Experinece = dto.Experinece ?? 0,
+                CompletionQuestBehaviour = completion,
+                FailureQuestBehaviour = failure,
+                Priority = dto.Priority ?? 1,
+                cDifficultyId = dto.cDifficultyId ?? 1,
+                cQuestStatusId = dto.cQuestStatusId ?? 1,
+                Deadline = dto.Deadline,
+                ArchiveDate = dto.ArchiveDate
+            };
+            await context.QuestLines.AddAsync(questLine);
+            await context.SaveChangesAsync();
+            return new IdDto { Id = questLine.Id };
         }
         #endregion QuestLine
     }
