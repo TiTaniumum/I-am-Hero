@@ -8,8 +8,8 @@ namespace I_am_Hero_API.DTO
         public string? Title { get; set; } = null!;
         public string? Description { get; set; }
         public long? Experinece { get; set; }
-        public QuestBehaviourDto? CompletionQuestBehaviour { get; set; }
-        public QuestBehaviourDto? FailureQuestBehaviour { get; set; }
+        public BehaviourDto? CompletionBehaviour { get; set; }
+        public BehaviourDto? FailureBehaviour { get; set; }
         public int? Priority { get; set; }
         public long? cDifficultyId { get; set; }
         public long? cQuestStatusId { get; set; }
@@ -25,10 +25,10 @@ namespace I_am_Hero_API.DTO
             Title = questLine.Title;
             Description = questLine.Description;
             Experinece = questLine.Experinece;
-            if (questLine.CompletionQuestBehaviour != null)
-                CompletionQuestBehaviour = new QuestBehaviourDto(questLine.CompletionQuestBehaviour);
-            if (questLine.FailureQuestBehaviour != null)
-                FailureQuestBehaviour = new QuestBehaviourDto(questLine.FailureQuestBehaviour);
+            if (questLine.CompletionBehaviour != null)
+                CompletionBehaviour = new BehaviourDto(questLine.CompletionBehaviour);
+            if (questLine.FailureBehaviour != null)
+                FailureBehaviour = new BehaviourDto(questLine.FailureBehaviour);
             Priority = questLine.Priority;
             cDifficultyId = questLine.cDifficultyId;
             cQuestStatusId = questLine.cQuestStatusId;

@@ -401,14 +401,14 @@ namespace I_am_Hero_API.Controllers
             });
         }
 
-        // api/Hero/delete/QuestBehaviour
+        // api/Hero/delete/Behaviour
         [Authorize]
-        [HttpDelete("delete/QuestBehaviour")]
-        public async Task<ActionResult<TokenDto>> DeleteQuestBehaviour(long id)
+        [HttpDelete("delete/Behaviour")]
+        public async Task<ActionResult<TokenDto>> DeleteBehaviour(long id)
         {
             return await HandleEndpoint(async () =>
             {
-                await heroService.DeleteQuestBehaviour(id);
+                await heroService.DeleteBehaviour(id);
                 return new TokenDto();
             });
         }
@@ -459,7 +459,9 @@ namespace I_am_Hero_API.Controllers
             });
         }
 
-
+        //TODO: Calendar related endpoints
+        //TODO: Habbit related endpoints
+        //TODO: Social related endpoints
 
         #region PrivateMethods
         /// <summary>

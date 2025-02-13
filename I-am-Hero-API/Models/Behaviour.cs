@@ -1,6 +1,6 @@
 ﻿namespace I_am_Hero_API.Models
 {
-    public class QuestBehaviour
+    public class Behaviour
     {
         public long Id { get; set; }
         public long UserId { get; set; }

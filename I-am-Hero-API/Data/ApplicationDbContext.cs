@@ -21,9 +21,13 @@ namespace I_am_Hero_API.Data
         public DbSet<cRarity> cRarities { get; set; }
         public DbSet<cQuestStatus> cQuestStatuses { get; set; }
         public DbSet<cDifficulty> cDifficulties { get; set; }
-        public DbSet<QuestBehaviour> QuestBehaviours { get; set; }
+        public DbSet<Behaviour> Behaviours { get; set; }
         public DbSet<QuestLine> QuestLines { get; set; }
         public DbSet<Quest> Quests { get; set; }
+        public DbSet<cCalendarBehaviour> cCalendarBehaviours { get; set; }
+        public DbSet<cCalendarStatus> cCalendarStatuses { get; set; }
+        public DbSet<Calendar> Calendars { get; set; }
+        public DbSet<CalendarAttendance> CalendarAttendances { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
@@ -114,25 +118,55 @@ namespace I_am_Hero_API.Data
                     new cQuestStatus { Id = 10, NameEn = "Hidden", NameRu = "Скрыто" }
                 );
             modelBuilder.Entity<QuestLine>()
-                .HasOne(q => q.CompletionQuestBehaviour)
+                .HasOne(q => q.CompletionBehaviour)
                 .WithMany()
-                .HasForeignKey(q => q.CompletionQuestBehaviourId)
+                .HasForeignKey(q => q.CompletionBehaviourId)
                 .OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<QuestLine>()
-                .HasOne(q => q.FailureQuestBehaviour)
+                .HasOne(q => q.FailureBehaviour)
                 .WithMany()
-                .HasForeignKey(q => q.FailureQuestBehaviourId)
+                .HasForeignKey(q => q.FailureBehaviourId)
                 .OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Quest>()
-                .HasOne(q => q.CompletionQuestBehaviour)
+                .HasOne(q => q.CompletionBehaviour)
                 .WithMany()
-                .HasForeignKey(q => q.CompletionQuestBehaviourId)
+                .HasForeignKey(q => q.CompletionBehaviourId)
                 .OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Quest>()
-                .HasOne(q => q.FailureQuestBehaviour)
+                .HasOne(q => q.FailureBehaviour)
                 .WithMany()
-                .HasForeignKey(q => q.FailureQuestBehaviourId)
+                .HasForeignKey(q => q.FailureBehaviourId)
                 .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Calendar>()
+                .Property(x => x.CreateDate)
+                .HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<Calendar>()
+                .HasOne(q => q.RewardBehaviour)
+                .WithMany()
+                .HasForeignKey(q => q.RewardBehaviourId)
+                .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Calendar>()
+                .HasOne(q => q.PenaltyBehaviour)
+                .WithMany()
+                .HasForeignKey(q => q.PenaltyBehaviourId)
+                .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Calendar>()
+                .HasOne(q => q.IgnoreBehaviour)
+                .WithMany()
+                .HasForeignKey(q => q.IgnoreBehaviourId)
+                .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<cCalendarBehaviour>()
+                .HasData(
+                    new cCalendarBehaviour { Id = 1, NameEn = "Positive", NameRu = "Положительное", DescriptionEn = "On unmarked day, user will receive reward", DescriptionRu = "В день без отметки пользователь получит награду" },
+                    new cCalendarBehaviour { Id = 2, NameEn = "Negative", NameRu = "Отрицательное", DescriptionEn = "On unmarked day, user will receive penalty", DescriptionRu = "В день без отметки пользователь получит штраф" },
+                    new cCalendarBehaviour { Id = 3, NameEn = "Neutral", NameRu = "Нейтральное", DescriptionEn = "On unmarked day, status will remain unmarked", DescriptionRu = "В день без отметки статус останется неотмеченным" }
+                );
+            modelBuilder.Entity<cCalendarStatus>()
+                .HasData(
+                    new cCalendarStatus { Id = 1, NameEn = "Marked", NameRu = "Отмечено" },
+                    new cCalendarStatus { Id = 2, NameEn = "Failed", NameRu = "Провалено" },
+                    new cCalendarStatus { Id = 3, NameEn = "Not marked", NameRu = "Не отмечено" }
+                );
         }
     }
 }
