@@ -39,17 +39,29 @@ namespace I_am_Hero_API.Controllers
         {
             return Ok(commonService.GetAllcRarities());
         }
-        // app/Common/all-cDifficulty
+        // api/Common/all-cDifficulty
         [HttpGet("all-cDifficulty")]
         public ActionResult<IEnumerable<cDifficulty>> GetAllcDifficulties()
         {
             return Ok(commonService.GetAllcDifficulties());
         }
-        // app/Common/all-cQuestStatus
+        // api/Common/all-cQuestStatus
         [HttpGet("all-cQuestStatus")]
         public ActionResult<IEnumerable<cQuestStatus>> GetAllcQuestStatuses()
         {
             return Ok(commonService.GetAllcQuestStatuses());
+        }
+        // api/Common/all-cCalendarBehaviour
+        [HttpGet("all-cCalendarBehaviour")]
+        public ActionResult<IEnumerable<cCalendarBehaviour>> GetAllcCalendarBehaviours()
+        {
+            return Ok(commonService.GetAllcCalendarBehaviours());
+        }
+        // api/Common/all-cCalendarStatus
+        [HttpGet("all-cCalendarStatus")]
+        public ActionResult<IEnumerable<cCalendarStatus>> GetAllcCalendarStatuses()
+        {
+            return Ok(commonService.GetAllcCalendarStatuses());
         }
     }
 }

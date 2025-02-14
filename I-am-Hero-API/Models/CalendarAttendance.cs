@@ -5,7 +5,7 @@
         public long Id { get; set; }
         public long CalendarId { get; set; }
         public Calendar Calendar { get; set; } = null!;
-        public DateTime Date { get; set; }
+        public DateOnly Date { get; set; }
         public long? cCalendarStatusId { get; set; }
         public cCalendarStatus? cCalendarStatus { get; set; }
     }

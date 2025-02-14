@@ -36,5 +36,13 @@ namespace I_am_Hero_API.Services
         {
             return context.cQuestStatuses.ToList();
         }
+        public IEnumerable<cCalendarBehaviour> GetAllcCalendarBehaviours()
+        {
+            return context.cCalendarBehaviours.ToList();
+        }
+        public IEnumerable<cCalendarStatus> GetAllcCalendarStatuses()
+        {
+            return context.cCalendarStatuses.ToList();
+        }
     }
 }

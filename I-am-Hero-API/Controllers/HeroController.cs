@@ -460,7 +460,94 @@ namespace I_am_Hero_API.Controllers
         }
 
         //TODO: Calendar related endpoints
+
+        // api/Hero/create/Calendar
+        [Authorize]
+        [HttpPost("create/Calendar")]
+        public async Task<ActionResult<TokenDto>> CreateCalendar(CalendarDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.CreateCalendar(dto);
+            });
+        }
+
+        // api/Hero/get/Calendars
+        [Authorize]
+        [HttpGet("get/Calendars")]
+        public async Task<ActionResult<TokenDto>> GetCalendars(long? id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.GetCalendars(id);
+            });
+        }
+
+        // api/Hero/edit/Calendar
+        [Authorize]
+        [HttpPut("edit/Calendar")]
+        public async Task<ActionResult<TokenDto>> EditCalendar(CalendarDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.EditCalendar(dto);
+                return new TokenDto();
+            });
+        }
+
+        // api/Hero/delete/Calendar
+        [Authorize]
+        [HttpDelete("delete/Calendar")]
+        public async Task<ActionResult<TokenDto>> DeleteCalendar(long id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.DeleteCalendar(id);
+                return new TokenDto();
+            });
+        }
+        /// <summary>
+        /// Метод для отметки участия в календаре.
+        /// Он создает новую запись в таблице CalendarAttendance или изменяет статус существующей записи.
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        // api/Hero/attend/CalendarAttendance
+        [Authorize]
+        [HttpPost("attend/CalendarAttendance")]
+        public async Task<ActionResult<TokenDto>> AttendCalendar(CalendarAttendanceDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.AttendCalendar(dto);
+            });
+        }
+        /// <summary>
+        /// Метод для получения всех записей участия в календаре.
+        /// Параметры dateFrom и dateTo необязательные.
+        /// </summary>
+        /// <param name="calendarId"></param>
+        /// <param name="dateFrom"></param>
+        /// <param name="dateTo"></param>
+        /// <returns></returns>
+        // api/Hero/get/CalendarAttendances
+        [Authorize]
+        [HttpGet("get/CalendarAttendances")]
+        public async Task<ActionResult<TokenDto>> GetCalendarAttendances(long calendarId, DateOnly? dateFrom, DateOnly? dateTo)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.GetCalendarAttendances(calendarId, dateFrom, dateTo);
+            });
+        }
+
         //TODO: Habbit related endpoints
+
+        // api/Hero/create/Habbit
+        // api/Hero/get/Habbits
+        // api/Hero/edit/Habbit
+        // api/Hero/delete/Habbit
+
         //TODO: Social related endpoints
 
         #region PrivateMethods
