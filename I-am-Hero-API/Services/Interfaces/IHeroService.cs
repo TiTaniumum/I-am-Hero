@@ -49,5 +49,11 @@ namespace I_am_Hero_API.Services.Interfaces
         Task<QuestLinesDto> GetQuestLines(long? id);
         Task EditQuestLine(QuestLineDto dto);
         Task DeleteQuestLine(long id);
+        Task<IdDto> CreateCalendar(CalendarDto dto);
+        Task<CalendarsDto> GetCalendars(long? id);
+        Task EditCalendar(CalendarDto dto);
+        Task DeleteCalendar(long id);
+        Task<CalendarAttendanceDto> AttendCalendar(CalendarAttendanceDto dto);
+        Task<CalendarAttendancesDto> GetCalendarAttendances(long calendarId, DateOnly? dateFrom, DateOnly? dateTo);
     }
 }

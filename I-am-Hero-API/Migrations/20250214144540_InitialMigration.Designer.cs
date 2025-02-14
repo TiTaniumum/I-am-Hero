@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace I_am_Hero_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250213154610_InitialMigration")]
+    [Migration("20250214144540_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -107,16 +107,18 @@ namespace I_am_Hero_API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime?>("CreateDate")
+                    b.Property<DateTime>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("GETDATE()")
+                        .HasComment("Дата создания календаря. По умолчанию выставляется GETDATE()");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Дата окончания действия календаря");
 
                     b.Property<long?>("IgnoreBehaviourId")
                         .HasColumnType("bigint");
@@ -128,10 +130,12 @@ namespace I_am_Hero_API.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Дата начала действия календаря");
 
                     b.Property<DateTime?>("StopDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Дата прекращения работы календаря. Пользователь не сможет ставть attendance. Выставляется когда пользователь больше не хочет пользоваться календарем.");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -169,8 +173,8 @@ namespace I_am_Hero_API.Migrations
                     b.Property<long>("CalendarId")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
 
                     b.Property<long?>("cCalendarStatusId")
                         .HasColumnType("bigint");

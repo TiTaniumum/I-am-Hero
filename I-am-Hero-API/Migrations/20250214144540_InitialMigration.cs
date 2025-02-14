@@ -392,13 +392,13 @@ namespace I_am_Hero_API.Migrations
                     UserId = table.Column<long>(type: "bigint", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Дата начала действия календаря"),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Дата окончания действия календаря"),
                     RewardBehaviourId = table.Column<long>(type: "bigint", nullable: true),
                     PenaltyBehaviourId = table.Column<long>(type: "bigint", nullable: true),
                     IgnoreBehaviourId = table.Column<long>(type: "bigint", nullable: true),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "GETDATE()"),
-                    StopDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()", comment: "Дата создания календаря. По умолчанию выставляется GETDATE()"),
+                    StopDate = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Дата прекращения работы календаря. Пользователь не сможет ставть attendance. Выставляется когда пользователь больше не хочет пользоваться календарем."),
                     cCalendarBehaviourId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -490,7 +490,7 @@ namespace I_am_Hero_API.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CalendarId = table.Column<long>(type: "bigint", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Date = table.Column<DateOnly>(type: "date", nullable: false),
                     cCalendarStatusId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
