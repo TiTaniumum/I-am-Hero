@@ -605,7 +605,7 @@ namespace I_am_Hero_API.Controllers
 
         // api/Hero/checkin/Habbit
         [Authorize]
-        [HttpPost("checkin/Habbit")]
+        [HttpPut("checkin/Habbit")]
         public async Task<ActionResult<TokenDto>> CheckinHeroHabbit(long id)
         {
             return await HandleEndpoint(async () =>
