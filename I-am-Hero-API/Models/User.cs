@@ -24,5 +24,6 @@ namespace I_am_Hero_API.Models
         public ICollection<QuestLine> QuestsLines { get; set; } = new List<QuestLine>();
         public ICollection<Behaviour> Behaviours { get; set; } = new List<Behaviour>();
         public ICollection<Calendar> Calendars { get; set; } = new List<Calendar>();
+        public ICollection<HeroHabbit> HeroHabbits { get; set; } = new List<HeroHabbit>();
     }
 }

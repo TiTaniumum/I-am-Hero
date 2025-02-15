@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using I_am_Hero_API.Models;
 using I_am_Hero_API.DTO;
 using I_am_Hero_API.Services.Interfaces;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace I_am_Hero_API.Controllers
 {
@@ -12,10 +13,12 @@ namespace I_am_Hero_API.Controllers
     {
         private readonly IAuthService authService;
         private readonly IHeroService heroService;
-        public HeroController(IAuthService authService, IHeroService heroService)
+        private readonly ILoggerService loggerService;
+        public HeroController(IAuthService authService, IHeroService heroService, ILoggerService loggerService)
         {
             this.authService = authService;
             this.heroService = heroService;
+            this.loggerService = loggerService;
         }
 
         // api/Hero/create
@@ -33,6 +36,7 @@ namespace I_am_Hero_API.Controllers
                 return await heroService.CreateHero(heroName);
             });
         }
+        
         // api/Hero/get
         [Authorize]
         [HttpGet("get")]
@@ -43,6 +47,7 @@ namespace I_am_Hero_API.Controllers
                 return await heroService.GetHero();
             });
         }
+        
         // api/Hero/edit
         [Authorize]
         [HttpPut("edit")]
@@ -54,6 +59,7 @@ namespace I_am_Hero_API.Controllers
                 return new TokenDto();
             });
         }
+        
         // api/Hero/edit-heroName
         [Authorize]
         [HttpPut("edit-heroName")]
@@ -65,6 +71,7 @@ namespace I_am_Hero_API.Controllers
                 return new TokenDto();
             });
         }
+        
         // api/Hero/edit-heroLevelCalculationType
         [Authorize]
         [HttpPut("edit-heroLevelCalculationType")]
@@ -76,6 +83,7 @@ namespace I_am_Hero_API.Controllers
                 return new TokenDto();
             });
         }
+        
         // api/Hero/edit-heroExperience
         [Authorize]
         [HttpPut("edit-heroExperience")]
@@ -87,6 +95,7 @@ namespace I_am_Hero_API.Controllers
                 return new TokenDto();
             });
         }
+        
         // api/Hero/create/HeroAtrribute
         [Authorize]
         [HttpPost("create/HeroAtrribute")]
@@ -97,6 +106,7 @@ namespace I_am_Hero_API.Controllers
                 return await heroService.CreateHeroAttribute(dto);
             });
         }
+        
         // api/Hero/get/HeroAttributes
         [Authorize]
         [HttpGet("get/HeroAttributes")]
@@ -107,6 +117,7 @@ namespace I_am_Hero_API.Controllers
                 return await heroService.GetHeroAttributes(id);
             });
         }
+        
         // api/Hero/edit/HeroAttribute
         [Authorize]
         [HttpPut("edit/HeroAttriute")]
@@ -118,6 +129,7 @@ namespace I_am_Hero_API.Controllers
                 return new TokenDto();
             });
         }
+        
         // api/Hero/delete/HeroAttribute
         [Authorize]
         [HttpDelete("delete/HeroAttribute")]
@@ -129,6 +141,7 @@ namespace I_am_Hero_API.Controllers
                 return new TokenDto();
             });
         }
+        
         // api/Hero/create/HeroAttributeStates
         [Authorize]
         [HttpPost("create/HeroAttributeState")]
@@ -139,6 +152,7 @@ namespace I_am_Hero_API.Controllers
                 return await heroService.CreateHeroAttributeState(dto);
             });
         }
+        
         // api/Hero/create/HeroAttributeStates
         [Authorize]
         [HttpPost("create/HeroAttributeStates")]
@@ -149,6 +163,7 @@ namespace I_am_Hero_API.Controllers
                 return await heroService.CreateHeroAttributeStates(dto);
             });
         }
+        
         // api/Hero/get/HeroAttributeStates
         [Authorize]
         [HttpGet("get/HeroAttributeStates")]
@@ -159,6 +174,7 @@ namespace I_am_Hero_API.Controllers
                 return await heroService.GetHeroAttributeStates(heroAttributeId);
             });
         }
+        
         // api/Hero/delete/HeroAttributeState
         [Authorize]
         [HttpDelete("delete/HeroAttributeState")]
@@ -459,8 +475,6 @@ namespace I_am_Hero_API.Controllers
             });
         }
 
-        //TODO: Calendar related endpoints
-
         // api/Hero/create/Calendar
         [Authorize]
         [HttpPost("create/Calendar")]
@@ -506,6 +520,7 @@ namespace I_am_Hero_API.Controllers
                 return new TokenDto();
             });
         }
+        
         /// <summary>
         /// Метод для отметки участия в календаре.
         /// Он создает новую запись в таблице CalendarAttendance или изменяет статус существующей записи.
@@ -522,6 +537,7 @@ namespace I_am_Hero_API.Controllers
                 return await heroService.AttendCalendar(dto);
             });
         }
+        
         /// <summary>
         /// Метод для получения всех записей участия в календаре.
         /// Параметры dateFrom и dateTo необязательные.
@@ -540,13 +556,64 @@ namespace I_am_Hero_API.Controllers
                 return await heroService.GetCalendarAttendances(calendarId, dateFrom, dateTo);
             });
         }
-
-        //TODO: Habbit related endpoints
-
+        
         // api/Hero/create/Habbit
+        [Authorize]
+        [HttpPost("create/Habbit")]
+        public async Task<ActionResult<TokenDto>> CreateHeroHabbit(HeroHabbitDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.CreateHeroHabbit(dto);
+            });
+        }
+
         // api/Hero/get/Habbits
+        [Authorize]
+        [HttpGet("get/Habbits")]
+        public async Task<ActionResult<TokenDto>> GetHeroHabbits(long? id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                return await heroService.GetHeroHabbits(id);
+            });
+        }
+
         // api/Hero/edit/Habbit
+        [Authorize]
+        [HttpPut("edit/Habbit")]
+        public async Task<ActionResult<TokenDto>> EditHeroHabbit(HeroHabbitDto dto)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.EditHeroHabbit(dto);
+                return new TokenDto();
+            });
+        }
+
         // api/Hero/delete/Habbit
+        [Authorize]
+        [HttpDelete("delete/Habbit")]
+        public async Task<ActionResult<TokenDto>> DeleteHeroHabbit(long id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.DeleteHeroHabbit(id);
+                return new TokenDto();
+            });
+        }
+
+        // api/Hero/checkin/Habbit
+        [Authorize]
+        [HttpPost("checkin/Habbit")]
+        public async Task<ActionResult<TokenDto>> CheckinHeroHabbit(long id)
+        {
+            return await HandleEndpoint(async () =>
+            {
+                await heroService.CheckinHeroHabbit(id);
+                return new TokenDto();
+            });
+        }
 
         //TODO: Social related endpoints
 
@@ -572,10 +639,16 @@ namespace I_am_Hero_API.Controllers
             }
             catch (ArgumentOutOfRangeException ex)
             {
+#pragma warning disable CS4014 // Этот метод не нуждается в ожидании
+                loggerService.LogException(heroService.GetUser().Id, HttpContext.Request.GetDisplayUrl(), ex);
+#pragma warning restore CS4014
                 return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
+#pragma warning disable CS4014 // Этот метод не нуждается в ожидании
+                loggerService.LogException(heroService.GetUser().Id, HttpContext.Request.GetDisplayUrl(), ex);
+#pragma warning restore CS4014
                 return BadRequest("Exception: " + ex.Message);
             }
         }

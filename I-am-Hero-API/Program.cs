@@ -61,6 +61,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IHeroService, HeroService>();
 builder.Services.AddScoped<ICommonService, CommonService>();
+builder.Services.AddScoped<ILoggerService, LoggerService>();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

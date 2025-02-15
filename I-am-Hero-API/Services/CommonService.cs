@@ -44,5 +44,9 @@ namespace I_am_Hero_API.Services
         {
             return context.cCalendarStatuses.ToList();
         }
+        public IEnumerable<cPopupInterval> GetAllcPopupIntervals()
+        {
+            return context.cPopupIntervals.ToList();
+        }
     }
 }

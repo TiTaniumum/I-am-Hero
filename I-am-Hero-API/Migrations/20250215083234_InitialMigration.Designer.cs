@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace I_am_Hero_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250214144540_InitialMigration")]
+    [Migration("20250215083234_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -188,6 +188,40 @@ namespace I_am_Hero_API.Migrations
                     b.ToTable("CalendarAttendances");
                 });
 
+            modelBuilder.Entity("I_am_Hero_API.Models.ExceptionLog", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("ExceptionDateTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("ExceptionMessage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StackTrace")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ExceptionLogs");
+                });
+
             modelBuilder.Entity("I_am_Hero_API.Models.Hero", b =>
                 {
                     b.Property<long>("Id")
@@ -340,6 +374,44 @@ namespace I_am_Hero_API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("HeroBioPieces");
+                });
+
+            modelBuilder.Entity("I_am_Hero_API.Models.HeroHabbit", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long?>("CheckinBehaviourId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastUpdateDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("cPopupIntervalId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CheckinBehaviourId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("cPopupIntervalId");
+
+                    b.ToTable("HeroHabbits");
                 });
 
             modelBuilder.Entity("I_am_Hero_API.Models.HeroSkill", b =>
@@ -841,6 +913,59 @@ namespace I_am_Hero_API.Migrations
                         });
                 });
 
+            modelBuilder.Entity("I_am_Hero_API.Models.cPopupInterval", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameRu")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("cPopupIntervals");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            NameEn = "Hourly",
+                            NameRu = "Почасовой"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            NameEn = "Every half of day",
+                            NameRu = "Каждые полдня"
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            NameEn = "Daily",
+                            NameRu = "Ежедневно"
+                        },
+                        new
+                        {
+                            Id = 4L,
+                            NameEn = "Weekly",
+                            NameRu = "Еженедельно"
+                        },
+                        new
+                        {
+                            Id = 5L,
+                            NameEn = "Monthly",
+                            NameRu = "Ежемесячно"
+                        });
+                });
+
             modelBuilder.Entity("I_am_Hero_API.Models.cQuestStatus", b =>
                 {
                     b.Property<long>("Id")
@@ -1111,6 +1236,15 @@ namespace I_am_Hero_API.Migrations
                     b.Navigation("cCalendarStatus");
                 });
 
+            modelBuilder.Entity("I_am_Hero_API.Models.ExceptionLog", b =>
+                {
+                    b.HasOne("I_am_Hero_API.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("I_am_Hero_API.Models.Hero", b =>
                 {
                     b.HasOne("I_am_Hero_API.Models.User", "User")
@@ -1186,6 +1320,32 @@ namespace I_am_Hero_API.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("I_am_Hero_API.Models.HeroHabbit", b =>
+                {
+                    b.HasOne("I_am_Hero_API.Models.Behaviour", "CheckinBehaviour")
+                        .WithMany()
+                        .HasForeignKey("CheckinBehaviourId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("I_am_Hero_API.Models.User", "User")
+                        .WithMany("HeroHabbits")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("I_am_Hero_API.Models.cPopupInterval", "cPopupInterval")
+                        .WithMany()
+                        .HasForeignKey("cPopupIntervalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CheckinBehaviour");
+
+                    b.Navigation("User");
+
+                    b.Navigation("cPopupInterval");
                 });
 
             modelBuilder.Entity("I_am_Hero_API.Models.HeroSkill", b =>
@@ -1345,6 +1505,8 @@ namespace I_am_Hero_API.Migrations
                     b.Navigation("HeroAttributes");
 
                     b.Navigation("HeroBioPieces");
+
+                    b.Navigation("HeroHabbits");
 
                     b.Navigation("HeroSkills");
 
