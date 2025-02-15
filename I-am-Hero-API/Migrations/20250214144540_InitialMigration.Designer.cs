@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace I_am_Hero_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250209135027_FixingQuestForeignKeys2")]
-    partial class FixingQuestForeignKeys2
+    [Migration("20250214144540_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,6 +62,130 @@ namespace I_am_Hero_API.Migrations
                             Id = 4L,
                             Name = "I-am-Hero-IOS"
                         });
+                });
+
+            modelBuilder.Entity("I_am_Hero_API.Models.Behaviour", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long?>("HeroAttributeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("HeroSkillId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Sign")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Value")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HeroAttributeId");
+
+                    b.HasIndex("HeroSkillId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Behaviours");
+                });
+
+            modelBuilder.Entity("I_am_Hero_API.Models.Calendar", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreateDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()")
+                        .HasComment("Дата создания календаря. По умолчанию выставляется GETDATE()");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2")
+                        .HasComment("Дата окончания действия календаря");
+
+                    b.Property<long?>("IgnoreBehaviourId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("PenaltyBehaviourId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("RewardBehaviourId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2")
+                        .HasComment("Дата начала действия календаря");
+
+                    b.Property<DateTime?>("StopDate")
+                        .HasColumnType("datetime2")
+                        .HasComment("Дата прекращения работы календаря. Пользователь не сможет ставть attendance. Выставляется когда пользователь больше не хочет пользоваться календарем.");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("cCalendarBehaviourId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IgnoreBehaviourId");
+
+                    b.HasIndex("PenaltyBehaviourId");
+
+                    b.HasIndex("RewardBehaviourId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("cCalendarBehaviourId");
+
+                    b.ToTable("Calendars");
+                });
+
+            modelBuilder.Entity("I_am_Hero_API.Models.CalendarAttendance", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CalendarId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<long?>("cCalendarStatusId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CalendarId");
+
+                    b.HasIndex("cCalendarStatusId");
+
+                    b.ToTable("CalendarAttendances");
                 });
 
             modelBuilder.Entity("I_am_Hero_API.Models.Hero", b =>
@@ -290,7 +414,7 @@ namespace I_am_Hero_API.Migrations
                     b.Property<DateTime?>("ArchiveDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("CompletionQuestBehaviourId")
+                    b.Property<long?>("CompletionBehaviourId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreateDate")
@@ -307,7 +431,7 @@ namespace I_am_Hero_API.Migrations
                     b.Property<long>("Experinece")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("FailureQuestBehaviourId")
+                    b.Property<long?>("FailureBehaviourId")
                         .HasColumnType("bigint");
 
                     b.Property<int?>("Priority")
@@ -331,9 +455,9 @@ namespace I_am_Hero_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompletionQuestBehaviourId");
+                    b.HasIndex("CompletionBehaviourId");
 
-                    b.HasIndex("FailureQuestBehaviourId");
+                    b.HasIndex("FailureBehaviourId");
 
                     b.HasIndex("QuestLineId");
 
@@ -344,44 +468,6 @@ namespace I_am_Hero_API.Migrations
                     b.HasIndex("cQuestStatusId");
 
                     b.ToTable("Quests");
-                });
-
-            modelBuilder.Entity("I_am_Hero_API.Models.QuestBehaviour", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long?>("HeroAttirbuteId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("HeroAttributeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("HeroSkillId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Sign")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Value")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HeroAttributeId");
-
-                    b.HasIndex("HeroSkillId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("QuestBehaviours");
                 });
 
             modelBuilder.Entity("I_am_Hero_API.Models.QuestLine", b =>
@@ -395,7 +481,7 @@ namespace I_am_Hero_API.Migrations
                     b.Property<DateTime?>("ArchiveDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("CompletionQuestBehaviourId")
+                    b.Property<long?>("CompletionBehaviourId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreateDate")
@@ -412,7 +498,7 @@ namespace I_am_Hero_API.Migrations
                     b.Property<long>("Experinece")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("FailureQuestBehaviourId")
+                    b.Property<long?>("FailureBehaviourId")
                         .HasColumnType("bigint");
 
                     b.Property<int?>("Priority")
@@ -433,9 +519,9 @@ namespace I_am_Hero_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompletionQuestBehaviourId");
+                    b.HasIndex("CompletionBehaviourId");
 
-                    b.HasIndex("FailureQuestBehaviourId");
+                    b.HasIndex("FailureBehaviourId");
 
                     b.HasIndex("UserId");
 
@@ -550,6 +636,102 @@ namespace I_am_Hero_API.Migrations
                             Id = 2L,
                             NameEn = "State",
                             NameRu = "Состояние"
+                        });
+                });
+
+            modelBuilder.Entity("I_am_Hero_API.Models.cCalendarBehaviour", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("DescriptionEn")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionRu")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameRu")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("cCalendarBehaviours");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            DescriptionEn = "On unmarked day, user will receive reward",
+                            DescriptionRu = "В день без отметки пользователь получит награду",
+                            NameEn = "Positive",
+                            NameRu = "Положительное"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            DescriptionEn = "On unmarked day, user will receive penalty",
+                            DescriptionRu = "В день без отметки пользователь получит штраф",
+                            NameEn = "Negative",
+                            NameRu = "Отрицательное"
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            DescriptionEn = "On unmarked day, status will remain unmarked",
+                            DescriptionRu = "В день без отметки статус останется неотмеченным",
+                            NameEn = "Neutral",
+                            NameRu = "Нейтральное"
+                        });
+                });
+
+            modelBuilder.Entity("I_am_Hero_API.Models.cCalendarStatus", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameRu")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("cCalendarStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            NameEn = "Marked",
+                            NameRu = "Отмечено"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            NameEn = "Failed",
+                            NameRu = "Провалено"
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            NameEn = "Not marked",
+                            NameRu = "Не отмечено"
                         });
                 });
 
@@ -849,6 +1031,86 @@ namespace I_am_Hero_API.Migrations
                         });
                 });
 
+            modelBuilder.Entity("I_am_Hero_API.Models.Behaviour", b =>
+                {
+                    b.HasOne("I_am_Hero_API.Models.HeroAttribute", "HeroAttribute")
+                        .WithMany()
+                        .HasForeignKey("HeroAttributeId");
+
+                    b.HasOne("I_am_Hero_API.Models.HeroSkill", "HeroSkill")
+                        .WithMany()
+                        .HasForeignKey("HeroSkillId");
+
+                    b.HasOne("I_am_Hero_API.Models.User", "User")
+                        .WithMany("Behaviours")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("HeroAttribute");
+
+                    b.Navigation("HeroSkill");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("I_am_Hero_API.Models.Calendar", b =>
+                {
+                    b.HasOne("I_am_Hero_API.Models.Behaviour", "IgnoreBehaviour")
+                        .WithMany()
+                        .HasForeignKey("IgnoreBehaviourId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("I_am_Hero_API.Models.Behaviour", "PenaltyBehaviour")
+                        .WithMany()
+                        .HasForeignKey("PenaltyBehaviourId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("I_am_Hero_API.Models.Behaviour", "RewardBehaviour")
+                        .WithMany()
+                        .HasForeignKey("RewardBehaviourId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("I_am_Hero_API.Models.User", "User")
+                        .WithMany("Calendars")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("I_am_Hero_API.Models.cCalendarBehaviour", "cCalendarBehaviour")
+                        .WithMany()
+                        .HasForeignKey("cCalendarBehaviourId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("IgnoreBehaviour");
+
+                    b.Navigation("PenaltyBehaviour");
+
+                    b.Navigation("RewardBehaviour");
+
+                    b.Navigation("User");
+
+                    b.Navigation("cCalendarBehaviour");
+                });
+
+            modelBuilder.Entity("I_am_Hero_API.Models.CalendarAttendance", b =>
+                {
+                    b.HasOne("I_am_Hero_API.Models.Calendar", "Calendar")
+                        .WithMany("CalendarAttendances")
+                        .HasForeignKey("CalendarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("I_am_Hero_API.Models.cCalendarStatus", "cCalendarStatus")
+                        .WithMany()
+                        .HasForeignKey("cCalendarStatusId");
+
+                    b.Navigation("Calendar");
+
+                    b.Navigation("cCalendarStatus");
+                });
+
             modelBuilder.Entity("I_am_Hero_API.Models.Hero", b =>
                 {
                     b.HasOne("I_am_Hero_API.Models.User", "User")
@@ -958,15 +1220,15 @@ namespace I_am_Hero_API.Migrations
 
             modelBuilder.Entity("I_am_Hero_API.Models.Quest", b =>
                 {
-                    b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "CompletionQuestBehaviour")
+                    b.HasOne("I_am_Hero_API.Models.Behaviour", "CompletionBehaviour")
                         .WithMany()
-                        .HasForeignKey("CompletionQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("CompletionBehaviourId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "FailureQuestBehaviour")
+                    b.HasOne("I_am_Hero_API.Models.Behaviour", "FailureBehaviour")
                         .WithMany()
-                        .HasForeignKey("FailureQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("FailureBehaviourId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("I_am_Hero_API.Models.QuestLine", "QuestLine")
                         .WithMany("Quests")
@@ -986,9 +1248,9 @@ namespace I_am_Hero_API.Migrations
                         .WithMany()
                         .HasForeignKey("cQuestStatusId");
 
-                    b.Navigation("CompletionQuestBehaviour");
+                    b.Navigation("CompletionBehaviour");
 
-                    b.Navigation("FailureQuestBehaviour");
+                    b.Navigation("FailureBehaviour");
 
                     b.Navigation("QuestLine");
 
@@ -999,40 +1261,17 @@ namespace I_am_Hero_API.Migrations
                     b.Navigation("cQuestStatus");
                 });
 
-            modelBuilder.Entity("I_am_Hero_API.Models.QuestBehaviour", b =>
-                {
-                    b.HasOne("I_am_Hero_API.Models.HeroAttribute", "HeroAttribute")
-                        .WithMany()
-                        .HasForeignKey("HeroAttributeId");
-
-                    b.HasOne("I_am_Hero_API.Models.HeroSkill", "HeroSkill")
-                        .WithMany()
-                        .HasForeignKey("HeroSkillId");
-
-                    b.HasOne("I_am_Hero_API.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("HeroAttribute");
-
-                    b.Navigation("HeroSkill");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("I_am_Hero_API.Models.QuestLine", b =>
                 {
-                    b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "CompletionQuestBehaviour")
+                    b.HasOne("I_am_Hero_API.Models.Behaviour", "CompletionBehaviour")
                         .WithMany()
-                        .HasForeignKey("CompletionQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("CompletionBehaviourId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("I_am_Hero_API.Models.QuestBehaviour", "FailureQuestBehaviour")
+                    b.HasOne("I_am_Hero_API.Models.Behaviour", "FailureBehaviour")
                         .WithMany()
-                        .HasForeignKey("FailureQuestBehaviourId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("FailureBehaviourId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("I_am_Hero_API.Models.User", "User")
                         .WithMany("QuestsLines")
@@ -1048,9 +1287,9 @@ namespace I_am_Hero_API.Migrations
                         .WithMany()
                         .HasForeignKey("cQuestStatusId");
 
-                    b.Navigation("CompletionQuestBehaviour");
+                    b.Navigation("CompletionBehaviour");
 
-                    b.Navigation("FailureQuestBehaviour");
+                    b.Navigation("FailureBehaviour");
 
                     b.Navigation("User");
 
@@ -1078,6 +1317,11 @@ namespace I_am_Hero_API.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("I_am_Hero_API.Models.Calendar", b =>
+                {
+                    b.Navigation("CalendarAttendances");
+                });
+
             modelBuilder.Entity("I_am_Hero_API.Models.HeroAttribute", b =>
                 {
                     b.Navigation("HeroAttributeStates");
@@ -1090,6 +1334,10 @@ namespace I_am_Hero_API.Migrations
 
             modelBuilder.Entity("I_am_Hero_API.Models.User", b =>
                 {
+                    b.Navigation("Behaviours");
+
+                    b.Navigation("Calendars");
+
                     b.Navigation("Hero");
 
                     b.Navigation("HeroAchievements");

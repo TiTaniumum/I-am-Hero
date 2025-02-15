@@ -40,5 +40,20 @@ namespace I_am_Hero_API.Services.Interfaces
         Task<HeroAchievementsDto> GetHeroAchievements(long? id);
         Task EditHeroAchievement(HeroAchievementDto dto);
         Task DeleteHeroAchievement(long id);
+        Task<IdDto> CreateQuest(QuestDto dto);
+        Task<QuestsDto> GetQuests(long? id);
+        Task EditQuest(QuestDto dto);
+        Task DeleteQuest(long id);
+        Task DeleteBehaviour(long id);
+        Task<IdDto> CreateQuestLine(QuestLineDto dto);
+        Task<QuestLinesDto> GetQuestLines(long? id);
+        Task EditQuestLine(QuestLineDto dto);
+        Task DeleteQuestLine(long id);
+        Task<IdDto> CreateCalendar(CalendarDto dto);
+        Task<CalendarsDto> GetCalendars(long? id);
+        Task EditCalendar(CalendarDto dto);
+        Task DeleteCalendar(long id);
+        Task<CalendarAttendanceDto> AttendCalendar(CalendarAttendanceDto dto);
+        Task<CalendarAttendancesDto> GetCalendarAttendances(long calendarId, DateOnly? dateFrom, DateOnly? dateTo);
     }
 }
