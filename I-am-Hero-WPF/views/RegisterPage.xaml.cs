@@ -36,6 +36,15 @@ namespace I_am_Hero_WPF.Views
                 DataContext = new LoginViewModel()
             };
         }
-
+        private void OnEnglishClick(object sender, RoutedEventArgs e)
+        {
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
+            Application.Current.MainWindow.Content = new RegisterPage();
+        }
+        private void OnRussianClick(object sender, RoutedEventArgs e)
+        {
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("ru-RU");
+            Application.Current.MainWindow.Content = new RegisterPage();
+        }
     }
 }

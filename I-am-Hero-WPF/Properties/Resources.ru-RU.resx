@@ -117,37 +117,43 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="LoginPageTitle" xml:space="preserve">
-    <value>Авторизация</value>
-  </data>
-  <data name="LoginPageEmail" xml:space="preserve">
-    <value>Эл. Почта</value>
-  </data>
-  <data name="LoginPageLogin" xml:space="preserve">
-    <value>Войти</value>
+  <data name="AuthPageEmail" xml:space="preserve">
+    <value>Электронная почта</value>
   </data>
   <data name="LoginPageNoAcc" xml:space="preserve">
     <value>Нет аккаунта?</value>
   </data>
-  <data name="LoginPagePassword" xml:space="preserve">
+  <data name="AuthPagePass" xml:space="preserve">
     <value>Пароль</value>
   </data>
-  <data name="LoginPageSignUp" xml:space="preserve">
+  <data name="AuthPageSignIn" xml:space="preserve">
+    <value>Войти</value>
+  </data>
+  <data name="AuthPageSignUp" xml:space="preserve">
     <value>Зарегистрироваться</value>
+  </data>
+  <data name="LoginPageTitle" xml:space="preserve">
+    <value>Авторизация</value>
   </data>
   <data name="RegisterPageTitle" xml:space="preserve">
     <value>Регистрация</value>
   </data>
-  <data name="RegisterPageEmail" xml:space="preserve">
-    <value>Эл. почта</value>
-  </data>
-  <data name="RegisterPagePassword" xml:space="preserve">
-    <value>Пароль</value>
-  </data>
-  <data name="RegisterPageConfirmPassword" xml:space="preserve">
+  <data name="RegisterPageConfirmPass" xml:space="preserve">
     <value>Подтвердите пароль</value>
   </data>
-  <data name="RegisterPageSignUp" xml:space="preserve">
-    <value>Зарегистрироваться</value>
+  <data name="MainPageLevel" xml:space="preserve">
+    <value>Уровень</value>
+  </data>
+  <data name="MainPageCalendar" xml:space="preserve">
+    <value>Календарь</value>
+  </data>
+  <data name="CreateHeroTitle" xml:space="preserve">
+    <value>Добро пожаловать, новый игрок!</value>
+  </data>
+  <data name="CreateHeroCreateName" xml:space="preserve">
+    <value>Создайте имя вашему герою:</value>
+  </data>
+  <data name="CreateHeroCreateBtn" xml:space="preserve">
+    <value>Создать</value>
   </data>
 </root>

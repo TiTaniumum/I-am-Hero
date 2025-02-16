@@ -1,28 +1,30 @@
 ﻿<Page x:Class="I_am_Hero_WPF.Views.LoginPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:c="clr-namespace:I_am_Hero_WPF.Properties" 
       Title="Login Page">
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
 
-            <TextBlock Text="Авторизация" FontSize="20" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center" />
+            <TextBlock Text="{x:Static c:Resources.LoginPageTitle}" FontSize="20" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center" />
 
-            <TextBlock Text="Email" Margin="0,0,0,5" FontSize="14" />
+            <TextBlock Text="{x:Static c:Resources.AuthPageEmail}" Margin="0,0,0,5" FontSize="14" />
             <TextBox Text="{Binding Email}" Style="{StaticResource CustomTextBoxStyle}" />
 
-            <TextBlock Text="Пароль" Margin="0,10,0,5" FontSize="14" />
+            <TextBlock Text="{x:Static c:Resources.AuthPagePass}" Margin="0,10,0,5" FontSize="14" />
             <PasswordBox x:Name="PasswordBox" 
                          PasswordChanged="PasswordBox_PasswordChanged"
                          Style="{StaticResource CustomPasswordBoxStyle}" />
 
-            <Button Content="Войти" Command="{Binding LoginCommand}" 
+            <Button Content="{x:Static c:Resources.AuthPageSignIn}" Command="{Binding LoginCommand}" 
                     Style="{StaticResource CustomButtonStyle}" Margin="0,10,0,0"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
-                <TextBlock Text="Нет аккаунта?" VerticalAlignment="Center" FontSize="14"/>
-                <TextBlock Text=" Зарегистрироваться" Foreground="Blue" Cursor="Hand" FontSize="14"
+                <TextBlock Text="{x:Static c:Resources.LoginPageNoAcc}" VerticalAlignment="Center" FontSize="14"/>
+                <TextBlock Text="{x:Static c:Resources.AuthPageSignUp}" Foreground="Blue" Cursor="Hand" FontSize="14"
                            TextDecorations="Underline" MouseDown="GoToRegisterPage"/>
             </StackPanel>
+            <Button Content="Change Language" Click="ChangeLanguage_Click" />
         </StackPanel>
     </Grid>
 </Page>
