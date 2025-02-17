@@ -28,5 +28,21 @@ namespace I_am_Hero_API.Services
         {
             return context.cRarities.ToList();
         }
+        public IEnumerable<cDifficulty> GetAllcDifficulties()
+        {
+            return context.cDifficulties.ToList();
+        }
+        public IEnumerable<cQuestStatus> GetAllcQuestStatuses()
+        {
+            return context.cQuestStatuses.ToList();
+        }
+        public IEnumerable<cCalendarBehaviour> GetAllcCalendarBehaviours()
+        {
+            return context.cCalendarBehaviours.ToList();
+        }
+        public IEnumerable<cCalendarStatus> GetAllcCalendarStatuses()
+        {
+            return context.cCalendarStatuses.ToList();
+        }
     }
 }

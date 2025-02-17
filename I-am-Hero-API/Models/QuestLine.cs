@@ -8,10 +8,10 @@
         public string Title { get; set; } = null!;
         public string? Description { get; set; }
         public long Experinece { get; set; }
-        public long? CompletionQuestBehaviourId { get; set; }
-        public QuestBehaviour? CompletionQuestBehaviour { get; set; }
-        public long? FailureQuestBehaviourId { get; set; }
-        public QuestBehaviour? FailureQuestBehaviour { get; set; }
+        public long? CompletionBehaviourId { get; set; }
+        public Behaviour? CompletionBehaviour { get; set; }
+        public long? FailureBehaviourId { get; set; }
+        public Behaviour? FailureBehaviour { get; set; }
         public int? Priority { get; set; }
         public long? cDifficultyId { get; set; }
         public cDifficulty? cDifficulty { get; set; }

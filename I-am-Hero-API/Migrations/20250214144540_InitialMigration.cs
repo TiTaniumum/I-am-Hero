@@ -41,6 +41,36 @@ namespace I_am_Hero_API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "cCalendarBehaviours",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NameRu = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NameEn = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DescriptionRu = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DescriptionEn = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_cCalendarBehaviours", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "cCalendarStatuses",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NameRu = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NameEn = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_cCalendarStatuses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "cDifficulties",
                 columns: table => new
                 {
@@ -321,13 +351,12 @@ namespace I_am_Hero_API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "QuestBehaviours",
+                name: "Behaviours",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<long>(type: "bigint", nullable: false),
-                    HeroAttirbuteId = table.Column<long>(type: "bigint", nullable: true),
                     HeroAttributeId = table.Column<long>(type: "bigint", nullable: true),
                     HeroSkillId = table.Column<long>(type: "bigint", nullable: true),
                     Sign = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -335,21 +364,71 @@ namespace I_am_Hero_API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_QuestBehaviours", x => x.Id);
+                    table.PrimaryKey("PK_Behaviours", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_QuestBehaviours_HeroAttributes_HeroAttributeId",
+                        name: "FK_Behaviours_HeroAttributes_HeroAttributeId",
                         column: x => x.HeroAttributeId,
                         principalTable: "HeroAttributes",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_QuestBehaviours_HeroSkills_HeroSkillId",
+                        name: "FK_Behaviours_HeroSkills_HeroSkillId",
                         column: x => x.HeroSkillId,
                         principalTable: "HeroSkills",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_QuestBehaviours_Users_UserId",
+                        name: "FK_Behaviours_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Calendars",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<long>(type: "bigint", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Дата начала действия календаря"),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Дата окончания действия календаря"),
+                    RewardBehaviourId = table.Column<long>(type: "bigint", nullable: true),
+                    PenaltyBehaviourId = table.Column<long>(type: "bigint", nullable: true),
+                    IgnoreBehaviourId = table.Column<long>(type: "bigint", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()", comment: "Дата создания календаря. По умолчанию выставляется GETDATE()"),
+                    StopDate = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Дата прекращения работы календаря. Пользователь не сможет ставть attendance. Выставляется когда пользователь больше не хочет пользоваться календарем."),
+                    cCalendarBehaviourId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Calendars", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Calendars_Behaviours_IgnoreBehaviourId",
+                        column: x => x.IgnoreBehaviourId,
+                        principalTable: "Behaviours",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Calendars_Behaviours_PenaltyBehaviourId",
+                        column: x => x.PenaltyBehaviourId,
+                        principalTable: "Behaviours",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Calendars_Behaviours_RewardBehaviourId",
+                        column: x => x.RewardBehaviourId,
+                        principalTable: "Behaviours",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Calendars_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Calendars_cCalendarBehaviours_cCalendarBehaviourId",
+                        column: x => x.cCalendarBehaviourId,
+                        principalTable: "cCalendarBehaviours",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -364,8 +443,8 @@ namespace I_am_Hero_API.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Experinece = table.Column<long>(type: "bigint", nullable: false),
-                    CompletionQuestBehaviourId = table.Column<long>(type: "bigint", nullable: true),
-                    FailureQuestBehaviourId = table.Column<long>(type: "bigint", nullable: true),
+                    CompletionBehaviourId = table.Column<long>(type: "bigint", nullable: true),
+                    FailureBehaviourId = table.Column<long>(type: "bigint", nullable: true),
                     Priority = table.Column<int>(type: "int", nullable: true),
                     cDifficultyId = table.Column<long>(type: "bigint", nullable: true),
                     cQuestStatusId = table.Column<long>(type: "bigint", nullable: true),
@@ -377,14 +456,14 @@ namespace I_am_Hero_API.Migrations
                 {
                     table.PrimaryKey("PK_QuestLines", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_QuestLines_QuestBehaviours_CompletionQuestBehaviourId",
-                        column: x => x.CompletionQuestBehaviourId,
-                        principalTable: "QuestBehaviours",
+                        name: "FK_QuestLines_Behaviours_CompletionBehaviourId",
+                        column: x => x.CompletionBehaviourId,
+                        principalTable: "Behaviours",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_QuestLines_QuestBehaviours_FailureQuestBehaviourId",
-                        column: x => x.FailureQuestBehaviourId,
-                        principalTable: "QuestBehaviours",
+                        name: "FK_QuestLines_Behaviours_FailureBehaviourId",
+                        column: x => x.FailureBehaviourId,
+                        principalTable: "Behaviours",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_QuestLines_Users_UserId",
@@ -405,6 +484,32 @@ namespace I_am_Hero_API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CalendarAttendances",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CalendarId = table.Column<long>(type: "bigint", nullable: false),
+                    Date = table.Column<DateOnly>(type: "date", nullable: false),
+                    cCalendarStatusId = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CalendarAttendances", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CalendarAttendances_Calendars_CalendarId",
+                        column: x => x.CalendarId,
+                        principalTable: "Calendars",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CalendarAttendances_cCalendarStatuses_cCalendarStatusId",
+                        column: x => x.cCalendarStatusId,
+                        principalTable: "cCalendarStatuses",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Quests",
                 columns: table => new
                 {
@@ -414,8 +519,8 @@ namespace I_am_Hero_API.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Experinece = table.Column<long>(type: "bigint", nullable: false),
-                    CompletionQuestBehaviourId = table.Column<long>(type: "bigint", nullable: true),
-                    FailureQuestBehaviourId = table.Column<long>(type: "bigint", nullable: true),
+                    CompletionBehaviourId = table.Column<long>(type: "bigint", nullable: true),
+                    FailureBehaviourId = table.Column<long>(type: "bigint", nullable: true),
                     Priority = table.Column<int>(type: "int", nullable: true),
                     cDifficultyId = table.Column<long>(type: "bigint", nullable: true),
                     cQuestStatusId = table.Column<long>(type: "bigint", nullable: true),
@@ -428,14 +533,14 @@ namespace I_am_Hero_API.Migrations
                 {
                     table.PrimaryKey("PK_Quests", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Quests_QuestBehaviours_CompletionQuestBehaviourId",
-                        column: x => x.CompletionQuestBehaviourId,
-                        principalTable: "QuestBehaviours",
+                        name: "FK_Quests_Behaviours_CompletionBehaviourId",
+                        column: x => x.CompletionBehaviourId,
+                        principalTable: "Behaviours",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Quests_QuestBehaviours_FailureQuestBehaviourId",
-                        column: x => x.FailureQuestBehaviourId,
-                        principalTable: "QuestBehaviours",
+                        name: "FK_Quests_Behaviours_FailureBehaviourId",
+                        column: x => x.FailureBehaviourId,
+                        principalTable: "Behaviours",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Quests_QuestLines_QuestLineId",
@@ -478,6 +583,26 @@ namespace I_am_Hero_API.Migrations
                 {
                     { 1L, "Numerical", "Численный" },
                     { 2L, "State", "Состояние" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "cCalendarBehaviours",
+                columns: new[] { "Id", "DescriptionEn", "DescriptionRu", "NameEn", "NameRu" },
+                values: new object[,]
+                {
+                    { 1L, "On unmarked day, user will receive reward", "В день без отметки пользователь получит награду", "Positive", "Положительное" },
+                    { 2L, "On unmarked day, user will receive penalty", "В день без отметки пользователь получит штраф", "Negative", "Отрицательное" },
+                    { 3L, "On unmarked day, status will remain unmarked", "В день без отметки статус останется неотмеченным", "Neutral", "Нейтральное" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "cCalendarStatuses",
+                columns: new[] { "Id", "NameEn", "NameRu" },
+                values: new object[,]
+                {
+                    { 1L, "Marked", "Отмечено" },
+                    { 2L, "Failed", "Провалено" },
+                    { 3L, "Not marked", "Не отмечено" }
                 });
 
             migrationBuilder.InsertData(
@@ -543,6 +668,56 @@ namespace I_am_Hero_API.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Behaviours_HeroAttributeId",
+                table: "Behaviours",
+                column: "HeroAttributeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Behaviours_HeroSkillId",
+                table: "Behaviours",
+                column: "HeroSkillId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Behaviours_UserId",
+                table: "Behaviours",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CalendarAttendances_CalendarId",
+                table: "CalendarAttendances",
+                column: "CalendarId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CalendarAttendances_cCalendarStatusId",
+                table: "CalendarAttendances",
+                column: "cCalendarStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Calendars_cCalendarBehaviourId",
+                table: "Calendars",
+                column: "cCalendarBehaviourId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Calendars_IgnoreBehaviourId",
+                table: "Calendars",
+                column: "IgnoreBehaviourId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Calendars_PenaltyBehaviourId",
+                table: "Calendars",
+                column: "PenaltyBehaviourId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Calendars_RewardBehaviourId",
+                table: "Calendars",
+                column: "RewardBehaviourId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Calendars_UserId",
+                table: "Calendars",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_HeroAchievements_cRarityId",
                 table: "HeroAchievements",
                 column: "cRarityId");
@@ -599,29 +774,14 @@ namespace I_am_Hero_API.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_QuestBehaviours_HeroAttributeId",
-                table: "QuestBehaviours",
-                column: "HeroAttributeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_QuestBehaviours_HeroSkillId",
-                table: "QuestBehaviours",
-                column: "HeroSkillId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_QuestBehaviours_UserId",
-                table: "QuestBehaviours",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_QuestLines_cDifficultyId",
                 table: "QuestLines",
                 column: "cDifficultyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_QuestLines_CompletionQuestBehaviourId",
+                name: "IX_QuestLines_CompletionBehaviourId",
                 table: "QuestLines",
-                column: "CompletionQuestBehaviourId");
+                column: "CompletionBehaviourId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_QuestLines_cQuestStatusId",
@@ -629,9 +789,9 @@ namespace I_am_Hero_API.Migrations
                 column: "cQuestStatusId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_QuestLines_FailureQuestBehaviourId",
+                name: "IX_QuestLines_FailureBehaviourId",
                 table: "QuestLines",
-                column: "FailureQuestBehaviourId");
+                column: "FailureBehaviourId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_QuestLines_UserId",
@@ -644,9 +804,9 @@ namespace I_am_Hero_API.Migrations
                 column: "cDifficultyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Quests_CompletionQuestBehaviourId",
+                name: "IX_Quests_CompletionBehaviourId",
                 table: "Quests",
-                column: "CompletionQuestBehaviourId");
+                column: "CompletionBehaviourId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Quests_cQuestStatusId",
@@ -654,9 +814,9 @@ namespace I_am_Hero_API.Migrations
                 column: "cQuestStatusId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Quests_FailureQuestBehaviourId",
+                name: "IX_Quests_FailureBehaviourId",
                 table: "Quests",
-                column: "FailureQuestBehaviourId");
+                column: "FailureBehaviourId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Quests_QuestLineId",
@@ -683,6 +843,9 @@ namespace I_am_Hero_API.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "CalendarAttendances");
+
+            migrationBuilder.DropTable(
                 name: "HeroAchievements");
 
             migrationBuilder.DropTable(
@@ -704,6 +867,12 @@ namespace I_am_Hero_API.Migrations
                 name: "Tokens");
 
             migrationBuilder.DropTable(
+                name: "Calendars");
+
+            migrationBuilder.DropTable(
+                name: "cCalendarStatuses");
+
+            migrationBuilder.DropTable(
                 name: "cRarities");
 
             migrationBuilder.DropTable(
@@ -713,7 +882,10 @@ namespace I_am_Hero_API.Migrations
                 name: "Applications");
 
             migrationBuilder.DropTable(
-                name: "QuestBehaviours");
+                name: "cCalendarBehaviours");
+
+            migrationBuilder.DropTable(
+                name: "Behaviours");
 
             migrationBuilder.DropTable(
                 name: "cDifficulties");

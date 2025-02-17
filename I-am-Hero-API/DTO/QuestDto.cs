@@ -9,8 +9,8 @@ namespace I_am_Hero_API.DTO
         public string? Title { get; set; }
         public string? Description { get; set; }
         public long? Experinece { get; set; }
-        public QuestBehaviourDto? CompletionQuestBehaviour { get; set; }
-        public QuestBehaviourDto? FailureQuestBehaviour { get; set; }
+        public BehaviourDto? CompletionBehaviour { get; set; }
+        public BehaviourDto? FailureBehaviour { get; set; }
         public int? Priority { get; set; }
         public long? cDifficultyId { get; set; }
         public long? cQuestStatusId { get; set; }
@@ -31,10 +31,10 @@ namespace I_am_Hero_API.DTO
             Title = quest.Title;
             Description = quest.Description;
             Experinece = quest.Experinece;
-            if (quest.CompletionQuestBehaviour != null)
-                CompletionQuestBehaviour = new QuestBehaviourDto(quest.CompletionQuestBehaviour);
-            if (quest.FailureQuestBehaviour != null)
-                FailureQuestBehaviour = new QuestBehaviourDto(quest.FailureQuestBehaviour);
+            if (quest.CompletionBehaviour != null)
+                CompletionBehaviour = new BehaviourDto(quest.CompletionBehaviour);
+            if (quest.FailureBehaviour != null)
+                FailureBehaviour = new BehaviourDto(quest.FailureBehaviour);
             Priority = quest.Priority;
             cDifficultyId = quest.cDifficultyId;
             cQuestStatusId = quest.cQuestStatusId;
@@ -44,16 +44,16 @@ namespace I_am_Hero_API.DTO
             ArchiveDate = quest.ArchiveDate;
         }
 
-        public QuestDto(Quest quest, QuestBehaviour? completion, QuestBehaviour? failure)
+        public QuestDto(Quest quest, Behaviour? completion, Behaviour? failure)
         {
             Id = quest.Id;
             Title = quest.Title;
             Description = quest.Description;
             Experinece = quest.Experinece;
             if(completion is not null)
-                CompletionQuestBehaviour = new QuestBehaviourDto(completion);
+                CompletionBehaviour = new BehaviourDto(completion);
             if(failure is not null)
-                FailureQuestBehaviour = new QuestBehaviourDto(failure);
+                FailureBehaviour = new BehaviourDto(failure);
             Priority = quest.Priority;
             cDifficultyId = quest.cDifficultyId;
             cQuestStatusId = quest.cQuestStatusId;

@@ -22,6 +22,7 @@ namespace I_am_Hero_API.Models
         public ICollection<HeroAchievement> HeroAchievements { get; set; } = new List<HeroAchievement>();
         public ICollection<Quest> Quests { get; set; } = new List<Quest>();
         public ICollection<QuestLine> QuestsLines { get; set; } = new List<QuestLine>();
-        public ICollection<QuestBehaviour> QuestBehaviours { get; set; } = new List<QuestBehaviour>();
+        public ICollection<Behaviour> Behaviours { get; set; } = new List<Behaviour>();
+        public ICollection<Calendar> Calendars { get; set; } = new List<Calendar>();
     }
 }

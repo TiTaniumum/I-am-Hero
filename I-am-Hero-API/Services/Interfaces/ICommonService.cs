@@ -8,5 +8,9 @@ namespace I_am_Hero_API.Services.Interfaces
         IEnumerable<cAttributeType> GetAllcAttributeTypes();
         IEnumerable<Application> GetAllApplications();
         IEnumerable<cRarity> GetAllcRarities();
+        IEnumerable<cDifficulty> GetAllcDifficulties();
+        IEnumerable<cQuestStatus> GetAllcQuestStatuses();
+        IEnumerable<cCalendarBehaviour> GetAllcCalendarBehaviours();
+        IEnumerable<cCalendarStatus> GetAllcCalendarStatuses();
     }
 }
