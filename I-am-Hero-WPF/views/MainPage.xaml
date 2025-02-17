@@ -55,20 +55,31 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!-- Статы -->
-                <Border Grid.Column="1" Background="White" CornerRadius="4" Margin="20,0,0,0" Padding="10">
-                    <StackPanel>
-                        <TextBlock Text="Характеристики" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
-                        <ListBox>
-                            <ListBoxItem Content="Stats 1" />
-                            <ProgressBar Minimum="0" Maximum="100" Value="{Binding Experience}" Height="20" Width="200" Margin="0,5,0,0"/>
-                            <ListBoxItem Content="Stats 2" />
-                            <ProgressBar Minimum="0" Maximum="100" Value="{Binding Experience}" Height="20" Width="200" Margin="0,5,0,0"/>
-                            <ListBoxItem Content="Stats 3" />
-                            <ProgressBar Minimum="0" Maximum="100" Value="{Binding Experience}" Height="20" Width="200" Margin="0,5,0,0"/>
-                        </ListBox>
+                <!-- Skills -->
+                <StackPanel Orientation="Vertical" Grid.Column="1" Margin="20">
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <TextBlock Text="Навыки" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <Button Content="+" 
+                            Command="{Binding AddSkillCommand}" 
+                            Width="20"
+                            Height="20"
+                            Margin="10,0,0,10"/>
                     </StackPanel>
-                </Border>
+                    <Border Background="White" CornerRadius="4" Padding="10">
+                        <ListView ItemsSource="{Binding Skills}" Margin="10">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="5">
+                                        <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="Bold"
+                                   ToolTip="{Binding Description}" Width="150"/>
+                                        <ProgressBar Width="200" Height="20" Value="{Binding Experience}" Maximum="100"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Border>
+                </StackPanel>
+
             </Grid>
 
 
@@ -104,14 +115,28 @@
                 <!-- Правый блок: Квесты -->
                 <Border Grid.Column="2" Background="White" CornerRadius="4" Margin="5" Padding="10">
                     <StackPanel>
-                        <TextBlock Text="Общие квесты" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
-                        <ListBox>
-                            <ListBoxItem Content="Квест A: Собрать 100 монет" />
-                            <ListBoxItem Content="Квест B: Победить босса" />
-                            <ListBoxItem Content="Квест C: Найти секретное место" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Общие квесты" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                            <Button Content="+" 
+                                    Command="{Binding AddQuestCommand}" 
+                                    Width="20"
+                                    Height="20"
+                                    Margin="10,0,0,10"/>
+                        </StackPanel>
+                        
+                        <ListBox ItemsSource="{Binding Quests}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                        <TextBlock Text="{Binding Description}" FontStyle="Italic"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
                         </ListBox>
                     </StackPanel>
                 </Border>
+
             </Grid>
         </Grid>
     </Grid>

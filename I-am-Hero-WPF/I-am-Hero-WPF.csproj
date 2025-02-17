@@ -120,6 +120,10 @@
     </ApplicationDefinition>
     <Compile Include="Command\RelayCommand.cs" />
     <Compile Include="Models\Hero.cs" />
+    <Compile Include="Models\HeroSkill.cs" />
+    <Compile Include="Models\HeroSkillsResponse.cs" />
+    <Compile Include="Models\Quest.cs" />
+    <Compile Include="Models\QuestBehaviour.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -133,21 +137,29 @@
     <Compile Include="Services\ApiService.cs" />
     <Compile Include="Services\AuthManager.cs" />
     <Compile Include="Services\TokenStorage.cs" />
+    <Compile Include="viewmodels\AddQuestViewModel.cs" />
+    <Compile Include="viewmodels\AddSkillViewModel.cs" />
     <Compile Include="viewmodels\CreateHeroViewModel.cs" />
     <Compile Include="viewmodels\LoginViewModel.cs" />
     <Compile Include="viewmodels\MainViewModel.cs" />
     <Compile Include="viewmodels\RegisterViewModel.cs" />
     <Compile Include="viewmodels\ViewModelBase.cs" />
-    <Compile Include="views\CreateHeroPage.xaml.cs">
+    <Compile Include="Views\AddQuestPage.xaml.cs">
+      <DependentUpon>AddQuestPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AddSkillPage.xaml.cs">
+      <DependentUpon>AddSkillPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CreateHeroPage.xaml.cs">
       <DependentUpon>CreateHeroPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="views\LoginPage.xaml.cs">
+    <Compile Include="Views\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="views\MainPage.xaml.cs">
+    <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="views\RegisterPage.xaml.cs">
+    <Compile Include="Views\RegisterPage.xaml.cs">
       <DependentUpon>RegisterPage.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
@@ -162,19 +174,27 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="views\CreateHeroPage.xaml">
+    <Page Include="Views\AddQuestPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="views\LoginPage.xaml">
+    <Page Include="Views\AddSkillPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CreateHeroPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LoginPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="views\MainPage.xaml">
+    <Page Include="Views\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="views\RegisterPage.xaml">
+    <Page Include="Views\RegisterPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
