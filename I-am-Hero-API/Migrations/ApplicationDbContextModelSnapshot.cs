@@ -497,7 +497,7 @@ namespace I_am_Hero_API.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("Experinece")
+                    b.Property<long>("Experience")
                         .HasColumnType("bigint");
 
                     b.Property<long?>("FailureBehaviourId")
@@ -564,7 +564,7 @@ namespace I_am_Hero_API.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("Experinece")
+                    b.Property<long>("Experience")
                         .HasColumnType("bigint");
 
                     b.Property<long?>("FailureBehaviourId")
