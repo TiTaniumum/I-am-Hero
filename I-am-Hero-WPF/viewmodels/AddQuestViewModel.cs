@@ -7,7 +7,7 @@ using I_am_Hero_WPF.Views;
 public class AddQuestViewModel : ViewModelBase
 {
     private readonly ApiService _apiService;
-
+    
     private string _title;
     private string _description;
     private int _experience;
