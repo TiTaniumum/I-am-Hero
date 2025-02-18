@@ -99,6 +99,20 @@ namespace I_am_Hero_API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "cPopupIntervals",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NameRu = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NameEn = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_cPopupIntervals", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "cQuestStatuses",
                 columns: table => new
                 {
@@ -140,6 +154,28 @@ namespace I_am_Hero_API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ExceptionLogs",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<long>(type: "bigint", nullable: true),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExceptionMessage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StackTrace = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExceptionDateTime = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExceptionLogs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ExceptionLogs_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -434,6 +470,41 @@ namespace I_am_Hero_API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "HeroHabbits",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<long>(type: "bigint", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CheckinBehaviourId = table.Column<long>(type: "bigint", nullable: true),
+                    cPopupIntervalId = table.Column<long>(type: "bigint", nullable: false),
+                    LastUpdateDateTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HeroHabbits", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_HeroHabbits_Behaviours_CheckinBehaviourId",
+                        column: x => x.CheckinBehaviourId,
+                        principalTable: "Behaviours",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_HeroHabbits_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_HeroHabbits_cPopupIntervals_cPopupIntervalId",
+                        column: x => x.cPopupIntervalId,
+                        principalTable: "cPopupIntervals",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "QuestLines",
                 columns: table => new
                 {
@@ -442,7 +513,7 @@ namespace I_am_Hero_API.Migrations
                     UserId = table.Column<long>(type: "bigint", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Experinece = table.Column<long>(type: "bigint", nullable: false),
+                    Experience = table.Column<long>(type: "bigint", nullable: false),
                     CompletionBehaviourId = table.Column<long>(type: "bigint", nullable: true),
                     FailureBehaviourId = table.Column<long>(type: "bigint", nullable: true),
                     Priority = table.Column<int>(type: "int", nullable: true),
@@ -518,7 +589,7 @@ namespace I_am_Hero_API.Migrations
                     UserId = table.Column<long>(type: "bigint", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Experinece = table.Column<long>(type: "bigint", nullable: false),
+                    Experience = table.Column<long>(type: "bigint", nullable: false),
                     CompletionBehaviourId = table.Column<long>(type: "bigint", nullable: true),
                     FailureBehaviourId = table.Column<long>(type: "bigint", nullable: true),
                     Priority = table.Column<int>(type: "int", nullable: true),
@@ -630,6 +701,18 @@ namespace I_am_Hero_API.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "cPopupIntervals",
+                columns: new[] { "Id", "NameEn", "NameRu" },
+                values: new object[,]
+                {
+                    { 1L, "Hourly", "Почасовой" },
+                    { 2L, "Every half of day", "Каждые полдня" },
+                    { 3L, "Daily", "Ежедневно" },
+                    { 4L, "Weekly", "Еженедельно" },
+                    { 5L, "Monthly", "Ежемесячно" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "cQuestStatuses",
                 columns: new[] { "Id", "NameEn", "NameRu" },
                 values: new object[,]
@@ -718,6 +801,11 @@ namespace I_am_Hero_API.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ExceptionLogs_UserId",
+                table: "ExceptionLogs",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_HeroAchievements_cRarityId",
                 table: "HeroAchievements",
                 column: "cRarityId");
@@ -757,6 +845,21 @@ namespace I_am_Hero_API.Migrations
                 table: "Heroes",
                 column: "UserId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HeroHabbits_CheckinBehaviourId",
+                table: "HeroHabbits",
+                column: "CheckinBehaviourId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HeroHabbits_cPopupIntervalId",
+                table: "HeroHabbits",
+                column: "cPopupIntervalId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HeroHabbits_UserId",
+                table: "HeroHabbits",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HeroSkills_cLevelCalculationTypeId",
@@ -846,6 +949,9 @@ namespace I_am_Hero_API.Migrations
                 name: "CalendarAttendances");
 
             migrationBuilder.DropTable(
+                name: "ExceptionLogs");
+
+            migrationBuilder.DropTable(
                 name: "HeroAchievements");
 
             migrationBuilder.DropTable(
@@ -856,6 +962,9 @@ namespace I_am_Hero_API.Migrations
 
             migrationBuilder.DropTable(
                 name: "Heroes");
+
+            migrationBuilder.DropTable(
+                name: "HeroHabbits");
 
             migrationBuilder.DropTable(
                 name: "HeroStatusEffects");
@@ -874,6 +983,9 @@ namespace I_am_Hero_API.Migrations
 
             migrationBuilder.DropTable(
                 name: "cRarities");
+
+            migrationBuilder.DropTable(
+                name: "cPopupIntervals");
 
             migrationBuilder.DropTable(
                 name: "QuestLines");

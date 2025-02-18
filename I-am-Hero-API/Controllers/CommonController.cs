@@ -63,5 +63,11 @@ namespace I_am_Hero_API.Controllers
         {
             return Ok(commonService.GetAllcCalendarStatuses());
         }
+        // api/Common/all-cPopupInterval
+        [HttpGet("all-cPopupInterval")]
+        public ActionResult<IEnumerable<cPopupInterval>> GetAllcPopupIntervals()
+        {
+            return Ok(commonService.GetAllcPopupIntervals());
+        }
     }
 }

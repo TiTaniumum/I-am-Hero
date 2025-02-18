@@ -12,5 +12,6 @@ namespace I_am_Hero_API.Services.Interfaces
         IEnumerable<cQuestStatus> GetAllcQuestStatuses();
         IEnumerable<cCalendarBehaviour> GetAllcCalendarBehaviours();
         IEnumerable<cCalendarStatus> GetAllcCalendarStatuses();
+        IEnumerable<cPopupInterval> GetAllcPopupIntervals();
     }
 }

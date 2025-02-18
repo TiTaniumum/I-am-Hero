@@ -9,6 +9,7 @@ namespace I_am_Hero_API.Services.Interfaces
         void SetResult(ActionResult<TokenDto> result);
         ActionResult<TokenDto>? GetResultOrDefault();
         void SetUser(User user);
+        User GetUser();
         Task<IdDto> CreateHero(string heroName);
         Task<HeroDto> GetHero();
         Task EditHero(HeroDto dto);
@@ -55,5 +56,10 @@ namespace I_am_Hero_API.Services.Interfaces
         Task DeleteCalendar(long id);
         Task<CalendarAttendanceDto> AttendCalendar(CalendarAttendanceDto dto);
         Task<CalendarAttendancesDto> GetCalendarAttendances(long calendarId, DateOnly? dateFrom, DateOnly? dateTo);
+        Task<IdDto> CreateHeroHabbit(HeroHabbitDto dto);
+        Task<HeroHabbitsDto> GetHeroHabbits(long? id);
+        Task EditHeroHabbit(HeroHabbitDto dto);
+        Task DeleteHeroHabbit(long id);
+        Task CheckinHeroHabbit(long id);
     }
 }
