@@ -7,7 +7,7 @@
         public User User { get; set; } = null!;
         public string Title { get; set; } = null!;
         public string? Description { get; set; }
-        public long Experinece { get; set; }
+        public long Experience { get; set; }
         public long? CompletionBehaviourId { get; set; }
         public Behaviour? CompletionBehaviour { get; set; }
         public long? FailureBehaviourId { get; set; }

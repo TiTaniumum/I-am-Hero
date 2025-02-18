@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace I_am_Hero_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250215083234_InitialMigration")]
+    [Migration("20250218140545_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -500,7 +500,7 @@ namespace I_am_Hero_API.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("Experinece")
+                    b.Property<long>("Experience")
                         .HasColumnType("bigint");
 
                     b.Property<long?>("FailureBehaviourId")
@@ -567,7 +567,7 @@ namespace I_am_Hero_API.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("Experinece")
+                    b.Property<long>("Experience")
                         .HasColumnType("bigint");
 
                     b.Property<long?>("FailureBehaviourId")

@@ -86,7 +86,7 @@ namespace I_am_Hero_API.Services
                 UserId = user.Id,
                 Title = dto.Title ?? "",
                 Description = dto.Description,
-                Experinece = dto.Experinece ?? 0,
+                Experience = dto.Experience ?? 0,
                 CompletionBehaviour = completion,
                 FailureBehaviour = failure,
                 Priority = dto.Priority ?? 1,
@@ -252,8 +252,6 @@ namespace I_am_Hero_API.Services
         #region HeroSkill
         public async Task<IdDto> CreateHeroSkill(HeroSkillDto dto)
         {
-            if (dto.Id == null)
-                throw new NullReferenceException("Id cannot be null when creating HeroSkill");
             if (dto.Name == null)
                 throw new NullReferenceException("Name cannot be null when creating HeroSkill");
             HeroSkill skill = new HeroSkill
@@ -469,8 +467,8 @@ namespace I_am_Hero_API.Services
                 quest.Title = dto.Title;
             if (dto.Description != null)
                 quest.Description = dto.Description;
-            if (dto.Experinece != null)
-                quest.Experinece = dto.Experinece.Value;
+            if (dto.Experience != null)
+                quest.Experience = dto.Experience.Value;
             if (dto.CompletionBehaviour != null && !EditBehaviourObj(quest.CompletionBehaviour, dto.CompletionBehaviour))
                 quest.CompletionBehaviour = CreateBehaviourObj(dto.CompletionBehaviour);
             if (dto.FailureBehaviour != null && !EditBehaviourObj(quest.FailureBehaviour, dto.FailureBehaviour))
@@ -523,7 +521,7 @@ namespace I_am_Hero_API.Services
                 UserId = user.Id,
                 Title = dto.Title,
                 Description = dto.Description,
-                Experinece = dto.Experinece ?? 0,
+                Experience = dto.Experience ?? 0,
                 CompletionBehaviour = completion,
                 FailureBehaviour = failure,
                 Priority = dto.Priority ?? 1,
@@ -574,8 +572,8 @@ namespace I_am_Hero_API.Services
                 questLine.Title = dto.Title;
             if (dto.Description != null)
                 questLine.Description = dto.Description;
-            if (dto.Experinece != null)
-                questLine.Experinece = dto.Experinece.Value;
+            if (dto.Experience != null)
+                questLine.Experience = dto.Experience.Value;
             if (dto.CompletionBehaviour != null && !EditBehaviourObj(questLine.CompletionBehaviour, dto.CompletionBehaviour))
                 questLine.CompletionBehaviour = CreateBehaviourObj(dto.CompletionBehaviour);
             if (dto.FailureBehaviour != null && !EditBehaviourObj(questLine.FailureBehaviour, dto.FailureBehaviour))
