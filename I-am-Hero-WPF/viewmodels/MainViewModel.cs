@@ -10,6 +10,11 @@ using I_am_Hero_WPF.Views;
 
 public class MainViewModel : ViewModelBase
 {
+    public ObservableCollection<double> VerticalLines { get; set; }
+    public ObservableCollection<double> HorizontalLines { get; set; }
+
+
+
     public RelayCommand LogoutCommand { get; }
     public RelayCommand AddSkillCommand { get; }
     public RelayCommand AddQuestCommand { get; }
@@ -51,6 +56,23 @@ public class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
+        VerticalLines = new ObservableCollection<double>();
+        HorizontalLines = new ObservableCollection<double>();
+
+        // 8 вертикальных линий
+        for (int i = 1; i <= 8; i++)
+        {
+            VerticalLines.Add(i * 100); // Через каждые 100px
+        }
+
+        // 10 горизонтальных линий (пример)
+        for (int i = 1; i <= 10; i++)
+        {
+            HorizontalLines.Add(i * 80); // Через каждые 80px
+        }
+
+
+
         _apiService = new ApiService();
         Skills = new ObservableCollection<HeroSkill>();
 
@@ -98,7 +120,7 @@ public class MainViewModel : ViewModelBase
         }
 
         await LoadSkills(); 
-        await LoadQuests(); 
+        //await LoadQuests(); 
     }
 
     private async Task LoadSkills()

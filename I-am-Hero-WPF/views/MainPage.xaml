@@ -6,138 +6,125 @@
       Title="Main Page">
 
     <Grid Background="{DynamicResource MaterialDesignPaper}">
-        <!-- Верхняя панель для кнопки выхода -->
+        <!-- Основная сетка -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Верхняя панель: кнопка выхода справа -->
+        <!-- Верхняя панель -->
         <Grid Grid.Row="0" Margin="10">
             <Label Content="I am Hero" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource PrimaryHueMidBrush}" />
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
-                <!-- Кнопка выхода -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <TextBlock Text="Log out" VerticalAlignment="Center" Margin="5,0,0,0" FontSize="14"/>
                 <Button Command="{Binding LogoutCommand}"
-                Style="{StaticResource MaterialDesignIconButton}" 
-                ToolTip="Выход" 
-                Width="40" Height="40">
-                    <materialDesign:PackIcon Kind="Close" Width="24" Height="24" />
+                        Style="{StaticResource MaterialDesignIconButton}" 
+                        ToolTip="Выход" 
+                        Width="40" Height="40">
+                    <materialDesign:PackIcon Kind="Close" Width="24" Height="24"/>
                 </Button>
             </StackPanel>
         </Grid>
 
-        <!-- Основное содержимое -->
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <!-- Профиль и статы -->
-            <Grid Grid.Row="0" Margin="20">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <!-- Профиль -->
-                    <ColumnDefinition Width="Auto"/>
-                    <!-- Статы -->
-                </Grid.ColumnDefinitions>
-
-                <!-- Профиль -->
-                <StackPanel Orientation="Horizontal" Grid.Column="0">
-                    <materialDesign:PackIcon Kind="AccountCircle" Width="48" Height="48"
-                                 Foreground="{DynamicResource PrimaryHueMidBrush}" />
-                    <StackPanel Orientation="Vertical" Margin="10,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding HeroName}" FontSize="20" FontWeight="Bold"/>
-                        <TextBlock Text="{x:Static c:Resources.MainPageLevel}" FontSize="14"/>
-                        <ProgressBar Minimum="0" Maximum="100" Value="{Binding Experience}" Height="20" Width="200" Margin="0,5,0,0"/>
-                        <TextBlock Text="{Binding Experience, StringFormat='{}{0}/100 exp'}" FontSize="12" Foreground="Gray"/>
+        <!-- Динамический Dashboard -->
+        <Canvas Grid.Row="1" Background="#f2f2f2" Name="MainCanvas" Loaded="MainCanvas_Loaded" SizeChanged="MainCanvas_SizeChanged">
+            <!-- Блок: Профиль -->
+            <Border Canvas.Left="50" Canvas.Top="50" Width="250" Height="150"
+                        Canvas.ZIndex="2"
+                    Background="White" CornerRadius="8" Padding="10"
+                    MouseLeftButtonDown="Block_MouseLeftButtonDown"
+                    MouseMove="Block_MouseMove"
+                    MouseLeftButtonUp="Block_MouseLeftButtonUp">
+                <Grid>
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="AccountCircle" Width="48" Height="48"
+                                             Foreground="{DynamicResource PrimaryHueMidBrush}" />
+                        <StackPanel Orientation="Vertical" Margin="10,0,0,0">
+                            <TextBlock Text="{Binding HeroName}" FontSize="20" FontWeight="Bold"/>
+                            <ProgressBar Minimum="0" Maximum="100" Value="{Binding Experience}" Height="20" Width="200"/>
+                            <TextBlock Text="{Binding Experience, StringFormat='{}{0}/100 exp'}" FontSize="12" Foreground="Gray"/>
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
 
-                <!-- Skills -->
-                <StackPanel Orientation="Vertical" Grid.Column="1" Margin="20">
-                    <StackPanel Orientation="Horizontal" Margin="5">
-                        <TextBlock Text="Навыки" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
-                        <Button Content="+" 
-                            Command="{Binding AddSkillCommand}" 
-                            Width="20"
-                            Height="20"
-                            Margin="10,0,0,10"/>
-                    </StackPanel>
-                    <Border Background="White" CornerRadius="4" Padding="10">
-                        <ListView ItemsSource="{Binding Skills}" Margin="10">
+                    <Thumb Width="10" Height="10" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                       DragDelta="Thumb_DragDelta" Background="Gray"/>
+                </Grid>
+            </Border>
+
+            <!-- Блок: Навыки -->
+            <Border Canvas.Left="350" Canvas.Top="50" Width="300" Height="200" Canvas.ZIndex="2"
+                    Background="White" CornerRadius="8" Padding="10"
+                    MouseLeftButtonDown="Block_MouseLeftButtonDown"
+                    MouseMove="Block_MouseMove"
+                    MouseLeftButtonUp="Block_MouseLeftButtonUp">
+                <Grid>
+
+                    <StackPanel>
+                        <TextBlock Text="Навыки" FontSize="16" FontWeight="Bold"/>
+                        <Button Content="+" Command="{Binding AddSkillCommand}" Width="20" Height="20"/>
+                        <ListView ItemsSource="{Binding Skills}">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" Margin="5">
-                                        <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="Bold"
-                                   ToolTip="{Binding Description}" Width="150"/>
-                                        <ProgressBar Width="200" Height="20" Value="{Binding Experience}" Maximum="100"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Name}" Width="150"/>
+                                        <ProgressBar Width="150" Height="20" Value="{Binding Experience}" Maximum="100"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
-                    </Border>
-                </StackPanel>
-
-            </Grid>
-
-
-            <!-- Основное содержимое: три блока -->
-            <Grid Grid.Row="1" Margin="20">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <!-- Левый блок: Календари -->
-                <Border Grid.Column="0" Background="White" CornerRadius="4" Margin="5" Padding="10">
-                    <StackPanel>
-                        <TextBlock Text="{x:Static c:Resources.MainPageCalendar}" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
-                        <!-- Временный Стандартный Calendar -->
-                        <Calendar DisplayMode="Month" IsTodayHighlighted="True" />
                     </StackPanel>
-                </Border>
 
-                <!-- Центральный блок: Дейлики -->
-                <Border Grid.Column="1" Background="White" CornerRadius="4" Margin="5" Padding="10">
+                    <Thumb Width="10" Height="10" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                       DragDelta="Thumb_DragDelta" Background="Gray"/>
+                </Grid>
+            </Border>
+
+            <!-- Блок: Календарь -->
+            <Border Canvas.Left="50" Canvas.Top="250" Width="300" Height="300" Canvas.ZIndex="2"
+                    Background="White" CornerRadius="8" Padding="10"
+                    MouseLeftButtonDown="Block_MouseLeftButtonDown"
+                    MouseMove="Block_MouseMove"
+                    MouseLeftButtonUp="Block_MouseLeftButtonUp">
+                <Grid>
                     <StackPanel>
-                        <TextBlock Text="Ежедневные квесты" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
-                        <ListBox>
-                            <ListBoxItem Content="Квест 1: Выполнить задачу A" />
-                            <ListBoxItem Content="Квест 2: Выполнить задачу B" />
-                            <ListBoxItem Content="Квест 3: Выполнить задачу C" />
-                        </ListBox>
+                        <TextBlock Text="Календарь" FontSize="16" FontWeight="Bold"/>
+                        <Calendar DisplayMode="Month" IsTodayHighlighted="True"/>
                     </StackPanel>
-                </Border>
 
-                <!-- Правый блок: Квесты -->
-                <Border Grid.Column="2" Background="White" CornerRadius="4" Margin="5" Padding="10">
+                    <Thumb Width="10" Height="10" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                       DragDelta="Thumb_DragDelta" Background="Gray"/>
+                </Grid>
+            </Border>
+
+            <!-- Блок: Квесты -->
+            <Border Canvas.Left="400" Canvas.Top="250" Width="300" Height="300" Canvas.ZIndex="2"
+                    Background="White" CornerRadius="8" Padding="10"
+                    MouseLeftButtonDown="Block_MouseLeftButtonDown"
+                    MouseMove="Block_MouseMove"
+                    MouseLeftButtonUp="Block_MouseLeftButtonUp">
+                <Grid>
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Общие квесты" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
-                            <Button Content="+" 
-                                    Command="{Binding AddQuestCommand}" 
-                                    Width="20"
-                                    Height="20"
-                                    Margin="10,0,0,10"/>
+                            <TextBlock Text="Квесты" FontSize="16" FontWeight="Bold"/>
+                            <Button Content="+" Command="{Binding AddQuestCommand}" Width="20" Height="20"/>
                         </StackPanel>
-                        
-                        <ListBox ItemsSource="{Binding Quests}">
-                            <ListBox.ItemTemplate>
+                        <ListView ItemsSource="{Binding Quests}">
+                            <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel>
                                         <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
                                         <TextBlock Text="{Binding Description}" FontStyle="Italic"/>
                                     </StackPanel>
                                 </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
+                            </ListView.ItemTemplate>
+                        </ListView>
                     </StackPanel>
-                </Border>
 
-            </Grid>
-        </Grid>
+                    <Thumb Width="10" Height="10" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                       DragDelta="Thumb_DragDelta" Background="Gray"/>
+                </Grid>
+            </Border>
+
+        </Canvas>
     </Grid>
 </Page>
