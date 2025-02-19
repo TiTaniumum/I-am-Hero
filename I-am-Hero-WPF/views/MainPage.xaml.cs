@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,11 +15,16 @@ namespace I_am_Hero_WPF.Views
         private bool _isDragging = false;
         private Point _startPoint;
         private UIElement _draggedElement;
+        private Dictionary<UIElement, Point> _relativePositions = new Dictionary<UIElement, Point>(); // Относительные позиции блоков
+        private Dictionary<UIElement, Size> _relativeSizes = new Dictionary<UIElement, Size>(); // Относительные размеры блоков
+
+
         public MainPage()
         {
             InitializeComponent();
             this.DataContext = new MainViewModel();
         }
+
         // Начало перетаскивания
         private void Block_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -55,35 +61,69 @@ namespace I_am_Hero_WPF.Views
                 _isDragging = false;
                 _draggedElement.ReleaseMouseCapture();
 
-                // Получаем текущие координаты блока
+                // Текущие размеры Canvas
+                double canvasWidth = MainCanvas.ActualWidth;
+                double canvasHeight = MainCanvas.ActualHeight;
+
+                // Определяем ближайшую точку сетки
                 double left = Canvas.GetLeft(_draggedElement);
                 double top = Canvas.GetTop(_draggedElement);
-
-                // Привязываем к ближайшей точке сетки
                 Point nearestPoint = GetNearestGridPoint(left, top);
 
-                // Устанавливаем новые координаты блока
+                // Обновляем положение элемента
                 Canvas.SetLeft(_draggedElement, nearestPoint.X);
                 Canvas.SetTop(_draggedElement, nearestPoint.Y);
 
-                // Сбрасываем переменную _draggedElement
+                // Сохраняем относительное положение
+                double relativeX = nearestPoint.X / canvasWidth;
+                double relativeY = nearestPoint.Y / canvasHeight;
+                _relativePositions[_draggedElement] = new Point(relativeX, relativeY);
+
                 _draggedElement = null;
             }
         }
 
 
+
         // Изменение размера
         private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            if (sender is Thumb thumb && thumb.Parent is Border block)
+            if (sender is Thumb thumb)
             {
-                double newWidth = block.Width + e.HorizontalChange;
-                double newHeight = block.Height + e.VerticalChange;
+                Grid grid = thumb.TemplatedParent as Grid ?? thumb.Parent as Grid;
+                if (grid == null) return;
 
-                block.Width = newWidth > 100 ? newWidth : 100; // Минимальная ширина
-                block.Height = newHeight > 100 ? newHeight : 100; // Минимальная высота
+                double newWidth = Math.Max(grid.Width + e.HorizontalChange, 50);
+                double newHeight = Math.Max(grid.Height + e.VerticalChange, 50);
+
+                // Получаем текущие координаты блока
+                double left = Canvas.GetLeft(grid);
+                double top = Canvas.GetTop(grid);
+
+                // Получаем ближайшую точку пересечения
+                Point nearestPoint = GetNearestGridPoint(left + newWidth, top + newHeight);
+
+                // Вычисляем новые размеры с учетом привязки
+                newWidth = nearestPoint.X - left - 10;
+                newHeight = nearestPoint.Y - top - 10;
+
+                grid.Width = newWidth;
+                grid.Height = newHeight;
+
+                // Обновляем Clip
+                if (grid.Clip is RectangleGeometry clip)
+                {
+                    clip.Rect = new Rect(0, 0, newWidth, newHeight);
+                }
+                else
+                {
+                    grid.Clip = new RectangleGeometry(new Rect(0, 0, newWidth, newHeight), 10, 10);
+                }
             }
         }
+
+
+
 
         private void MainCanvas_Loaded(object sender, RoutedEventArgs e)
         {
@@ -93,13 +133,38 @@ namespace I_am_Hero_WPF.Views
         private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             DrawGridLines();
+
+            double newWidth = e.NewSize.Width;
+            double newHeight = e.NewSize.Height;
+
+            foreach (var item in _relativePositions)
+            {
+                UIElement element = item.Key;
+                Point relativePos = item.Value;
+                Size relativeSize = _relativeSizes.ContainsKey(element) ? _relativeSizes[element] : new Size(0.2, 0.2); // Размер по умолчанию
+
+                // Вычисляем новые абсолютные координаты и размеры
+                double newX = relativePos.X * newWidth;
+                double newY = relativePos.Y * newHeight;
+                double newW = relativeSize.Width * newWidth;
+                double newH = relativeSize.Height * newHeight;
+
+                // Привязываем к ближайшей точке сетки
+                Point nearestPoint = GetNearestGridPoint(newX, newY);
+
+                // Устанавливаем новые параметры
+                Canvas.SetLeft(element, nearestPoint.X);
+                Canvas.SetTop(element, nearestPoint.Y);
+                ((FrameworkElement)element).Width = newW;
+                ((FrameworkElement)element).Height = newH;
+            }
         }
 
-        private void DrawGridLines()
+        private void DrawGridLines() // Отрисовка сетки
         {
             if (MainCanvas == null) return;
 
-            var savedBorders = MainCanvas.Children.OfType<Border>().ToList();
+            var savedBorders = MainCanvas.Children.OfType<Grid>().ToList();
             MainCanvas.Children.Clear(); // Очищаем, чтобы не дублировать линии
 
             double width = MainCanvas.ActualWidth;
