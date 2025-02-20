@@ -18,7 +18,8 @@ namespace I_am_Hero_WPF.Views
         private Point _startPoint;
         private Grid _draggedElement;
         private readonly Dictionary<Grid, (Point, Point)> _relativePositions = new Dictionary<Grid, (Point, Point)>();
-        private readonly int _columns = 8;
+        private readonly Dictionary<Grid, Point> _originalPositions = new Dictionary<Grid, Point>();
+        private readonly int _columns = 10;
         private readonly int _rows = 8;
         private readonly double _thumbMargin = 10;
 
@@ -35,6 +36,10 @@ namespace I_am_Hero_WPF.Views
                 _draggedElement = grid;
                 _isDragging = true;
                 _startPoint = e.GetPosition(this);
+                if (!_originalPositions.ContainsKey(grid))
+                {
+                    _originalPositions[grid] = new Point(Canvas.GetLeft(grid), Canvas.GetTop(grid));
+                }
                 _draggedElement.CaptureMouse();
             }
         }
@@ -43,8 +48,15 @@ namespace I_am_Hero_WPF.Views
         {
             if (!_isDragging || _draggedElement == null) return;
             Point currentPoint = e.GetPosition(this);
-            Canvas.SetLeft(_draggedElement, Canvas.GetLeft(_draggedElement) + (currentPoint.X - _startPoint.X));
-            Canvas.SetTop(_draggedElement, Canvas.GetTop(_draggedElement) + (currentPoint.Y - _startPoint.Y));
+            double newLeft = Canvas.GetLeft(_draggedElement) + (currentPoint.X - _startPoint.X);
+            double newTop = Canvas.GetTop(_draggedElement) + (currentPoint.Y - _startPoint.Y);
+
+            // Проверка на выход за границы
+            newLeft = Math.Max(0, Math.Min(MainCanvas.ActualWidth - _draggedElement.Width, newLeft));
+            newTop = Math.Max(0, Math.Min(MainCanvas.ActualHeight - _draggedElement.Height, newTop));
+
+            Canvas.SetLeft(_draggedElement, newLeft);
+            Canvas.SetTop(_draggedElement, newTop);
             _startPoint = currentPoint;
         }
 
@@ -54,17 +66,24 @@ namespace I_am_Hero_WPF.Views
             _isDragging = false;
             _draggedElement.ReleaseMouseCapture();
 
-            double canvasWidth = MainCanvas.ActualWidth;
-            double canvasHeight = MainCanvas.ActualHeight;
             double left = Canvas.GetLeft(_draggedElement);
             double top = Canvas.GetTop(_draggedElement);
             Point nearestTopLeft = GetNearestGridPoint(left, top);
             Point correctedBottomRight = GetNearestGridPoint(left + _draggedElement.Width, top + _draggedElement.Height);
 
-            _relativePositions[_draggedElement] = (new Point(nearestTopLeft.X / canvasWidth, nearestTopLeft.Y / canvasHeight),
-                                                   new Point(correctedBottomRight.X / canvasWidth, correctedBottomRight.Y / canvasHeight));
-            Canvas.SetLeft(_draggedElement, nearestTopLeft.X);
-            Canvas.SetTop(_draggedElement, nearestTopLeft.Y);
+            if (!IsPositionOccupied(_draggedElement, nearestTopLeft))
+            {
+                _relativePositions[_draggedElement] = (new Point(nearestTopLeft.X / MainCanvas.ActualWidth, nearestTopLeft.Y / MainCanvas.ActualHeight),
+                                                       new Point(correctedBottomRight.X / MainCanvas.ActualWidth, correctedBottomRight.Y / MainCanvas.ActualHeight));
+                Canvas.SetLeft(_draggedElement, nearestTopLeft.X);
+                Canvas.SetTop(_draggedElement, nearestTopLeft.Y);
+                _originalPositions[_draggedElement] = new Point(Canvas.GetLeft(_draggedElement), Canvas.GetTop(_draggedElement));
+            }
+            else if (_originalPositions.TryGetValue(_draggedElement, out Point originalPos))
+            {
+                Canvas.SetLeft(_draggedElement, originalPos.X);
+                Canvas.SetTop(_draggedElement, originalPos.Y);
+            }
             _draggedElement = null;
         }
 
@@ -81,14 +100,36 @@ namespace I_am_Hero_WPF.Views
                 double newHeight = Math.Max(grid.Height + e.VerticalChange, 50);
                 Point nearestBottomRight = GetNearestGridPoint(left + newWidth, top + newHeight);
 
-                grid.Width = nearestBottomRight.X - left - _thumbMargin;
-                grid.Height = nearestBottomRight.Y - top - _thumbMargin;
-                grid.Clip = new RectangleGeometry(new Rect(0, 0, grid.Width, grid.Height), 10, 10);
-                double canvasWidth = MainCanvas.ActualWidth;
-                double canvasHeight = MainCanvas.ActualHeight;
-                _relativePositions[grid] = (new Point(left / canvasWidth, top / canvasHeight),
-                                            new Point(nearestBottomRight.X / canvasWidth, nearestBottomRight.Y / canvasHeight));
+                if (!IsPositionOccupied(grid, new Point(left, top), newWidth, newHeight))
+                {
+                    grid.Width = nearestBottomRight.X - left - _thumbMargin;
+                    grid.Height = nearestBottomRight.Y - top - _thumbMargin;
+                    grid.Clip = new RectangleGeometry(new Rect(0, 0, grid.Width, grid.Height), 10, 10);
+                    double canvasWidth = MainCanvas.ActualWidth;
+                    double canvasHeight = MainCanvas.ActualHeight;
+                    _relativePositions[grid] = (new Point(left / canvasWidth, top / canvasHeight),
+                                                new Point(nearestBottomRight.X / canvasWidth, nearestBottomRight.Y / canvasHeight));
+                }
             }
+        }
+        private bool IsPositionOccupied(Grid element, Point newPosition, double width = 0, double height = 0)
+        {
+            if (width == 0) width = element.Width;
+            if (height == 0) height = element.Height;
+
+            foreach (var grid in MainCanvas.Children.OfType<Grid>())
+            {
+                if (grid == element) continue;
+                double gridLeft = Canvas.GetLeft(grid);
+                double gridTop = Canvas.GetTop(grid);
+
+                if (newPosition.X < gridLeft + grid.Width && newPosition.X + width > gridLeft &&
+                    newPosition.Y < gridTop + grid.Height && newPosition.Y + height > gridTop)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void MainCanvas_Loaded(object sender, RoutedEventArgs e)

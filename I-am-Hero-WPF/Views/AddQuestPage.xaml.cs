@@ -10,7 +10,7 @@ namespace I_am_Hero_WPF.Views
         public AddQuestPage()
         {
             InitializeComponent();
-            DataContext = new CreateHeroViewModel();
+            DataContext = new AddQuestViewModel();
         }
     }
 }

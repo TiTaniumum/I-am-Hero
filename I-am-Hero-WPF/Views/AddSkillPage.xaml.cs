@@ -10,7 +10,7 @@ namespace I_am_Hero_WPF.Views
         public AddSkillPage()
         {
             InitializeComponent();
-            DataContext = new CreateHeroViewModel();
+            DataContext = new AddSkillViewModel();
         }
     }
 }
