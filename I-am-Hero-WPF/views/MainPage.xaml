@@ -29,7 +29,7 @@
         <!-- Динамический Dashboard -->
         <Canvas Grid.Row="1" Background="#f2f2f2" Name="MainCanvas" Loaded="MainCanvas_Loaded" SizeChanged="MainCanvas_SizeChanged">
             <!-- Profile -->
-            <Grid x:Name="ProfileBlock" Canvas.Left="50" Canvas.Top="50" Canvas.ZIndex="2" Margin="5"
+            <Grid x:Name="ProfileBlock" Canvas.Left="10" Canvas.Top="10" Canvas.ZIndex="2" Margin="5"
                     Width="250" Height="150" Background="White"
                     MouseLeftButtonDown="Block_MouseLeftButtonDown"
                     MouseMove="Block_MouseMove"
@@ -54,7 +54,7 @@
 
 
             <!-- Skills -->
-            <Grid x:Name="SkillsBlock" Canvas.Left="350" Canvas.Top="50" Canvas.ZIndex="2" Margin="5"
+            <Grid x:Name="SkillsBlock" Canvas.Left="350" Canvas.Top="10" Canvas.ZIndex="2" Margin="5"
                     Width="250" Height="150" Background="White"
                     MouseLeftButtonDown="Block_MouseLeftButtonDown"
                     MouseMove="Block_MouseMove"
@@ -86,7 +86,7 @@
             </Grid>
 
             <!-- Calendar -->
-            <Grid x:Name="CalendarBlock" Canvas.Left="50" Canvas.Top="250" Canvas.ZIndex="2" Margin="5"
+            <Grid x:Name="CalendarBlock" Canvas.Left="10" Canvas.Top="180" Canvas.ZIndex="2" Margin="5"
                     Width="250" Height="150" Background="White"
                     MouseLeftButtonDown="Block_MouseLeftButtonDown"
                     MouseMove="Block_MouseMove"
@@ -105,7 +105,7 @@
             </Grid>
 
             <!-- Quests -->
-            <Grid x:Name="QuestsBlock" Canvas.Left="350" Canvas.Top="250" Canvas.ZIndex="2" Margin="5"
+            <Grid x:Name="QuestsBlock" Canvas.Left="350" Canvas.Top="180" Canvas.ZIndex="2" Margin="5"
                     Width="250" Height="150" Background="White"
                     MouseLeftButtonDown="Block_MouseLeftButtonDown"
                     MouseMove="Block_MouseMove"

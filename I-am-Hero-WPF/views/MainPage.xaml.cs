@@ -1,91 +1,73 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.UI.WebControls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
 
 namespace I_am_Hero_WPF.Views
 {
     public partial class MainPage : Page
     {
-        private bool _isDragging = false;
+        private bool _isDragging;
         private Point _startPoint;
-        private UIElement _draggedElement;
-        private Dictionary<UIElement, Point> _relativePositions = new Dictionary<UIElement, Point>(); // Относительные позиции блоков
-        private Dictionary<UIElement, Size> _relativeSizes = new Dictionary<UIElement, Size>(); // Относительные размеры блоков
-
+        private Grid _draggedElement;
+        private readonly Dictionary<Grid, (Point, Point)> _relativePositions = new Dictionary<Grid, (Point, Point)>();
+        private readonly int _columns = 8;
+        private readonly int _rows = 8;
+        private readonly double _thumbMargin = 10;
 
         public MainPage()
         {
             InitializeComponent();
-            this.DataContext = new MainViewModel();
+            DataContext = new MainViewModel();
         }
 
-        // Начало перетаскивания
         private void Block_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            _draggedElement = sender as UIElement;
-            if (_draggedElement != null)
+            if (sender is Grid grid)
             {
+                _draggedElement = grid;
                 _isDragging = true;
                 _startPoint = e.GetPosition(this);
                 _draggedElement.CaptureMouse();
             }
         }
 
-        // Перетаскивание
         private void Block_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_isDragging && _draggedElement != null)
-            {
-                Point currentPoint = e.GetPosition(this);
-                double offsetX = currentPoint.X - _startPoint.X;
-                double offsetY = currentPoint.Y - _startPoint.Y;
-
-                Canvas.SetLeft(_draggedElement, Canvas.GetLeft(_draggedElement) + offsetX);
-                Canvas.SetTop(_draggedElement, Canvas.GetTop(_draggedElement) + offsetY);
-
-                _startPoint = currentPoint;
-            }
+            if (!_isDragging || _draggedElement == null) return;
+            Point currentPoint = e.GetPosition(this);
+            Canvas.SetLeft(_draggedElement, Canvas.GetLeft(_draggedElement) + (currentPoint.X - _startPoint.X));
+            Canvas.SetTop(_draggedElement, Canvas.GetTop(_draggedElement) + (currentPoint.Y - _startPoint.Y));
+            _startPoint = currentPoint;
         }
 
-        // Завершение перетаскивания
         private void Block_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (_draggedElement != null)
-            {
-                _isDragging = false;
-                _draggedElement.ReleaseMouseCapture();
+            if (_draggedElement == null) return;
+            _isDragging = false;
+            _draggedElement.ReleaseMouseCapture();
 
-                // Текущие размеры Canvas
-                double canvasWidth = MainCanvas.ActualWidth;
-                double canvasHeight = MainCanvas.ActualHeight;
+            double canvasWidth = MainCanvas.ActualWidth;
+            double canvasHeight = MainCanvas.ActualHeight;
+            double left = Canvas.GetLeft(_draggedElement);
+            double top = Canvas.GetTop(_draggedElement);
+            Point nearestTopLeft = GetNearestGridPoint(left, top);
+            Point correctedBottomRight = GetNearestGridPoint(left + _draggedElement.Width, top + _draggedElement.Height);
 
-                // Определяем ближайшую точку сетки
-                double left = Canvas.GetLeft(_draggedElement);
-                double top = Canvas.GetTop(_draggedElement);
-                Point nearestPoint = GetNearestGridPoint(left, top);
-
-                // Обновляем положение элемента
-                Canvas.SetLeft(_draggedElement, nearestPoint.X);
-                Canvas.SetTop(_draggedElement, nearestPoint.Y);
-
-                // Сохраняем относительное положение
-                double relativeX = nearestPoint.X / canvasWidth;
-                double relativeY = nearestPoint.Y / canvasHeight;
-                _relativePositions[_draggedElement] = new Point(relativeX, relativeY);
-
-                _draggedElement = null;
-            }
+            _relativePositions[_draggedElement] = (new Point(nearestTopLeft.X / canvasWidth, nearestTopLeft.Y / canvasHeight),
+                                                   new Point(correctedBottomRight.X / canvasWidth, correctedBottomRight.Y / canvasHeight));
+            Canvas.SetLeft(_draggedElement, nearestTopLeft.X);
+            Canvas.SetTop(_draggedElement, nearestTopLeft.Y);
+            _draggedElement = null;
         }
 
-
-
-        // Изменение размера
         private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
             if (sender is Thumb thumb)
@@ -93,145 +75,110 @@ namespace I_am_Hero_WPF.Views
                 Grid grid = thumb.TemplatedParent as Grid ?? thumb.Parent as Grid;
                 if (grid == null) return;
 
-                double newWidth = Math.Max(grid.Width + e.HorizontalChange, 50);
-                double newHeight = Math.Max(grid.Height + e.VerticalChange, 50);
-
-                // Получаем текущие координаты блока
                 double left = Canvas.GetLeft(grid);
                 double top = Canvas.GetTop(grid);
+                double newWidth = Math.Max(grid.Width + e.HorizontalChange, 50);
+                double newHeight = Math.Max(grid.Height + e.VerticalChange, 50);
+                Point nearestBottomRight = GetNearestGridPoint(left + newWidth, top + newHeight);
 
-                // Получаем ближайшую точку пересечения
-                Point nearestPoint = GetNearestGridPoint(left + newWidth, top + newHeight);
-
-                // Вычисляем новые размеры с учетом привязки
-                newWidth = nearestPoint.X - left - 10;
-                newHeight = nearestPoint.Y - top - 10;
-
-                grid.Width = newWidth;
-                grid.Height = newHeight;
-
-                // Обновляем Clip
-                if (grid.Clip is RectangleGeometry clip)
-                {
-                    clip.Rect = new Rect(0, 0, newWidth, newHeight);
-                }
-                else
-                {
-                    grid.Clip = new RectangleGeometry(new Rect(0, 0, newWidth, newHeight), 10, 10);
-                }
+                grid.Width = nearestBottomRight.X - left - _thumbMargin;
+                grid.Height = nearestBottomRight.Y - top - _thumbMargin;
+                grid.Clip = new RectangleGeometry(new Rect(0, 0, grid.Width, grid.Height), 10, 10);
+                double canvasWidth = MainCanvas.ActualWidth;
+                double canvasHeight = MainCanvas.ActualHeight;
+                _relativePositions[grid] = (new Point(left / canvasWidth, top / canvasHeight),
+                                            new Point(nearestBottomRight.X / canvasWidth, nearestBottomRight.Y / canvasHeight));
             }
         }
-
-
-
 
         private void MainCanvas_Loaded(object sender, RoutedEventArgs e)
         {
             DrawGridLines();
+            AlignBlocksToGrid();
+            SaveRelativePositions();
         }
 
         private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             DrawGridLines();
-
-            double newWidth = e.NewSize.Width;
-            double newHeight = e.NewSize.Height;
-
-            foreach (var item in _relativePositions)
-            {
-                UIElement element = item.Key;
-                Point relativePos = item.Value;
-                Size relativeSize = _relativeSizes.ContainsKey(element) ? _relativeSizes[element] : new Size(0.2, 0.2); // Размер по умолчанию
-
-                // Вычисляем новые абсолютные координаты и размеры
-                double newX = relativePos.X * newWidth;
-                double newY = relativePos.Y * newHeight;
-                double newW = relativeSize.Width * newWidth;
-                double newH = relativeSize.Height * newHeight;
-
-                // Привязываем к ближайшей точке сетки
-                Point nearestPoint = GetNearestGridPoint(newX, newY);
-
-                // Устанавливаем новые параметры
-                Canvas.SetLeft(element, nearestPoint.X);
-                Canvas.SetTop(element, nearestPoint.Y);
-                ((FrameworkElement)element).Width = newW;
-                ((FrameworkElement)element).Height = newH;
-            }
+            RestorePositions();
+            AlignBlocksToGrid();
         }
 
-        private void DrawGridLines() // Отрисовка сетки
+        private void DrawGridLines()
         {
             if (MainCanvas == null) return;
+            var savedGrids = MainCanvas.Children.OfType<Grid>().ToList();
+            MainCanvas.Children.Clear();
+            double width = MainCanvas.ActualWidth, height = MainCanvas.ActualHeight;
 
-            var savedBorders = MainCanvas.Children.OfType<Grid>().ToList();
-            MainCanvas.Children.Clear(); // Очищаем, чтобы не дублировать линии
+            for (int i = 1; i < _columns; i++) AddGridLine(i * width / _columns, 0, i * width / _columns, height);
+            for (int i = 1; i < _rows; i++) AddGridLine(0, i * height / _rows, width, i * height / _rows);
+            savedGrids.ForEach(grid => MainCanvas.Children.Add(grid));
+        }
 
-            double width = MainCanvas.ActualWidth;
-            double height = MainCanvas.ActualHeight;
-            int columns = 8; // Количество вертикальных линий
-            int rows = 8; // Количество горизонтальных линий
-
-            // Добавляем вертикальные линии
-            for (int i = 1; i < columns; i++)
+        private void AddGridLine(double x1, double y1, double x2, double y2)
+        {
+            MainCanvas.Children.Add(new Line
             {
-                double x = width * i / columns;
-
-                Line verticalLine = new Line
-                {
-                    X1 = x,
-                    X2 = x,
-                    Y1 = 0,
-                    Y2 = height,
-                    Stroke = Brushes.Gray,
-                    StrokeThickness = 1,
-                    StrokeDashArray = new DoubleCollection { 2, 2 }
-                };
-
-                MainCanvas.Children.Add(verticalLine);
-            }
-
-            // Добавляем горизонтальные линии
-            for (int i = 1; i < rows; i++)
-            {
-                double y = height * i / rows;
-
-                Line horizontalLine = new Line
-                {
-                    X1 = 0,
-                    X2 = width,
-                    Y1 = y,
-                    Y2 = y,
-                    Stroke = Brushes.Gray,
-                    StrokeThickness = 1,
-                    StrokeDashArray = new DoubleCollection { 2, 2 }
-                };
-
-                MainCanvas.Children.Add(horizontalLine);
-            }
-            // Восстанавливаем сохранённые блоки
-            foreach (var border in savedBorders)
-            {
-                MainCanvas.Children.Add(border);
-            }
+                X1 = x1,
+                X2 = x2,
+                Y1 = y1,
+                Y2 = y2,
+                Stroke = Brushes.Gray,
+                StrokeThickness = 1,
+                StrokeDashArray = new DoubleCollection { 2, 2 }
+            });
         }
 
         private Point GetNearestGridPoint(double x, double y)
         {
-            double width = MainCanvas.ActualWidth;
-            double height = MainCanvas.ActualHeight;
-            int columns = 8; // Количество вертикальных линий
-            int rows = 8;    // Количество горизонтальных линий
+            double columnStep = MainCanvas.ActualWidth / _columns;
+            double rowStep = MainCanvas.ActualHeight / _rows;
+            return new Point(Math.Round(x / columnStep) * columnStep, Math.Round(y / rowStep) * rowStep);
+        }
 
-            // Вычисляем шаг сетки
-            double columnStep = width / columns;
-            double rowStep = height / rows;
+        private void AlignBlocksToGrid()
+        {
+            foreach (var grid in MainCanvas.Children.OfType<Grid>())
+            {
+                double left = Canvas.GetLeft(grid);
+                double top = Canvas.GetTop(grid);
+                Point nearestTopLeft = GetNearestGridPoint(left, top);
+                Point nearestBottomRight = GetNearestGridPoint(left + grid.Width, top + grid.Height);
 
-            // Находим ближайшие координаты
-            double nearestX = Math.Round(x / columnStep) * columnStep;
-            double nearestY = Math.Round(y / rowStep) * rowStep;
+                grid.Width = nearestBottomRight.X - nearestTopLeft.X - _thumbMargin;
+                grid.Height = nearestBottomRight.Y - nearestTopLeft.Y - _thumbMargin;
+                Canvas.SetLeft(grid, nearestTopLeft.X);
+                Canvas.SetTop(grid, nearestTopLeft.Y);
+                grid.Clip = new RectangleGeometry(new Rect(0, 0, grid.Width, grid.Height), 10, 10);
+            }
+        }
 
-            return new Point(nearestX, nearestY);
+        private void SaveRelativePositions()
+        {
+            double width = MainCanvas.ActualWidth, height = MainCanvas.ActualHeight;
+            _relativePositions.Clear();
+            foreach (var grid in MainCanvas.Children.OfType<Grid>())
+                _relativePositions[grid] = (new Point(Canvas.GetLeft(grid) / width, Canvas.GetTop(grid) / height),
+                                            new Point((Canvas.GetLeft(grid) + grid.Width) / width, (Canvas.GetTop(grid) + grid.Height) / height));
+        }
+
+        private void RestorePositions()
+        {
+            double width = MainCanvas.ActualWidth, height = MainCanvas.ActualHeight;
+            foreach (var kvp in _relativePositions)
+            {
+                Grid grid = kvp.Key;
+                (Point relTopLeft, Point relBottomRight) = kvp.Value;
+                Point newTopLeft = GetNearestGridPoint(relTopLeft.X * width, relTopLeft.Y * height);
+                Point newBottomRight = GetNearestGridPoint(relBottomRight.X * width, relBottomRight.Y * height);
+                grid.Width = newBottomRight.X - newTopLeft.X;
+                grid.Height = newBottomRight.Y - newTopLeft.Y;
+                Canvas.SetLeft(grid, newTopLeft.X);
+                Canvas.SetTop(grid, newTopLeft.Y);
+                grid.Clip = new RectangleGeometry(new Rect(0, 0, grid.Width, grid.Height), 10, 10);
+            }
         }
     }
 }
