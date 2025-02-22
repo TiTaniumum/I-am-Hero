@@ -1,9 +1,6 @@
-﻿using System;
-using System.Globalization;
-using System.Threading;
+﻿using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using WPFLocalizeExtension.Engine;
 
 namespace I_am_Hero_WPF.Views
 {
@@ -30,20 +27,14 @@ namespace I_am_Hero_WPF.Views
             };
         }
 
-        private void ChangeLanguage_Click(object sender, RoutedEventArgs e)
+        private void OnEnglishClick(object sender, RoutedEventArgs e)
         {
-            string cultureCode = Thread.CurrentThread.CurrentUICulture.Name;
-            switch (cultureCode)
-            {
-                case "en-US":
-                    System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("ru-RU");
-                    break;
-                case "ru-RU":
-                default:
-                    System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
-                    break;
-            }
-            
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
+            Application.Current.MainWindow.Content = new LoginPage();
+        }
+        private void OnRussianClick(object sender, RoutedEventArgs e)
+        {
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("ru-RU");
             Application.Current.MainWindow.Content = new LoginPage();
         }
     }

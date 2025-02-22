@@ -19,8 +19,8 @@ namespace I_am_Hero_WPF.Views
         private Grid _draggedElement;
         private readonly Dictionary<Grid, (Point, Point)> _relativePositions = new Dictionary<Grid, (Point, Point)>();
         private readonly Dictionary<Grid, Point> _originalPositions = new Dictionary<Grid, Point>();
-        private readonly int _columns = 10;
-        private readonly int _rows = 8;
+        private readonly int _columns = 6;
+        private readonly int _rows = 6;
         private readonly double _thumbMargin = 10;
 
         public MainPage()
@@ -179,7 +179,7 @@ namespace I_am_Hero_WPF.Views
             return new Point(Math.Round(x / columnStep) * columnStep, Math.Round(y / rowStep) * rowStep);
         }
 
-        private void AlignBlocksToGrid()
+        private void AlignBlocksToGrid() // Align blocks to grid after replacing
         {
             foreach (var grid in MainCanvas.Children.OfType<Grid>())
             {
@@ -196,7 +196,7 @@ namespace I_am_Hero_WPF.Views
             }
         }
 
-        private void SaveRelativePositions()
+        private void SaveRelativePositions() // Save blocks positions before resizing
         {
             double width = MainCanvas.ActualWidth, height = MainCanvas.ActualHeight;
             _relativePositions.Clear();
@@ -205,7 +205,7 @@ namespace I_am_Hero_WPF.Views
                                             new Point((Canvas.GetLeft(grid) + grid.Width) / width, (Canvas.GetTop(grid) + grid.Height) / height));
         }
 
-        private void RestorePositions()
+        private void RestorePositions() // Restore blocks positions after resizing
         {
             double width = MainCanvas.ActualWidth, height = MainCanvas.ActualHeight;
             foreach (var kvp in _relativePositions)

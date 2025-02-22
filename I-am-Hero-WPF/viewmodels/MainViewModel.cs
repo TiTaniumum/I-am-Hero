@@ -10,20 +10,19 @@ using I_am_Hero_WPF.Views;
 
 public class MainViewModel : ViewModelBase
 {
-    public ObservableCollection<double> VerticalLines { get; set; }
-    public ObservableCollection<double> HorizontalLines { get; set; }
-
-
-
     public RelayCommand LogoutCommand { get; }
     public RelayCommand AddSkillCommand { get; }
     public RelayCommand AddQuestCommand { get; }
+    public RelayCommand ToggleSidebarCommand { get; }
     private readonly ApiService _apiService;
     private string _heroName;
     private int _experience;
     private int _cLevelCalculationTypeId;
     private ObservableCollection<HeroSkill> _skills;
     private ObservableCollection<Quest> _quests;
+    private double _sidebarWidth = 10 + 24 + 10; // Начальная ширина (свернутое состояние) 10 - Margin, 24 - Width иконки, 10 - Margin
+    private bool _sidebarExpanded = false;
+    private string _sidebarArrowIcon = "ChevronRight";
 
     public string HeroName
     {
@@ -53,26 +52,38 @@ public class MainViewModel : ViewModelBase
         get => _quests;
         set => SetProperty(ref _quests, value);
     }
+    public double SidebarWidth
+    {
+        get => _sidebarWidth;
+        set
+        {
+            _sidebarWidth = value;
+            OnPropertyChanged();
+        }
+    }
 
+    public bool SidebarExpanded
+    {
+        get => _sidebarExpanded;
+        set
+        {
+            _sidebarExpanded = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string SidebarArrowIcon
+    {
+        get => _sidebarArrowIcon;
+        set
+        {
+            _sidebarArrowIcon = value;
+            OnPropertyChanged();
+        }
+    }
+    
     public MainViewModel()
     {
-        VerticalLines = new ObservableCollection<double>();
-        HorizontalLines = new ObservableCollection<double>();
-
-        // 8 вертикальных линий
-        for (int i = 1; i <= 8; i++)
-        {
-            VerticalLines.Add(i * 100); // Через каждые 100px
-        }
-
-        // 10 горизонтальных линий (пример)
-        for (int i = 1; i <= 10; i++)
-        {
-            HorizontalLines.Add(i * 80); // Через каждые 80px
-        }
-
-
-
         _apiService = new ApiService();
         Skills = new ObservableCollection<HeroSkill>();
 
@@ -89,8 +100,19 @@ public class MainViewModel : ViewModelBase
         {
             Application.Current.MainWindow.Content = new AddQuestPage(); // Переход на AddQuestCommand
         });
+        ToggleSidebarCommand = new RelayCommand(_ =>
+        {
+            ToggleSidebar();
+        }); 
 
         LoadHeroData();
+    }
+
+    private void ToggleSidebar()
+    {
+        SidebarExpanded = !SidebarExpanded;
+        SidebarWidth = SidebarExpanded ? 150 : 10 + 24 + 10; // 10 - Margin, 24 - Width иконки, 10 - Margin (150 - состояние развёрнутого меню)
+        SidebarArrowIcon = SidebarExpanded ? "ChevronLeft" : "ChevronRight";
     }
 
     private async Task LoadHeroData()
@@ -130,8 +152,8 @@ public class MainViewModel : ViewModelBase
             HttpResponseMessage response = await _apiService.GetHeroSkillsAsync();
             if (response.IsSuccessStatusCode)
             {
-                string skillsJson = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonSerializer.Deserialize<HeroSkillsResponse>(skillsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                string json = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonSerializer.Deserialize<HeroSkillsResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                 if (responseObject?.HeroSkills != null)
                 {
@@ -162,12 +184,12 @@ public class MainViewModel : ViewModelBase
             if (response.IsSuccessStatusCode)
             {
                 string json = await response.Content.ReadAsStringAsync();
-                var quests = JsonSerializer.Deserialize<List<Quest>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var responseObject = JsonSerializer.Deserialize<List<Quest>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                if (quests != null)
+                if (responseObject != null)
                 {
                     Quests.Clear();
-                    foreach (var quest in quests)
+                    foreach (var quest in responseObject)
                     {
                         Quests.Add(quest);
                     }
@@ -183,6 +205,4 @@ public class MainViewModel : ViewModelBase
             MessageBox.Show("Ошибка при загрузке квестов: " + ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
-
-
 }

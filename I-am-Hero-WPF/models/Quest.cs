@@ -22,5 +22,4 @@ namespace I_am_Hero_WPF.Models
         public DateTime CreateDate { get; set; }
         public DateTime? ArchiveDate { get; set; }
     }
-
 }

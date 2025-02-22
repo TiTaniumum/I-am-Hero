@@ -1,7 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Navigation;
-using ControlzEx.Standard;
 
 namespace I_am_Hero_WPF.Views
 {
