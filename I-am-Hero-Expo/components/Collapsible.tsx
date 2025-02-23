@@ -27,7 +27,7 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
 
         <ThemedText type="defaultSemiBold">{title}</ThemedText>
       </TouchableOpacity>
-      {isOpen && <ThemedView style={styles.content}>{children}</ThemedView>}
+      {isOpen && <ThemedView>{children}</ThemedView>}
     </ThemedView>
   );
 }
@@ -37,9 +37,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-  },
-  content: {
-    marginTop: 6,
-    marginLeft: 24,
-  },
+  }
 });

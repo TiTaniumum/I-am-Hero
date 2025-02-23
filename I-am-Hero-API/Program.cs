@@ -62,6 +62,14 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IHeroService, HeroService>();
 builder.Services.AddScoped<ICommonService, CommonService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost",
+        policy => policy.WithOrigins("http://localhost:8081") // Change port if necessary
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+});
+
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
@@ -76,6 +84,7 @@ if (app.Environment.IsDevelopment() || true) // swagger будет включе�
         options.RoutePrefix = string.Empty; // Set to an empty string to serve Swagger UI at the root URL
     });
 }
+app.UseCors("AllowLocalhost");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
