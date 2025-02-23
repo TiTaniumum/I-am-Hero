@@ -39,6 +39,7 @@ namespace I_am_Hero_API.Services
         {
             this.user = user;
         }
+        public User GetUser() => user;
         #endregion ServiceContext
         #region PrivateMethods
         private Behaviour? CreateBehaviourObj(BehaviourDto? dto)
@@ -85,7 +86,7 @@ namespace I_am_Hero_API.Services
                 UserId = user.Id,
                 Title = dto.Title ?? "",
                 Description = dto.Description,
-                Experinece = dto.Experinece ?? 0,
+                Experience = dto.Experience ?? 0,
                 CompletionBehaviour = completion,
                 FailureBehaviour = failure,
                 Priority = dto.Priority ?? 1,
@@ -251,8 +252,6 @@ namespace I_am_Hero_API.Services
         #region HeroSkill
         public async Task<IdDto> CreateHeroSkill(HeroSkillDto dto)
         {
-            if (dto.Id == null)
-                throw new NullReferenceException("Id cannot be null when creating HeroSkill");
             if (dto.Name == null)
                 throw new NullReferenceException("Name cannot be null when creating HeroSkill");
             HeroSkill skill = new HeroSkill
@@ -468,8 +467,8 @@ namespace I_am_Hero_API.Services
                 quest.Title = dto.Title;
             if (dto.Description != null)
                 quest.Description = dto.Description;
-            if (dto.Experinece != null)
-                quest.Experinece = dto.Experinece.Value;
+            if (dto.Experience != null)
+                quest.Experience = dto.Experience.Value;
             if (dto.CompletionBehaviour != null && !EditBehaviourObj(quest.CompletionBehaviour, dto.CompletionBehaviour))
                 quest.CompletionBehaviour = CreateBehaviourObj(dto.CompletionBehaviour);
             if (dto.FailureBehaviour != null && !EditBehaviourObj(quest.FailureBehaviour, dto.FailureBehaviour))
@@ -522,7 +521,7 @@ namespace I_am_Hero_API.Services
                 UserId = user.Id,
                 Title = dto.Title,
                 Description = dto.Description,
-                Experinece = dto.Experinece ?? 0,
+                Experience = dto.Experience ?? 0,
                 CompletionBehaviour = completion,
                 FailureBehaviour = failure,
                 Priority = dto.Priority ?? 1,
@@ -573,8 +572,8 @@ namespace I_am_Hero_API.Services
                 questLine.Title = dto.Title;
             if (dto.Description != null)
                 questLine.Description = dto.Description;
-            if (dto.Experinece != null)
-                questLine.Experinece = dto.Experinece.Value;
+            if (dto.Experience != null)
+                questLine.Experience = dto.Experience.Value;
             if (dto.CompletionBehaviour != null && !EditBehaviourObj(questLine.CompletionBehaviour, dto.CompletionBehaviour))
                 questLine.CompletionBehaviour = CreateBehaviourObj(dto.CompletionBehaviour);
             if (dto.FailureBehaviour != null && !EditBehaviourObj(questLine.FailureBehaviour, dto.FailureBehaviour))
@@ -757,5 +756,74 @@ namespace I_am_Hero_API.Services
             );
         }
         #endregion CalendarAttendance
+        #region HeroHabbit
+        public async Task<IdDto> CreateHeroHabbit(HeroHabbitDto dto)
+        {
+            if (dto.Title == null)
+                throw new NullReferenceException("Title cannot be null when creating HeroHabbit");
+            Behaviour? checkinBehaviour = CreateBehaviourObj(dto.CheckinBehaviourDto);
+            HeroHabbit habbit = new HeroHabbit
+            {
+                UserId = user.Id,
+                Title = dto.Title,
+                Description = dto.Description,
+                CheckinBehaviour = checkinBehaviour,
+                cPopupIntervalId = dto.cPopupIntervalId ?? 3, // Daily
+                LastUpdateDateTime = dto.LastUpdateDateTime
+            };
+            await context.HeroHabbits.AddAsync(habbit);
+            await context.SaveChangesAsync();
+            return new IdDto { Id = habbit.Id };
+        }
+
+        public async Task<HeroHabbitsDto> GetHeroHabbits(long? id)
+        {
+            if (id != null)
+                return new HeroHabbitsDto(
+                    await context.HeroHabbits
+                        .Where(x => x.Id == id)
+                        .Include(x => x.CheckinBehaviour)
+                        .ToArrayAsync()
+                );
+            return new HeroHabbitsDto(
+                await context.HeroHabbits
+                    .Where(x => x.UserId == user.Id)
+                    .Include(x => x.CheckinBehaviour)
+                    .ToArrayAsync()
+            );
+        }
+
+        public async Task EditHeroHabbit(HeroHabbitDto dto)
+        {
+            if (dto.Id == null)
+                throw new NullReferenceException("Id cannot be null when editing HeroHabbit");
+            HeroHabbit? habbit = await context.HeroHabbits
+                .Include(x => x.CheckinBehaviour)
+                .FirstOrDefaultAsync(x => x.Id == dto.Id);
+            if (habbit == null)
+                throw new NullReferenceException("HeroHabbit with this Id not found");
+            if (dto.Title != null)
+                habbit.Title = dto.Title;
+            if (dto.Description != null)
+                habbit.Description = dto.Description;
+            if (dto.CheckinBehaviourDto != null && !EditBehaviourObj(habbit.CheckinBehaviour, dto.CheckinBehaviourDto))
+                habbit.CheckinBehaviour = CreateBehaviourObj(dto.CheckinBehaviourDto);
+            if (dto.cPopupIntervalId != null)
+                habbit.cPopupIntervalId = dto.cPopupIntervalId.Value;
+            if (dto.LastUpdateDateTime != null)
+                habbit.LastUpdateDateTime = dto.LastUpdateDateTime;
+            await context.SaveChangesAsync();
+        }
+
+        public async Task DeleteHeroHabbit(long id)
+        {
+            await context.HeroHabbits.Where(x => x.Id == id).ExecuteDeleteAsync();
+        }
+
+        public async Task CheckinHeroHabbit(long id)
+        {
+            await context.HeroHabbits.Where(x => x.Id == id).ExecuteUpdateAsync(setters => setters.SetProperty(x => x.LastUpdateDateTime, DateTime.Now));
+        }
+        #endregion HeroHabbit
     }
 }

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using I_am_Hero_WPF.Models;
 
 public class ApiService
 {
@@ -80,7 +82,7 @@ public class ApiService
 
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        HttpResponseMessage response = await _httpClient.GetAsync("api/Auth/validate");
+        HttpResponseMessage response = await _httpClient.GetAsync("api/Hero/get");
         return response.IsSuccessStatusCode;
     }
 
@@ -89,4 +91,41 @@ public class ApiService
         TokenStorage.DeleteToken();
         _httpClient.DefaultRequestHeaders.Authorization = null;
     }
+
+    //Hero Skills
+    public async Task<HttpResponseMessage> GetHeroSkillsAsync()
+    {
+        HttpResponseMessage response = await _httpClient.GetAsync("api/Hero/get/HeroSkills");
+        return response;
+    }
+    public async Task<HttpResponseMessage> CreateSkillAsync(HeroSkill skill)
+    {
+        if (skill == null)
+            throw new ArgumentNullException(nameof(skill));
+
+        string json = JsonSerializer.Serialize(skill);
+        HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        HttpResponseMessage response = await _httpClient.PostAsync("api/Hero/create/HeroSkills", content);
+        return response;
+    }
+
+    //Hero Quests
+    public async Task<HttpResponseMessage> GetQuestsAsync()
+    {
+        HttpResponseMessage response = await _httpClient.GetAsync("api/Hero/get/Quests");
+        return response;
+    }
+    public async Task<HttpResponseMessage> CreateQuestAsync(Quest quest)
+    {
+        if (quest == null)
+            throw new ArgumentNullException(nameof(quest));
+
+        string json = JsonSerializer.Serialize(quest);
+        HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        HttpResponseMessage response = await _httpClient.PostAsync("api/Hero/create/Quest", content);
+        return response;
+    }
+
 }

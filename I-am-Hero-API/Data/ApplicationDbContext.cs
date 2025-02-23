@@ -28,6 +28,9 @@ namespace I_am_Hero_API.Data
         public DbSet<cCalendarStatus> cCalendarStatuses { get; set; }
         public DbSet<Calendar> Calendars { get; set; }
         public DbSet<CalendarAttendance> CalendarAttendances { get; set; }
+        public DbSet<cPopupInterval> cPopupIntervals { get; set; }
+        public DbSet<HeroHabbit> HeroHabbits { get; set; }
+        public DbSet<ExceptionLog> ExceptionLogs { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
@@ -167,6 +170,22 @@ namespace I_am_Hero_API.Data
                     new cCalendarStatus { Id = 2, NameEn = "Failed", NameRu = "Провалено" },
                     new cCalendarStatus { Id = 3, NameEn = "Not marked", NameRu = "Не отмечено" }
                 );
+            modelBuilder.Entity<cPopupInterval>()
+                .HasData(
+                    new cPopupInterval { Id = 1, NameEn = "Hourly", NameRu = "Почасовой" },
+                    new cPopupInterval { Id = 2, NameEn = "Every half of day", NameRu = "Каждые полдня" },
+                    new cPopupInterval { Id = 3, NameEn = "Daily", NameRu = "Ежедневно" },
+                    new cPopupInterval { Id = 4, NameEn = "Weekly", NameRu = "Еженедельно" },
+                    new cPopupInterval { Id = 5, NameEn = "Monthly", NameRu = "Ежемесячно" }
+                );
+            modelBuilder.Entity<HeroHabbit>()
+                .HasOne(q => q.CheckinBehaviour)
+                .WithMany()
+                .HasForeignKey(q => q.CheckinBehaviourId)
+                .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<ExceptionLog>()
+                .Property(x => x.ExceptionDateTime)
+                .HasDefaultValueSql("GETDATE()");
         }
     }
 }

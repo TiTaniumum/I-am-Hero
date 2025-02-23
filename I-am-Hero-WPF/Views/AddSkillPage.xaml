@@ -1,0 +1,26 @@
+﻿<Page x:Class="I_am_Hero_WPF.Views.AddSkillPage"
+      xmlns:local="clr-namespace:I_am_Hero_WPF.Views"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Добавить навык">
+
+    <Grid DataContext="{Binding AddSkillViewModel}">
+        <StackPanel Margin="20" HorizontalAlignment="Center">
+            <TextBlock Text="Добавление нового навыка" FontSize="20" HorizontalAlignment="Center" Margin="10"/>
+
+            <TextBlock Text="Название навыка:"/>
+            <TextBox Text="{Binding SkillName, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+
+            <TextBlock Text="Описание:"/>
+            <TextBox Text="{Binding SkillDescription, UpdateSourceTrigger=PropertyChanged}" Width="200" Height="60" TextWrapping="Wrap"/>
+
+            <TextBlock Text="Опыт (exp):"/>
+            <TextBox Text="{Binding Experience, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                <Button Content="Добавить" Command="{Binding AddSkillCommand}" Width="100" Margin="5"/>
+                <Button Content="Отмена" Command="{Binding CancelCommand}" Width="100" Margin="5"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>
