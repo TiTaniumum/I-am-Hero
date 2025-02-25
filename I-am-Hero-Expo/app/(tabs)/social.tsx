@@ -4,8 +4,8 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 
 export default function SocialScreen() {
-  const {token} = useGlobalContext();
-    if(token === null)
+  const {isToken} = useGlobalContext();
+  if(!isToken)
       return <Auth/>
   return (
     <ThemedView style={{height: '100%', display: 'flex', justifyContent: 'center', alignItems: "center"}}>

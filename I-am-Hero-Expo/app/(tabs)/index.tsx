@@ -8,8 +8,8 @@ import { useGlobalContext } from '@/components/ContextProvider';
 import Auth from '@/components/Auth';
 
 export default function HomeScreen() {
-  const {token} = useGlobalContext();
-  if(token === null)
+  const {isToken} = useGlobalContext();
+  if(!isToken)
     return <Auth/>
   return (
     <ParallaxScrollView

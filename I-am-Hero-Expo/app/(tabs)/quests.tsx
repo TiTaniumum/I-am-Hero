@@ -3,8 +3,8 @@ import { useGlobalContext } from "@/components/ContextProvider";
 import TempIcon from "@/components/TempIcon";
 
 export default function QuestsScreen() {
-  const {token} = useGlobalContext();
-    if(token === null)
+  const {isToken} = useGlobalContext();
+  if(!isToken)
       return <Auth/>
   return <>
     <TempIcon color="white" size={200}/>
