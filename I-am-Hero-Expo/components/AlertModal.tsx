@@ -36,7 +36,6 @@ const styles = StyleSheet.create({
   alertBox: {
     width: 300,
     padding: 20,
-    // backgroundColor: "white",
     borderRadius: 10,
     alignItems: "center",
   },
@@ -51,13 +50,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    // backgroundColor: "#007BFF",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
   },
   buttonText: {
-    // color: "white",
     fontSize: 16,
     fontWeight: "bold",
   },

@@ -9,8 +9,9 @@ import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import TempIcon from "@/components/TempIcon";
+
 import Entypo from '@expo/vector-icons/Entypo';
+import QuestIcon from "@/icons/QuestIcon";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -62,7 +63,7 @@ export default function TabLayout() {
         options={{
           title: "",
           tabBarIcon: ({ color }) => (
-            <TempIcon color={color} size={iconsize}/>
+            <QuestIcon color={color} size={iconsize}/>
           ),
         }}
       />

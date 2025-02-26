@@ -36,7 +36,7 @@ export default function Auth() {
           />
           <Pressable
             onPress={() => api.Login(email, password)}
-            style={styles.button}
+            style={[Styles.pressable, {width: "70%"}]}
           >
             <ThemedText>{Resource.get("login")}</ThemedText>
           </Pressable>
@@ -80,7 +80,7 @@ export default function Auth() {
             onPress={() =>
               api.Register(email, password, passwordRepeat, setIsLogin)
             }
-            style={styles.button}
+            style={[Styles.pressable, {width: "70%"}]}
           >
             <ThemedText>{Resource.get("register")}</ThemedText>
           </Pressable>
@@ -111,16 +111,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
-  },
-  button: {
-    padding: 5,
-    borderColor: "white",
-    borderWidth: 1,
-    borderRadius: 10,
-    width: "70%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
   },
   input: {
     width: "70%",
