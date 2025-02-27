@@ -8,31 +8,32 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import Entypo from "@expo/vector-icons/Entypo";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { useState } from "react";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
 import { Colors } from "@/constants/Colors";
 import QuestIcon from "@/icons/QuestIcon";
+import { router } from "expo-router";
 
 export default function MenuScreen() {
-  const { isToken } = useGlobalContext();
-  if (!isToken) return <Auth />;
-
+  const { isToken,user } = useGlobalContext();
+  
   const Wrapper = Platform.OS === "web" ? ThemedView : SafeAreaView;
   const [listType, setListType] = useState(false);
   const colorScheme = useColorScheme();
   const color = Colors[colorScheme ?? "light"].tint;
   const background = Colors[colorScheme ?? "light"].background;
-  const iconsize = 24;
+  const iconsize = 24 * (listType ? 1 : 2);
+  const styles = getStyles(listType, color, background, iconsize)
+  
+  if (!isToken) return <Auth />;
   return (
     <Wrapper style={Styles.container}>
       <ThemedView style={Styles.header} tint={true}>
@@ -57,22 +58,16 @@ export default function MenuScreen() {
             pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
           ]}
         >
-          <FontAwesome5 name="cog" size={iconsize} color={color} />
+          <FontAwesome5 name="cog" size={24} color={color} />
         </Pressable>
       </ThemedView>
       <ScrollView
         style={{ width: "100%", backgroundColor: background }}
-        contentContainerStyle={{
-          width: "100%",
-          alignItems: "center",
-          gap: 10,
-          marginHorizontal: "auto",
-          paddingTop: 10,
-        }}
+        contentContainerStyle={listType ? styles.menulist : styles.menugrid}
       >
         <ThemedView style={styles.profile}>
           <ThemedView style={styles.leftprofile}>
-            <ThemedText style={{fontSize:25}}>I am Hero</ThemedText>
+            <ThemedText style={{ fontSize: 25 }}>I am {user.hero?.name}</ThemedText>
             <ThemedText>Level 10</ThemedText>
             <ThemedView style={styles.bar}>
               <ThemedView style={styles.progressbar}></ThemedView>
@@ -82,95 +77,194 @@ export default function MenuScreen() {
             <FontAwesome6 name="user-astronaut" size={100} color={color} />
           </ThemedView>
         </ThemedView>
-        <ThemedView style={[Styles.row, styles.button]}>
+        <Pressable
+          style={({ pressed }) => [
+            styles.button,
+            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+          ]}
+          onPress={() => {
+            router.push("/biography");
+          }}
+        >
           <FontAwesome5 name="scroll" size={iconsize} color={color} />
-          <ThemedText>Biography</ThemedText>
-        </ThemedView>
-        <ThemedView style={[Styles.row, styles.button]}>
+          {listType && <ThemedText>Biography</ThemedText>}
+        </Pressable>
+        <Pressable
+          style={({ pressed }) => [
+            styles.button,
+            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+          ]}
+          onPress={() => {
+            router.push("/attributes");
+          }}
+        >
           <FontAwesome5 name="dna" size={iconsize} color={color} />
-          <ThemedText>Attributes</ThemedText>
-        </ThemedView>
-        <ThemedView style={[Styles.row, styles.button]}>
+          {listType && <ThemedText>Attributes</ThemedText>}
+        </Pressable>
+        <Pressable
+          style={({ pressed }) => [
+            styles.button,
+            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+          ]}
+          onPress={() => {
+            router.push("/skills");
+          }}
+        >
           <Entypo name="graduation-cap" size={iconsize} color={color} />
-          <ThemedText>Skills</ThemedText>
-        </ThemedView>
-        <ThemedView style={[Styles.row, styles.button]}>
-          <FontAwesome name="check-square" size={iconsize} color={color} />
-          <ThemedText>Habits</ThemedText>
-        </ThemedView>
-        <ThemedView style={[Styles.row, styles.button]}>
+          {listType && <ThemedText>Skills</ThemedText>}
+        </Pressable>
+        <Pressable
+          style={({ pressed }) => [
+            styles.button,
+            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+          ]}
+          onPress={() => {
+            router.push("/habbits");
+          }}
+        >
+          <MaterialCommunityIcons name="progress-check" size={iconsize} color={color} />
+          {listType && <ThemedText>Habits</ThemedText>}
+        </Pressable>
+        <Pressable
+          style={({ pressed }) => [
+            styles.button,
+            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+          ]}
+          onPress={() => {
+            router.push("/statuseffects");
+          }}
+        >
           <MaterialCommunityIcons
-            name="emoticon-sick"
+            name="heart-pulse"
             size={iconsize}
             color={color}
           />
-          <ThemedText>Status effects</ThemedText>
-        </ThemedView>
-        <ThemedView style={[Styles.row, styles.button]}>
-          <FontAwesome5 name="trophy" size={iconsize} color={color} />
-          <ThemedText>Achievements</ThemedText>
-        </ThemedView>
-        <ThemedView style={[Styles.row, styles.button]}>
-          <Ionicons name="calendar-sharp" size={iconsize} color={color} />
-          <ThemedText>Daylies</ThemedText>
-        </ThemedView>
-        <ThemedView style={[Styles.row, styles.button]}>
+          {listType && <ThemedText>Status effects</ThemedText>}
+        </Pressable>
+        <Pressable
+          style={({ pressed }) => [
+            styles.button,
+            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+          ]}
+          onPress={() => {
+            router.push("/achievements");
+          }}
+        >
+          <MaterialCommunityIcons name="trophy" size={iconsize} color={color} />
+          {listType && <ThemedText>Achievements</ThemedText>}
+        </Pressable>
+        <Pressable
+          style={({ pressed }) => [
+            styles.button,
+            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+          ]}
+          onPress={() => {
+            router.push("/calendars");
+          }}
+        >
+          <MaterialCommunityIcons name="calendar-check" size={iconsize} color={color} />
+          {listType && <ThemedText>Daylies</ThemedText>}
+        </Pressable>
+        <Pressable
+          style={({ pressed }) => [
+            styles.button,
+            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+          ]}
+          onPress={() => {
+            router.push("/quests");
+          }}
+        >
           <QuestIcon size={iconsize} color={color} />
-          <ThemedText>Quests</ThemedText>
-        </ThemedView>
+          {listType && <ThemedText>Quests</ThemedText>}
+        </Pressable>
+        <Pressable
+          style={({ pressed }) => [
+            styles.button,
+            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+          ]}
+          onPress={() => {
+            router.push("/social");
+          }}
+        >
+          <AntDesign name="message1" size={iconsize} color={color} />
+          {listType && <ThemedText>Social</ThemedText>}
+        </Pressable>
         <ThemedView style={styles.empty}></ThemedView>
       </ScrollView>
     </Wrapper>
   );
 }
 
-const styles = StyleSheet.create({
-  box: {
-    width: 100,
-    height: 100,
-    backgroundColor: "red",
-  },
-  button: {
-    width: "60%",
-    borderWidth: 2,
-    borderRadius: 10,
-    padding: 5,
-    paddingVertical: 15,
-    justifyContent: "center",
-  },
-  profile: {
-    width: "100%",
-    height: 200,
-    display: "flex",
-    flexDirection: "row",
-    borderBottomWidth: 2,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  leftprofile: {
-    width: "50%",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 10,
-  },
-  empty: {
-    width: "100%",
-    height: 100,
-  },
-  bar: {
-    width: '50%',
-    height: 30,
-    borderWidth: 2,
-    borderRadius: 30,
-    padding: 2,
-  },
-  progressbar: {
-    width: '80%',
-    height: '100%',
-    backgroundColor: 'white',
-    borderWidth: 2,
-    borderRadius: 30,
-  },
-});
+function getStyles(listType: boolean, color: string, background: string, iconsize: number){
+  const styles = StyleSheet.create({
+    box: {
+      width: 100,
+      height: 100,
+      backgroundColor: "red",
+    },
+    button: {
+      width: listType ? "60%" : iconsize*2,
+      borderWidth: 2,
+      borderRadius: 10,
+      padding: 5,
+      paddingVertical: 15,
+      justifyContent: "center",
+      borderColor: color,
+      display: 'flex',
+      flexDirection: 'row',
+      gap: 10
+    },
+    profile: {
+      width: "100%",
+      height: 200,
+      display: "flex",
+      flexDirection: "row",
+      borderBottomWidth: 2,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    leftprofile: {
+      width: "50%",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      gap: 10,
+    },
+    empty: {
+      width: "100%",
+      height: 100,
+    },
+    bar: {
+      width: "70%",
+      height: 30,
+      borderWidth: 2,
+      borderRadius: 30,
+      padding: 2,
+    },
+    progressbar: {
+      width: "80%",
+      height: "100%",
+      backgroundColor: "white",
+      borderWidth: 2,
+      borderRadius: 30,
+    },
+    menulist: {
+      width: "100%",
+      alignItems: "center",
+      gap: 10,
+      marginHorizontal: "auto",
+    },
+    menugrid: {
+      gap: 25,
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      flexWrap: "wrap",
+    },
+    scrollview: { width: "100%", backgroundColor: background }
+  });
+  return styles
+}
+

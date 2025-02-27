@@ -8,7 +8,7 @@ import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 import Entypo from '@expo/vector-icons/Entypo';
 import QuestIcon from "@/icons/QuestIcon";
@@ -54,7 +54,7 @@ export default function TabLayout() {
         options={{
           title: "",
           tabBarIcon: ({ color }) => (
-            <Ionicons name="calendar-sharp" size={iconsize} color={color} />
+            <MaterialCommunityIcons name="calendar-check" size={iconsize} color={color} />
           ),
         }}
       />

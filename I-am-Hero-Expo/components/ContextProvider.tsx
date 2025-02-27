@@ -10,9 +10,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import ApiService from "@/services/ApiService";
 import AlertModal, { AlertModalProps } from "./AlertModal";
 import SettingsService from "@/services/SettingsService";
+import User from "@/models/User";
 
 const api = new ApiService();
 const settings = new SettingsService();
+const user = new User();
 
 export interface iAlert {
   title: string;
@@ -23,6 +25,8 @@ type GlobalContext = {
   isToken: boolean;
   api: ApiService;
   alert: (title: string, message: string) => void;
+  isHero: boolean;
+  user: User;
 };
 
 const Context = createContext<GlobalContext>({} as GlobalContext);
@@ -31,6 +35,7 @@ export function ContextProvider({ children }: { children: ReactNode }) {
   const [isToken, setIsToken] = useState<boolean>(false);
   const [isAlertVisible, setIsAlertVisible] = useState<boolean>(false);
   const [alertObj, setAlertObj] = useState<iAlert>({ title: "", message: "" });
+  const [isHero, setIsHero] = useState<boolean>(false);
   function onAlertClose() {
     setIsAlertVisible(false);
   }
@@ -39,10 +44,16 @@ export function ContextProvider({ children }: { children: ReactNode }) {
     setIsAlertVisible(true);
   }
   api.setIsToken = setIsToken;
+  user.setIsHero = setIsHero;
   useEffect(() => {
     settings.UpdateLocalization();
     api.GetToken();
     api.alert = alert;
+    user.Init()
+    .then(()=>{
+      if(!user.hero)
+        api.GetHero(user);
+    })
   }, []);
 
   return (
@@ -51,6 +62,8 @@ export function ContextProvider({ children }: { children: ReactNode }) {
         isToken,
         api,
         alert,
+        isHero,
+        user,
       }}
     >
       {children}

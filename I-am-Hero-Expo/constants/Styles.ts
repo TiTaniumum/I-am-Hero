@@ -8,6 +8,7 @@ const Styles = StyleSheet.create({
   pressable: {
     padding: 5,
     borderRadius: 10,
+    borderWidth: 1,
     width: "auto",
     display: "flex",
     justifyContent: "center",
@@ -25,6 +26,7 @@ const Styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    gap: 10,
   },
   header: {
     width: '100%',

@@ -1,14 +1,19 @@
 import Resource from "@/constants/Resource";
+import { Hero } from "@/models/Hero";
+import User from "@/models/User";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
+import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { Platform } from "react-native";
 
 export default class ApiService {
   private baseUrl: string = "http://192.168.1.65:8080/api/";
   private applicationID: number;
   token: string | null = null;
-  alert: (title: string, message: string) => void = (title: string, message: string)=>{};
-  setIsToken: any = (value:any)=>{};
+  alert: (title: string, message: string) => void = (
+    title: string,
+    message: string
+  ) => {};
+  setIsToken: any = (value: any) => {};
   constructor() {
     switch (Platform.OS) {
       case "android":
@@ -26,9 +31,9 @@ export default class ApiService {
 
   async GetToken() {
     const value: string | null = await AsyncStorage.getItem("authToken");
-    if(value){
-        this.token = value;
-        this.setIsToken(true);
+    if (value != null) {
+      this.token = value;
+      this.setIsToken(true);
     }
   }
 
@@ -41,13 +46,13 @@ export default class ApiService {
         ApplicationId: this.applicationID,
       })
       .then(function (response) {
-        api.alert(Resource.get("success!"),"");
+        api.alert(Resource.get("success!"), "");
         api.SetNewToken(response.data);
       })
       .catch(function (error) {
         console.log(error);
-        if(error.status == 400){
-            api.alert(Resource.get("error!"),Resource.get("errorUserNotExist"));
+        if (error.status == 400) {
+          api.alert(Resource.get("error!"), Resource.get("errorUserNotExist"));
         }
       });
   }
@@ -66,15 +71,56 @@ export default class ApiService {
           password: password,
         })
         .then(function (response) {
-          alert(Resource.get("success!"),"");
+          alert(Resource.get("success!"), "");
           setIsLogin(true);
         })
         .catch(function (error) {
           console.log(error);
         });
-    else alert(Resource.get("warning!"),Resource.get("passwordRepeatWarn"));
+    else alert(Resource.get("warning!"), Resource.get("passwordRepeatWarn"));
   }
 
+  CreateHero(name: string, user: User) {
+    const api = this;
+    axios
+      .post(this.uri(`Hero/create?heroName=${name}`), {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      .then(function (response) {
+        const j = api.handleToken(response);
+        api.GetHero(user);
+      })
+      .catch(function (error) {
+        api.alert("error", error.response?.data?.message || error.message);
+        console.log(error);
+      });
+  }
+  GetHero(user: User) {
+    const api = this;
+    axios
+      .get(this.uri("Hero/get"), {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      .then(function (response) {
+        const j = api.handleToken(response);
+        user.hero = new Hero(j);
+        AsyncStorage.setItem("Hero", JSON.stringify(user.hero));
+        user.setIsHero(true);
+      })
+      .catch((error) => console.log(error));
+  }
+
+  private handleToken(response: AxiosResponse<any, any>) {
+    const j = response.data;
+    if (j.token != "") {
+      this.SetNewToken(j.token);
+    }
+    return j;
+  }
   private uri(endPart: string) {
     return `${this.baseUrl}${endPart}`;
   }
