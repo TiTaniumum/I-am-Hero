@@ -1,0 +1,50 @@
+﻿<UserControl x:Class="I_am_Hero_WPF.Views.ProfileView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:I_am_Hero_WPF.Views">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Аватарка -->
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,10,0,20">
+            <Grid>
+                <Ellipse Width="120" Height="120" Fill="LightGray"/>
+                <Image Source="{Binding ProfileImage}" Width="120" Height="120" ClipToBounds="True"
+                   Stretch="UniformToFill"/>
+                <Button Width="32" Height="32" Background="Transparent" BorderThickness="0"
+                    HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                    ToolTip="Изменить аватар">
+                    <materialDesign:PackIcon Kind="Pencil" Width="24" Height="24" Opacity="0.5"/>
+                </Button>
+            </Grid>
+        </StackPanel>
+
+        <!-- Никнейм -->
+        <StackPanel Grid.Row="1" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,0,0,20">
+            <TextBlock Text="{Binding Nickname}" FontSize="22" FontWeight="Bold"/>
+            <Button Width="32" Height="32" Background="Transparent" BorderThickness="0"
+                ToolTip="Изменить ник">
+                <materialDesign:PackIcon Kind="Pencil" Width="24" Height="24" Opacity="0.5"/>
+            </Button>
+        </StackPanel>
+
+        <!-- Биография и описание профиля -->
+        <StackPanel Grid.Row="2" HorizontalAlignment="Center" Width="300">
+            <TextBlock Text="Биография" FontSize="16" FontWeight="Bold" Margin="0,0,0,5"/>
+            <Grid>
+                <TextBox Text="{Binding Biography}" AcceptsReturn="True" Height="60" TextWrapping="Wrap"
+                     BorderBrush="Gray" Padding="5"/>
+                <Button Width="32" Height="32" Background="Transparent" BorderThickness="0"
+                    HorizontalAlignment="Right" VerticalAlignment="Top"
+                    ToolTip="Редактировать биографию">
+                    <materialDesign:PackIcon Kind="Pencil" Width="24" Height="24" Opacity="0.5"/>
+                </Button>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</UserControl>

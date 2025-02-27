@@ -1,57 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Windows;
-using I_am_Hero_WPF.Models;
+﻿using System.Windows;
+using System.Windows.Controls;
 using I_am_Hero_WPF.Views;
 
 public class MainViewModel : ViewModelBase
 {
     public RelayCommand LogoutCommand { get; }
-    public RelayCommand AddSkillCommand { get; }
-    public RelayCommand AddQuestCommand { get; }
     public RelayCommand ToggleSidebarCommand { get; }
-    private readonly ApiService _apiService;
-    private string _heroName;
-    private int _experience;
-    private int _cLevelCalculationTypeId;
-    private ObservableCollection<HeroSkill> _skills;
-    private ObservableCollection<Quest> _quests;
-    private double _sidebarWidth = 10 + 24 + 10; // Начальная ширина (свернутое состояние) 10 - Margin, 24 - Width иконки, 10 - Margin
+    public RelayCommand NavigateToProfileCommand { get; }
+    public RelayCommand NavigateToDashboardCommand { get; }
+    public RelayCommand NavigateToSkillCommand { get; }
+    public RelayCommand NavigateToAttributeCommand { get; }
+    public RelayCommand NavigateToEffectCommand { get; }
+    public RelayCommand NavigateToDailyCommand { get; }
+    public RelayCommand NavigateToQuestCommand { get; }
+    public RelayCommand NavigateToQuestLineCommand { get; }
+    public RelayCommand NavigateToHabbitCommand { get; }
+
+    private double _sidebarUnfoldedWidth = 10 + 24 + 10; // Начальная ширина, свернутое состояние (10 - Margin, 24 - Width of icon, 10 - Margin)
+    private double _sidebarFoldedWidth = 175;
+    private double _sidebarWidth;
     private bool _sidebarExpanded = false;
     private string _sidebarArrowIcon = "ChevronRight";
 
-    public string HeroName
-    {
-        get => _heroName;
-        set => SetProperty(ref _heroName, value);
-    }
-
-    public int Experience
-    {
-        get => _experience;
-        set => SetProperty(ref _experience, value);
-    }
-
-    public int cLevelCalculationTypeId
-    {
-        get => _cLevelCalculationTypeId;
-        set => SetProperty(ref _cLevelCalculationTypeId, value);
-    }
-
-    public ObservableCollection<HeroSkill> Skills
-    {
-        get => _skills;
-        set => SetProperty(ref _skills, value);
-    }
-    public ObservableCollection<Quest> Quests
-    {
-        get => _quests;
-        set => SetProperty(ref _quests, value);
-    }
+    private UserControl _currentContent;
+    
     public double SidebarWidth
     {
         get => _sidebarWidth;
@@ -81,128 +53,70 @@ public class MainViewModel : ViewModelBase
             OnPropertyChanged();
         }
     }
-    
+
+    public UserControl CurrentContent
+    {
+        get => _currentContent;
+        set => SetProperty(ref _currentContent, value);
+    }
+
+
     public MainViewModel()
     {
-        _apiService = new ApiService();
-        Skills = new ObservableCollection<HeroSkill>();
+        _sidebarWidth = _sidebarUnfoldedWidth;
+        CurrentContent = new DashboardView();
 
         LogoutCommand = new RelayCommand(_ =>
         {
             TokenStorage.DeleteToken();
             Application.Current.MainWindow.Content = new LoginPage();
         });
-        AddSkillCommand = new RelayCommand(_ =>
-        {
-            Application.Current.MainWindow.Content = new AddSkillPage(); // Переход на AddSkillPage
-        });
-        AddQuestCommand = new RelayCommand(_ =>
-        {
-            Application.Current.MainWindow.Content = new AddQuestPage(); // Переход на AddQuestCommand
-        });
         ToggleSidebarCommand = new RelayCommand(_ =>
         {
             ToggleSidebar();
-        }); 
-
-        LoadHeroData();
+        });
+        NavigateToProfileCommand = new RelayCommand(_ =>
+        {
+            CurrentContent = new ProfileView();
+        });
+        NavigateToDashboardCommand = new RelayCommand(_ =>
+        {
+            CurrentContent = new DashboardView();
+        });
+        NavigateToSkillCommand = new RelayCommand(_ =>
+        {
+            CurrentContent = new SkillView();
+        });
+        NavigateToEffectCommand = new RelayCommand(_ =>
+        {
+            CurrentContent = new EffectView();
+        });
+        NavigateToAttributeCommand = new RelayCommand(_ =>
+        {
+            CurrentContent = new AttributeView();
+        });
+        NavigateToDailyCommand = new RelayCommand(_ =>
+        {
+            CurrentContent = new DailyView();
+        });
+        NavigateToQuestCommand = new RelayCommand(_ =>
+        {
+            CurrentContent = new QuestView();
+        });
+        NavigateToQuestLineCommand = new RelayCommand(_ =>
+        {
+            CurrentContent = new QuestLineView();
+        });
+        NavigateToHabbitCommand = new RelayCommand(_ =>
+        {
+            CurrentContent = new HabbitView();
+        });
     }
 
     private void ToggleSidebar()
     {
         SidebarExpanded = !SidebarExpanded;
-        SidebarWidth = SidebarExpanded ? 150 : 10 + 24 + 10; // 10 - Margin, 24 - Width иконки, 10 - Margin (150 - состояние развёрнутого меню)
+        SidebarWidth = SidebarExpanded ? _sidebarFoldedWidth : _sidebarUnfoldedWidth; // 10 - Margin, 24 - Width иконки, 10 - Margin (175 - состояние развёрнутого меню)
         SidebarArrowIcon = SidebarExpanded ? "ChevronLeft" : "ChevronRight";
-    }
-
-    private async Task LoadHeroData()
-    {
-        try
-        {
-            HttpResponseMessage response = await _apiService.GetHeroAsync();
-            if (response.IsSuccessStatusCode)
-            {
-                string heroJson = await response.Content.ReadAsStringAsync();
-                var hero = JsonSerializer.Deserialize<Hero>(heroJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                if (hero != null)
-                {
-                    HeroName = hero.Name;
-                    Experience = hero.Experience;
-                    cLevelCalculationTypeId = hero.cLevelCalculationTypeId;
-                }
-            }
-            else
-            {
-                MessageBox.Show("Не удалось загрузить данные героя: " + response.StatusCode, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show("Ошибка при загрузке данных героя: " + ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-
-        await LoadSkills(); 
-        //await LoadQuests(); 
-    }
-
-    private async Task LoadSkills()
-    {
-        try
-        {
-            HttpResponseMessage response = await _apiService.GetHeroSkillsAsync();
-            if (response.IsSuccessStatusCode)
-            {
-                string json = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonSerializer.Deserialize<HeroSkillsResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (responseObject?.HeroSkills != null)
-                {
-                    Skills = new ObservableCollection<HeroSkill>(responseObject.HeroSkills);
-                }
-                else
-                {
-                    Skills = new ObservableCollection<HeroSkill>(); // Пустая коллекция, если данных нет
-                }
-            }
-            else
-            {
-                MessageBox.Show("Не удалось загрузить навыки героя: " + response.StatusCode, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show("Ошибка при загрузке навыков героя: " + ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-    }
-
-    private async Task LoadQuests()
-    {
-        try
-        {
-            HttpResponseMessage response = await _apiService.GetQuestsAsync();
-
-            if (response.IsSuccessStatusCode)
-            {
-                string json = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonSerializer.Deserialize<List<Quest>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (responseObject != null)
-                {
-                    Quests.Clear();
-                    foreach (var quest in responseObject)
-                    {
-                        Quests.Add(quest);
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("Ошибка загрузки квестов: " + response.StatusCode, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show("Ошибка при загрузке квестов: " + ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
     }
 }
