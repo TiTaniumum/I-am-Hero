@@ -26,7 +26,7 @@ namespace I_am_Hero_WPF.Views
         private Grid _draggedElement;
         private readonly Dictionary<Grid, (Point, Point)> _relativePositions = new Dictionary<Grid, (Point, Point)>();
         private readonly Dictionary<Grid, Point> _originalPositions = new Dictionary<Grid, Point>();
-        private readonly int _columns = 6;
+        private readonly int _columns = 9;
         private readonly int _rows = 6;
         private readonly double _thumbMargin = 10;
         public DashboardView()

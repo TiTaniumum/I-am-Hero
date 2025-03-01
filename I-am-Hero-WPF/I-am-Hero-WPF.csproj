@@ -141,6 +141,8 @@
     </ApplicationDefinition>
     <Compile Include="Command\RelayCommand.cs" />
     <Compile Include="Models\Hero.cs" />
+    <Compile Include="Models\HeroAttribute.cs" />
+    <Compile Include="Models\HeroAttributesResponse.cs" />
     <Compile Include="Models\HeroSkill.cs" />
     <Compile Include="Models\HeroSkillsResponse.cs" />
     <Compile Include="Models\Quest.cs" />

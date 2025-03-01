@@ -19,7 +19,7 @@
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
                 <Button Content="Добавить" Command="{Binding AddSkillCommand}" Width="100" Margin="5"/>
-                <Button Content="Отмена" Command="{Binding CancelCommand}" Width="100" Margin="5"/>
+                <Button Content="Отмена" Command="{Binding CloseModalCommand}" Width="100" Margin="5"/>
             </StackPanel>
         </StackPanel>
     </Grid>

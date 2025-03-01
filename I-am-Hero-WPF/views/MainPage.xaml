@@ -202,6 +202,7 @@
                 <Separator Height="1" Background="Gray" Margin="10,5"/>
 
                 <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        Command="{Binding NavigateToAchievementCommand}"
                 ToolTip="Достижения"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Left" 
@@ -242,6 +243,6 @@
             </Button>
         </DockPanel>
         
-        <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding CurrentContent}" Margin="10"/>
+        <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding CurrentContent}" Margin="0"/>
     </Grid>
 </Page>

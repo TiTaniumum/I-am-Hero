@@ -60,6 +60,21 @@ public class ApiService
             return "Ошибка: " + response.StatusCode;
         }
     }
+    public async Task<bool> IsTokenValid()
+    {
+        string token = TokenStorage.LoadToken();
+        if (string.IsNullOrEmpty(token)) return false;
+
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        HttpResponseMessage response = await _httpClient.GetAsync("api/Hero/get");
+        return response.IsSuccessStatusCode;
+    }
+    public void Logout()
+    {
+        TokenStorage.DeleteToken();
+        _httpClient.DefaultRequestHeaders.Authorization = null;
+    }
 
     //Hero
     public async Task<HttpResponseMessage> GetHeroAsync()
@@ -71,26 +86,9 @@ public class ApiService
     public async Task<string> CreateHeroAsync(string heroName)
     {
         var response = await _httpClient.PostAsync($"api/Hero/create?heroName={Uri.EscapeDataString(heroName)}", null);
-
         return await response.Content.ReadAsStringAsync();
-    }
+    }    
 
-    public async Task<bool> IsTokenValid()
-    {
-        string token = TokenStorage.LoadToken();
-        if (string.IsNullOrEmpty(token)) return false;
-
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-        HttpResponseMessage response = await _httpClient.GetAsync("api/Hero/get");
-        return response.IsSuccessStatusCode;
-    }
-
-    public void Logout()
-    {
-        TokenStorage.DeleteToken();
-        _httpClient.DefaultRequestHeaders.Authorization = null;
-    }
 
     //Hero Skills
     public async Task<HttpResponseMessage> GetHeroSkillsAsync()
@@ -106,7 +104,25 @@ public class ApiService
         string json = JsonSerializer.Serialize(skill);
         HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        HttpResponseMessage response = await _httpClient.PostAsync("api/Hero/create/HeroSkills", content);
+        HttpResponseMessage response = await _httpClient.PostAsync("api/Hero/create/HeroSkill", content);
+        return response;
+    }
+
+    //Hero Attributes
+    public async Task<HttpResponseMessage> GetHeroAttributesAsync()
+    {
+        HttpResponseMessage response = await _httpClient.GetAsync("api/Hero/get/HeroAttributes");
+        return response;
+    }
+    public async Task<HttpResponseMessage> CreateAttributeAsync(HeroAttribute attribute)
+    {
+        if (attribute == null)
+            throw new ArgumentNullException(nameof(attribute));
+
+        string json = JsonSerializer.Serialize(attribute);
+        HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        HttpResponseMessage response = await _httpClient.PostAsync("api/Hero/create/HeroAtrribute", content);
         return response;
     }
 

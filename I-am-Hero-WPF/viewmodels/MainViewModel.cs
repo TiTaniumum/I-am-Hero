@@ -15,9 +15,10 @@ public class MainViewModel : ViewModelBase
     public RelayCommand NavigateToQuestCommand { get; }
     public RelayCommand NavigateToQuestLineCommand { get; }
     public RelayCommand NavigateToHabbitCommand { get; }
+    public RelayCommand NavigateToAchievementCommand { get; }
 
-    private double _sidebarUnfoldedWidth = 10 + 24 + 10; // Начальная ширина, свернутое состояние (10 - Margin, 24 - Width of icon, 10 - Margin)
-    private double _sidebarFoldedWidth = 175;
+    private double _sidebarUnfoldedWidth = 175;
+    private double _sidebarFoldedWidth = 10 + 24 + 10; // Начальная ширина, свернутое состояние (10 - Margin, 24 - Width of icon, 10 - Margin)
     private double _sidebarWidth;
     private bool _sidebarExpanded = false;
     private string _sidebarArrowIcon = "ChevronRight";
@@ -63,7 +64,7 @@ public class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
-        _sidebarWidth = _sidebarUnfoldedWidth;
+        _sidebarWidth = _sidebarFoldedWidth;
         CurrentContent = new DashboardView();
 
         LogoutCommand = new RelayCommand(_ =>
@@ -111,12 +112,16 @@ public class MainViewModel : ViewModelBase
         {
             CurrentContent = new HabbitView();
         });
+        NavigateToAchievementCommand = new RelayCommand(_ =>
+        {
+            CurrentContent = new AchievementView();
+        });
     }
 
     private void ToggleSidebar()
     {
         SidebarExpanded = !SidebarExpanded;
-        SidebarWidth = SidebarExpanded ? _sidebarFoldedWidth : _sidebarUnfoldedWidth; // 10 - Margin, 24 - Width иконки, 10 - Margin (175 - состояние развёрнутого меню)
+        SidebarWidth = SidebarExpanded ? _sidebarFoldedWidth : _sidebarUnfoldedWidth;
         SidebarArrowIcon = SidebarExpanded ? "ChevronLeft" : "ChevronRight";
     }
 }
