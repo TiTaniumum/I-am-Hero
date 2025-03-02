@@ -1,0 +1,9 @@
+﻿<UserControl x:Class="I_am_Hero_WPF.Views.AchievementView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:I_am_Hero_WPF.Properties" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+    <Grid>
+        <TextBlock>Achievements</TextBlock>
+    </Grid>
+</UserControl>
