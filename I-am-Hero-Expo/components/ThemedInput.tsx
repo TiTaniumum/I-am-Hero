@@ -10,14 +10,13 @@ export type ThemedInputProps = TextInputProps & {
 export function ThemedInput({ style, lightColor, darkColor, ...otherProps }: ThemedInputProps) {
   const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
-  return <TextInput style={[{ backgroundColor }, {color}, style, styles.input]} {...otherProps} />;
+  return <TextInput style={[{ backgroundColor }, {color}, style, {borderColor: color}, styles.input]} {...otherProps} />;
 }
 
 const styles = StyleSheet.create({
     input:{
-        borderColor: 'white',
-        borderWidth: 1,
+        borderWidth: 2,
         borderRadius: 10,
-        padding: 5
+        padding: 10
     }
 });
