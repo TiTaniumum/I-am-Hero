@@ -185,7 +185,7 @@ public class DashboardViewModel : ViewModelBase
         await LoadHero();
         await LoadSkills();
         await LoadAttributes();
-        //await LoadQuests(); 
+        await LoadQuests(); 
     }
     private async Task LoadHero()
     {
@@ -279,15 +279,15 @@ public class DashboardViewModel : ViewModelBase
             if (response.IsSuccessStatusCode)
             {
                 string json = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonSerializer.Deserialize<List<Quest>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var responseObject = JsonSerializer.Deserialize<QuestsResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                if (responseObject != null)
+                if (responseObject?.Quests != null)
                 {
-                    Quests.Clear();
-                    foreach (var quest in responseObject)
-                    {
-                        Quests.Add(quest);
-                    }
+                    Quests = new ObservableCollection<Quest>(responseObject.Quests);
+                }
+                else
+                {
+                    Quests = new ObservableCollection<Quest>(); // Пустая коллекция, если данных нет
                 }
             }
             else
@@ -322,6 +322,9 @@ public class DashboardViewModel : ViewModelBase
         if (response.IsSuccessStatusCode)
         {
             MessageBox.Show("Навык успешно добавлен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+            _ = LoadData();
+            IsSkillModalOpen= false;
+            IsModalOpen = false;
         }
         else
         {
@@ -342,6 +345,7 @@ public class DashboardViewModel : ViewModelBase
             Description = AttributeDescription,
             MinValue = AttributeMinValue,
             MaxValue = AttributeMaxValue,
+            Value = AttributeValue,
             CAttributeTypeId = cLevelCalculationTypeId
         };
 
@@ -350,6 +354,9 @@ public class DashboardViewModel : ViewModelBase
         if (response.IsSuccessStatusCode)
         {
             MessageBox.Show("Аттрибут успешно добавлен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+            _ = LoadData();
+            IsAttributeModalOpen = false;
+            IsModalOpen = false;
         }
         else
         {

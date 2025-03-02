@@ -66,7 +66,7 @@ public class ProfileViewModel : ViewModelBase
         });
         //ChangeAvatarCommand = new RelayCommand(ChangeAvatar);
 
-        LoadHeroData();
+        _ = LoadHeroData();
     }
 
     private async Task LoadHeroData()

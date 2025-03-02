@@ -108,8 +108,21 @@ namespace I_am_Hero_WPF.Views
 
                 if (!IsPositionOccupied(grid, new Point(left, top), newWidth, newHeight))
                 {
-                    grid.Width = nearestBottomRight.X - left - _thumbMargin;
-                    grid.Height = nearestBottomRight.Y - top - _thumbMargin;
+                    if(nearestBottomRight.X - left - _thumbMargin > 0)
+                    {
+                        grid.Width = nearestBottomRight.X - left - _thumbMargin;
+                    } else
+                    {
+                        grid.Width = 0;
+                    }
+                    if(nearestBottomRight.Y - top - _thumbMargin > 0)
+                    {
+                        grid.Height = nearestBottomRight.Y - top - _thumbMargin;
+                    }
+                    else
+                    {
+                        grid.Height = 0;
+                    }
                     grid.Clip = new RectangleGeometry(new Rect(0, 0, grid.Width, grid.Height), 10, 10);
                     double canvasWidth = MainCanvas.ActualWidth;
                     double canvasHeight = MainCanvas.ActualHeight;

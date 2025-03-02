@@ -7,6 +7,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -24,17 +25,24 @@
             </Grid>
         </StackPanel>
 
-        <!-- Никнейм -->
+        <!-- HeroName -->
         <StackPanel Grid.Row="1" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,0,0,20">
-            <TextBlock Text="{Binding Nickname}" FontSize="22" FontWeight="Bold"/>
+            <TextBlock Text="{Binding HeroName}" FontSize="22" FontWeight="Bold"/>
+            
             <Button Width="32" Height="32" Background="Transparent" BorderThickness="0"
                 ToolTip="Изменить ник">
                 <materialDesign:PackIcon Kind="Pencil" Width="24" Height="24" Opacity="0.5"/>
             </Button>
         </StackPanel>
 
+        <!-- HeroExperience -->
+        <StackPanel Grid.Row="2" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,0,0,20">
+            <ProgressBar Minimum="0" Maximum="100" Value="{Binding HeroExperience}" Height="20" Width="300"/>
+            <TextBlock Text="{Binding HeroExperience, StringFormat='{}{0}/100 exp'}" FontSize="12" Foreground="Gray" Margin="-60, 0, 0, 0"/>
+        </StackPanel>
+        
         <!-- Биография и описание профиля -->
-        <StackPanel Grid.Row="2" HorizontalAlignment="Center" Width="300">
+        <StackPanel Grid.Row="3" HorizontalAlignment="Center" Width="300">
             <TextBlock Text="Биография" FontSize="16" FontWeight="Bold" Margin="0,0,0,5"/>
             <Grid>
                 <TextBox Text="{Binding Biography}" AcceptsReturn="True" Height="60" TextWrapping="Wrap"
