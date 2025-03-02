@@ -6,12 +6,17 @@ import { useState } from "react";
 import { useGlobalContext } from "./ContextProvider";
 import Styles from "@/constants/Styles";
 import Resource from "@/constants/Resource";
+import { useColorScheme } from "@/hooks/useColorScheme.web";
+import { Colors } from "@/constants/Colors";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordRepeat, setPasswordRepeat] = useState("");
+
+  const colorScheme = useColorScheme();
+  const color = Colors[colorScheme ?? "light"].tint;
 
   const { api } = useGlobalContext();
 
@@ -36,7 +41,7 @@ export default function Auth() {
           />
           <Pressable
             onPress={() => api.Login(email, password)}
-            style={[Styles.pressable, {width: "70%"}]}
+            style={[Styles.pressable, {width: "70%", borderColor: color, borderWidth:2}]}
           >
             <ThemedText>{Resource.get("login")}</ThemedText>
           </Pressable>
@@ -80,7 +85,7 @@ export default function Auth() {
             onPress={() =>
               api.Register(email, password, passwordRepeat, setIsLogin)
             }
-            style={[Styles.pressable, {width: "70%"}]}
+            style={[Styles.pressable, {width: "70%", borderColor: color}]}
           >
             <ThemedText>{Resource.get("register")}</ThemedText>
           </Pressable>

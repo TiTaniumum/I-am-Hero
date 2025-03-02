@@ -12,9 +12,9 @@ import AlertModal, { AlertModalProps } from "./AlertModal";
 import SettingsService from "@/services/SettingsService";
 import User from "@/models/User";
 
-const api = new ApiService();
-const settings = new SettingsService();
 const user = new User();
+const api = new ApiService(user);
+const settings = new SettingsService();
 
 export interface iAlert {
   title: string;

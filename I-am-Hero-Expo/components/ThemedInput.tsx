@@ -15,8 +15,8 @@ export function ThemedInput({ style, lightColor, darkColor, ...otherProps }: The
 
 const styles = StyleSheet.create({
     input:{
-        borderWidth: 1,
+        borderWidth: 2,
         borderRadius: 10,
-        padding: 5
+        padding: 10
     }
 });

@@ -35,7 +35,7 @@ export default function MenuScreen() {
   
   if (!isToken) return <Auth />;
   return (
-    <Wrapper style={Styles.container}>
+    <Wrapper style={[Styles.container,{gap: 0}]}>
       <ThemedView style={Styles.header} tint={true}>
         <Pressable
           style={({ pressed }) => [
@@ -57,6 +57,7 @@ export default function MenuScreen() {
             Styles.headerButtons,
             pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
           ]}
+          onPress={()=>{router.push('/settings')}}
         >
           <FontAwesome5 name="cog" size={24} color={color} />
         </Pressable>

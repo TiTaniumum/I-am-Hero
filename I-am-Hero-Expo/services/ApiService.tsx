@@ -6,7 +6,7 @@ import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { Platform } from "react-native";
 
 export default class ApiService {
-  private baseUrl: string = "http://192.168.1.65:8080/api/";
+  private baseUrl: string = "http://172.17.144.1:8080/api/";
   private applicationID: number;
   token: string | null = null;
   alert: (title: string, message: string) => void = (
@@ -14,7 +14,9 @@ export default class ApiService {
     message: string
   ) => {};
   setIsToken: any = (value: any) => {};
-  constructor() {
+  user: User;
+  constructor(user: User) {
+    this.user = user;
     switch (Platform.OS) {
       case "android":
         this.applicationID = 3;
@@ -48,6 +50,7 @@ export default class ApiService {
       .then(function (response) {
         api.alert(Resource.get("success!"), "");
         api.SetNewToken(response.data);
+        api.GetHero(api.user)
       })
       .catch(function (error) {
         console.log(error);
@@ -55,6 +58,15 @@ export default class ApiService {
           api.alert(Resource.get("error!"), Resource.get("errorUserNotExist"));
         }
       });
+  }
+
+  Logout(){
+    this.token = null;
+    AsyncStorage.removeItem("authToken");
+    if(this.user != null && this.user.hero != undefined)
+      this.user.hero = undefined
+    AsyncStorage.removeItem("Hero");
+    this.setIsToken(false);
   }
 
   Register(
@@ -83,7 +95,7 @@ export default class ApiService {
   CreateHero(name: string, user: User) {
     const api = this;
     axios
-      .post(this.uri(`Hero/create?heroName=${name}`), {
+      .post(this.uri(`Hero/create?heroName=${name}`),{}, {
         headers: {
           Authorization: `Bearer ${this.token}`,
         },
@@ -98,6 +110,8 @@ export default class ApiService {
       });
   }
   GetHero(user: User) {
+    if(this.token == null)
+      return;
     const api = this;
     axios
       .get(this.uri("Hero/get"), {
@@ -116,7 +130,7 @@ export default class ApiService {
 
   private handleToken(response: AxiosResponse<any, any>) {
     const j = response.data;
-    if (j.token != "") {
+    if (j.token != "" && j.token != null) {
       this.SetNewToken(j.token);
     }
     return j;
@@ -129,5 +143,8 @@ export default class ApiService {
     AsyncStorage.setItem("authToken", token);
     this.token = token;
     this.setIsToken(true);
+  }
+  private handleException(error: any){
+    
   }
 }
