@@ -25,6 +25,7 @@ public class ApiService
         }
     }
 
+
     //Auth
     public async Task<string> Register(string email, string password)
     {
@@ -76,6 +77,7 @@ public class ApiService
         _httpClient.DefaultRequestHeaders.Authorization = null;
     }
 
+
     //Hero
     public async Task<HttpResponseMessage> GetHeroAsync()
     {
@@ -107,6 +109,36 @@ public class ApiService
         HttpResponseMessage response = await _httpClient.PostAsync("api/Hero/create/HeroSkill", content);
         return response;
     }
+    public async Task<HttpResponseMessage> DeleteSkillAsync(long id)
+    {
+        if (id <= 0)
+            throw new ArgumentException("Invalid attribute ID", nameof(id));
+
+        string json = JsonSerializer.Serialize(id);
+        HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        HttpRequestMessage request = new HttpRequestMessage
+        {
+            Method = HttpMethod.Delete,
+            RequestUri = new Uri("api/Hero/delete/HeroSkill", UriKind.Relative),
+            Content = content
+        };
+
+        HttpResponseMessage response = await _httpClient.SendAsync(request);
+        return response;
+    }
+    public async Task<HttpResponseMessage> EditSkillAsync(HeroSkill skill)
+    {
+        if (skill == null)
+            throw new ArgumentNullException(nameof(skill));
+
+        string json = JsonSerializer.Serialize(skill);
+        HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        HttpResponseMessage response = await _httpClient.PutAsync("api/Hero/edit/HeroSkill", content);
+        return response;
+    }
+
 
     //Hero Attributes
     public async Task<HttpResponseMessage> GetHeroAttributesAsync()
@@ -125,6 +157,37 @@ public class ApiService
         HttpResponseMessage response = await _httpClient.PostAsync("api/Hero/create/HeroAtrribute", content);
         return response;
     }
+    public async Task<HttpResponseMessage> DeleteHeroAttributeAsync(long id)
+    {
+        if (id <= 0)
+            throw new ArgumentException("Invalid attribute ID", nameof(id));
+
+        string json = JsonSerializer.Serialize(id);
+        HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        HttpRequestMessage request = new HttpRequestMessage
+        {
+            Method = HttpMethod.Delete,
+            RequestUri = new Uri("api/Hero/delete/HeroAttribute", UriKind.Relative),
+            Content = content
+        };
+
+        HttpResponseMessage response = await _httpClient.SendAsync(request);
+        return response;
+    }
+    public async Task<HttpResponseMessage> EditHeroAttributeAsync(HeroAttribute attribute)
+    {
+        if (attribute == null)
+            throw new ArgumentNullException(nameof(attribute));
+
+        string json = JsonSerializer.Serialize(attribute);
+        HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        HttpResponseMessage response = await _httpClient.PutAsync("api/Hero/edit/HeroAttriute", content);
+        return response;
+    }
+
+
 
     //Hero Quests
     public async Task<HttpResponseMessage> GetQuestsAsync()
