@@ -27,6 +27,7 @@ export default function MenuScreen() {
   
   const Wrapper = Platform.OS === "web" ? ThemedView : SafeAreaView;
   const [listType, setListType] = useState(false);
+  const [isHover, setIsHover] = useState(false);
   const colorScheme = useColorScheme();
   const color = Colors[colorScheme ?? "light"].tint;
   const background = Colors[colorScheme ?? "light"].background;
@@ -38,8 +39,11 @@ export default function MenuScreen() {
     <Wrapper style={[Styles.container,{gap: 0}]}>
       <ThemedView style={Styles.header} tint={true}>
         <Pressable
+          onHoverIn={()=>{setIsHover(true);}}
+          onHoverOut={()=>{setIsHover(false);}}
           style={({ pressed }) => [
             Styles.headerButtons,
+            isHover ? {backgroundColor: "rgba(255, 255, 255, 0.5)"} : {},
             pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
           ]}
           onPress={() => {

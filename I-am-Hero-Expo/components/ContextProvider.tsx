@@ -27,6 +27,8 @@ type GlobalContext = {
   alert: (title: string, message: string) => void;
   isHero: boolean;
   user: User;
+  bioText: string;
+  setBioText: (value: string)=>void ;
 };
 
 const Context = createContext<GlobalContext>({} as GlobalContext);
@@ -36,6 +38,7 @@ export function ContextProvider({ children }: { children: ReactNode }) {
   const [isAlertVisible, setIsAlertVisible] = useState<boolean>(false);
   const [alertObj, setAlertObj] = useState<iAlert>({ title: "", message: "" });
   const [isHero, setIsHero] = useState<boolean>(false);
+  const [bioText, setBioText] = useState("");
   function onAlertClose() {
     setIsAlertVisible(false);
   }
@@ -64,6 +67,8 @@ export function ContextProvider({ children }: { children: ReactNode }) {
         alert,
         isHero,
         user,
+        bioText,
+        setBioText
       }}
     >
       {children}

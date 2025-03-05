@@ -1,4 +1,5 @@
 import Resource from "@/constants/Resource";
+import { BioPiece } from "@/models/BioPiece";
 import { Hero } from "@/models/Hero";
 import User from "@/models/User";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -6,7 +7,7 @@ import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { Platform } from "react-native";
 
 export default class ApiService {
-  private baseUrl: string = "http://172.17.144.1:8080/api/";
+  private baseUrl: string = "http://192.168.1.68:8080/api/";
   private applicationID: number;
   token: string | null = null;
   alert: (title: string, message: string) => void = (
@@ -50,7 +51,7 @@ export default class ApiService {
       .then(function (response) {
         api.alert(Resource.get("success!"), "");
         api.SetNewToken(response.data);
-        api.GetHero(api.user)
+        api.GetHero(api.user);
       })
       .catch(function (error) {
         console.log(error);
@@ -60,13 +61,14 @@ export default class ApiService {
       });
   }
 
-  Logout(){
+  Logout() {
     this.token = null;
     AsyncStorage.removeItem("authToken");
-    if(this.user != null && this.user.hero != undefined)
-      this.user.hero = undefined
+    if (this.user != null && this.user.hero != undefined)
+      this.user.hero = undefined;
     AsyncStorage.removeItem("Hero");
     this.setIsToken(false);
+    this.user.setIsHero(false);
   }
 
   Register(
@@ -95,11 +97,15 @@ export default class ApiService {
   CreateHero(name: string, user: User) {
     const api = this;
     axios
-      .post(this.uri(`Hero/create?heroName=${name}`),{}, {
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-        },
-      })
+      .post(
+        this.uri(`Hero/create?heroName=${name}`),
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        }
+      )
       .then(function (response) {
         const j = api.handleToken(response);
         api.GetHero(user);
@@ -110,8 +116,7 @@ export default class ApiService {
       });
   }
   GetHero(user: User) {
-    if(this.token == null)
-      return;
+    if (this.token == null) return;
     const api = this;
     axios
       .get(this.uri("Hero/get"), {
@@ -126,6 +131,33 @@ export default class ApiService {
         user.setIsHero(true);
       })
       .catch((error) => console.log(error));
+  }
+
+  GetBioPieces() {
+    const api = this;
+    const user = this.user;
+    return axios
+      .get(this.uri("Hero/get/HeroBioPieces"), {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      .then(function (response) {
+        const j = api.handleToken(response);
+        user.biopieces = BioPiece.AcceptArr(j.heroBioPieces);
+      });
+  }
+  CreateBioPiece(text: string) {
+    const api = this;
+    return axios.post(
+      this.uri("Hero/create/HeroBioPiece"),
+      { text: text },
+      {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      }
+    ).then(api.handleToken);
   }
 
   private handleToken(response: AxiosResponse<any, any>) {
@@ -144,7 +176,5 @@ export default class ApiService {
     this.token = token;
     this.setIsToken(true);
   }
-  private handleException(error: any){
-    
-  }
+  private handleException(error: any) {}
 }
