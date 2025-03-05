@@ -17,14 +17,14 @@ const api = new ApiService(user);
 const settings = new SettingsService();
 
 export interface iAlert {
-  title: string;
-  message: string;
+  title?: string;
+  message?: string;
 }
 
 type GlobalContext = {
   isToken: boolean;
   api: ApiService;
-  alert: (title: string, message: string) => void;
+  alert: (title?: string, message?: string) => void;
   isHero: boolean;
   user: User;
   bioText: string;
@@ -42,8 +42,8 @@ export function ContextProvider({ children }: { children: ReactNode }) {
   function onAlertClose() {
     setIsAlertVisible(false);
   }
-  function alert(title: string, message: string = "") {
-    setAlertObj({ title, message });
+  function alert(title?: string, message?: string) {
+    setAlertObj({ title, message});
     setIsAlertVisible(true);
   }
   api.setIsToken = setIsToken;
@@ -77,7 +77,7 @@ export function ContextProvider({ children }: { children: ReactNode }) {
         title={alertObj.title}
         message={alertObj.message}
         onClose={onAlertClose}
-      ></AlertModal>
+      />
     </Context.Provider>
   );
 }
