@@ -5,29 +5,39 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import Styles from "@/constants/Styles";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
-import { useState } from "react";
+import { useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet } from "react-native";
 
-export default function CreateBiographyScreen() {
+export default function EditBiographyScreen() {
+  const { editBioID, editBioText, setEditBioText, alert, api } = useGlobalContext();
   const [height, setHeight] = useState(40);
-  const {bioText, setBioText} =  useGlobalContext();
+  const [backupText, setBackupText] = useState<string>("");
   const colorScheme = useColorScheme();
   const color = Colors[colorScheme ?? "light"].tint;
   const styles = createStyle(color);
-  const {alert, api} = useGlobalContext();
 
-  function handleClear(){
-    setBioText("");
+  useEffect(() => {
+    setBackupText(editBioText);
+  }, []);
+
+  function handleClear() {
+    setEditBioText("");
   }
 
-  function handleCreate(){
-    api.CreateBioPiece(bioText)
-    .then(()=>{
-      setBioText("");
-      alert("Created!", "");
-    }).catch((error)=>{
-      alert("ERROR","Something went wrong...");
-    })
+  function cancelChanges() {
+    setEditBioText(backupText);
+  }
+
+  function handleSave() {
+    api
+      .EditBioPiece(editBioID, editBioText)
+      .then(() => {
+        alert("Saved!", "");
+      })
+      .catch((error) => {
+        alert("ERROR", "Something went wrong...");
+      });
   }
 
   return (
@@ -38,22 +48,36 @@ export default function CreateBiographyScreen() {
           placeholderTextColor="gray"
           style={[styles.input, { height }, { outline: "none" }]}
           multiline
-          value={bioText}
-          onChangeText={setBioText}
+          value={editBioText}
+          onChangeText={setEditBioText}
           onContentSizeChange={(e) => {
             setHeight(e.nativeEvent.contentSize.height);
           }}
         />
       </ScrollView>
       <ThemedView style={styles.control}>
-        <Pressable style={[Styles.pressable, styles.button]} onPress={handleClear}>
+        <Pressable
+          style={[Styles.pressable, styles.button]}
+          onPress={handleClear}
+        >
           <ThemedView>
             <ThemedText>Erase</ThemedText>
           </ThemedView>
         </Pressable>
-        <Pressable style={[Styles.pressable, styles.button]} onPress={handleCreate}>
+        <Pressable
+          style={[Styles.pressable, styles.button]}
+          onPress={cancelChanges}
+        >
           <ThemedView>
-            <ThemedText>Create</ThemedText>
+            <ThemedText>Rollback</ThemedText>
+          </ThemedView>
+        </Pressable>
+        <Pressable
+          style={[Styles.pressable, styles.button]}
+          onPress={handleSave}
+        >
+          <ThemedView>
+            <ThemedText>Save</ThemedText>
           </ThemedView>
         </Pressable>
       </ThemedView>
@@ -67,7 +91,7 @@ function createStyle(color: any) {
       width: "100%",
       borderWidth: 0,
     },
-    button: { borderColor: color, width: "40%" },
+    button: { borderColor: color, width: "20%" },
     scroll: {
       width: "100%",
     },

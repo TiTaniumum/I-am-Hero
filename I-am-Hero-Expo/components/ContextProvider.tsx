@@ -28,7 +28,11 @@ type GlobalContext = {
   isHero: boolean;
   user: User;
   bioText: string;
-  setBioText: (value: string)=>void ;
+  setBioText: (value: string)=>void;
+  editBioID: number;
+  setEditBioID: (value: number)=>void;
+  editBioText: string;
+  setEditBioText: (value: string)=>void;
 };
 
 const Context = createContext<GlobalContext>({} as GlobalContext);
@@ -39,6 +43,8 @@ export function ContextProvider({ children }: { children: ReactNode }) {
   const [alertObj, setAlertObj] = useState<iAlert>({ title: "", message: "" });
   const [isHero, setIsHero] = useState<boolean>(false);
   const [bioText, setBioText] = useState("");
+  const [editBioID, setEditBioID] = useState<number>(0);
+  const [editBioText, setEditBioText] = useState("");
   function onAlertClose() {
     setIsAlertVisible(false);
   }
@@ -68,7 +74,11 @@ export function ContextProvider({ children }: { children: ReactNode }) {
         isHero,
         user,
         bioText,
-        setBioText
+        setBioText,
+        editBioID,
+        setEditBioID,
+        editBioText,
+        setEditBioText,
       }}
     >
       {children}

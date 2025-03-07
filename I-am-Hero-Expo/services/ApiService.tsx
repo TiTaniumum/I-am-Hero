@@ -1,4 +1,5 @@
 import Resource from "@/constants/Resource";
+import { Attribute, AttributeState } from "@/models/Attribute";
 import { BioPiece } from "@/models/BioPiece";
 import { Hero } from "@/models/Hero";
 import User from "@/models/User";
@@ -147,17 +148,82 @@ export default class ApiService {
         user.biopieces = BioPiece.AcceptArr(j.heroBioPieces);
       });
   }
+
   CreateBioPiece(text: string) {
     const api = this;
-    return axios.post(
-      this.uri("Hero/create/HeroBioPiece"),
-      { text: text },
-      {
+    return axios
+      .post(
+        this.uri("Hero/create/HeroBioPiece"),
+        { text: text },
+        {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        }
+      )
+      .then(api.handleToken);
+  }
+
+  DeleteBioPiece(id: number) {
+    const api = this;
+    return axios
+      .delete(this.uri("Hero/delete/HeroBioPiece"), {
+        params: { id: id },
         headers: {
           Authorization: `Bearer ${this.token}`,
         },
-      }
-    ).then(api.handleToken);
+      })
+      .then(api.handleToken);
+  }
+
+  EditBioPiece(id: number, text: string) {
+    const api = this;
+    return axios
+      .put(
+        this.uri("Hero/edit/HeroBioPiece"),
+        { id: id, text: text },
+        {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        }
+      )
+      .then(api.handleToken);
+  }
+
+  GetAttributes() {
+    const api = this;
+    const user = this.user;
+    return axios
+      .get(this.uri("Hero/get/HeroAttributes"), {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      .then((response) => {
+        const j = api.handleToken(response);
+        user.attributes = Attribute.AcceptArr(j.heroAttributes);
+        api.PullAttributeStates();
+      });
+  }
+
+  PullAttributeStates() {
+    const api = this;
+    const user = this.user;
+    user.attributes?.forEach(async (attribute) => {
+      // 2 - тип состояние; 1 - численный
+      if (
+        attribute.currentStateID === undefined ||
+        attribute.currentStateID instanceof AttributeState ||
+        attribute.currentStateID == 1
+      )
+        return;
+      const response = await axios.get(
+        this.uri(`Hero/get/HeroAttributeStates?id=${attribute.currentStateID}`)
+      );
+      const attributeState = new AttributeState(response.data);
+      attribute.currentStateID = attributeState;
+    });
   }
 
   private handleToken(response: AxiosResponse<any, any>) {

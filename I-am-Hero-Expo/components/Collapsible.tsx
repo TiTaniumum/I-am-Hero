@@ -1,5 +1,5 @@
 import React, { PropsWithChildren, useState } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { DimensionValue, StyleSheet, TouchableOpacity } from "react-native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -16,7 +16,7 @@ export function Collapsible({
   return (
     <ThemedView>
       <TouchableOpacity
-        style={styles.heading}
+        style={[styles.heading]}
         onPress={() => setIsOpen((value) => !value)}
         activeOpacity={0.8}
       >
@@ -28,7 +28,7 @@ export function Collapsible({
           style={{ transform: [{ rotate: isOpen ? "90deg" : "0deg" }] }}
         />
         {React.isValidElement(title) ? (
-          title
+          <ThemedView style={styles.outerWidth}>{title}</ThemedView>
         ) : (
           <ThemedText type="defaultSemiBold">{title}</ThemedText>
         )}
@@ -45,4 +45,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 6,
   },
+  outerWidth:{
+    width: '90%'
+  }
 });

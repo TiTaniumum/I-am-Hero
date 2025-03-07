@@ -1,7 +1,13 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import Styles from "@/constants/Styles";
-import { FlatList, Pressable, RefreshControl, StyleSheet } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  RefreshControl,
+  StyleSheet,
+} from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
 import { Colors } from "@/constants/Colors";
@@ -14,7 +20,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function BiographyScreen() {
-  const { user, api, alert } = useGlobalContext();
+  const { user, api, alert, setEditBioID, setEditBioText } = useGlobalContext();
   const [bioPieces, setBioPieces] = useState<BioPiece[]>(user.biopieces ?? []);
   const [itemsCountdown, setItemsCountdown] = useState<
     {
@@ -37,35 +43,38 @@ export default function BiographyScreen() {
   const color = Colors[colorScheme ?? "light"].tint;
   const background = Colors[colorScheme ?? "light"].background;
   const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     api.GetBioPieces().then(() => {
       setBioPieces(user.biopieces ?? []);
       setRefreshing(false);
+      if(loading) setLoading(false);
     });
   }, []);
 
   useEffect(() => {
     setRefreshing(true);
+    setLoading(true);
     api.GetBioPieces().then(() => {
       setBioPieces(user.biopieces ?? []);
       setRefreshing(false);
+      setLoading(false);
     });
   }, []);
-  useEffect(()=>{
-    setItemsCountdown(bioPieces.map((item) => {
-      return {
-        id: item.id,
-        countdown: 0,
-        interval: undefined,
-        isDeleted: false,
-      };
-    }));
-  },[bioPieces])
-
-  function getCountDownItem(id: number) {
-    return itemsCountdown.find((item) => item.id === id);
-  }
+  useEffect(() => {
+    setItemsCountdown(
+      bioPieces.map((item) => {
+        return {
+          id: item.id,
+          countdown: 0,
+          interval: undefined,
+          isDeleted: false,
+        };
+      })
+    );
+  }, [bioPieces]);
 
   function startDeletionCountdown(id: number) {
     const countdownitem = itemsCountdown.find((item) => item.id === id);
@@ -77,7 +86,6 @@ export default function BiographyScreen() {
           item.id == id ? { ...item, countdown: 0, interval: undefined } : item
         )
       );
-      alert(`${id}: Deletion Canceled`, "");
       return;
     }
     setItemsCountdown((prevData) =>
@@ -87,7 +95,6 @@ export default function BiographyScreen() {
     );
     let count = 5;
     const interval = setInterval(() => {
-      //console.log(count);
       count -= 1;
       setItemsCountdown((prevData) =>
         prevData.map((item) =>
@@ -110,7 +117,9 @@ export default function BiographyScreen() {
               : item
           )
         );
-        alert(`${id}: Deleted`, "");
+        api
+          .DeleteBioPiece(id)
+          .catch((error) => alert("ERROR", "Something went wrong ..."));
       }
     }, 1000);
   }
@@ -171,76 +180,93 @@ export default function BiographyScreen() {
       >
         <Ionicons name="refresh-circle-outline" size={60} color={color} />
       </Pressable>
-      <FlatList
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        style={styles.listcontainer}
-        contentContainerStyle={styles.listcontainer}
-        data={bioPieces}
-        renderItem={({ index, item }) => (
-          <ThemedView key={item.id} style={styles.item}>
-            <Collapsible
-              title={
-                <ThemedText style={styles.date}>
-                  {item.createDate instanceof Date
-                    ? item.createDate.toLocaleDateString()
-                    : new Date(item.createDate).toLocaleDateString()}
-                </ThemedText>
-              }
-            >
-              <ThemedView style={styles.options}>
-                <Pressable
-                  style={[
-                    Styles.pressable,
-                    { borderColor: color },
-                    styles.optionButton,
-                    isDeleted(item.id) ? { borderColor: "gray" } : {},
-                  ]}
-                >
-                  <MaterialIcons
-                    name="mode-edit"
-                    size={24}
-                    color={isDeleted(item.id) ? "gray" : color}
-                  />
-                  <ThemedText
-                    style={
-                      isDeleted(item.id)
-                        ? { textDecorationLine: "line-through", color: "gray" }
-                        : {}
-                    }
-                  >
-                    Edit
+      {loading && <ActivityIndicator size="large" color={color} />}
+      {!loading && (
+        <FlatList
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          style={styles.listcontainer}
+          contentContainerStyle={styles.listcontainer}
+          data={bioPieces}
+          renderItem={({ index, item }) => (
+            <ThemedView key={item.id} style={styles.item}>
+              <Collapsible
+                title={
+                  <ThemedText style={styles.date}>
+                    {item.createDate instanceof Date
+                      ? item.createDate.toLocaleDateString()
+                      : new Date(item.createDate).toLocaleDateString()}
                   </ThemedText>
-                </Pressable>
-                <Pressable
-                  style={[
-                    Styles.pressable,
-                    { borderColor: color },
-                    styles.optionButton,
-                  ]}
-                  onPress={() => {
-                    startDeletionCountdown(item.id);
-                  }}
-                >
-                  <MaterialIcons name="delete" size={24} color={color} />
-                  <ThemedText>{DeletionText(item.id)}</ThemedText>
-                </Pressable>
-              </ThemedView>
-            </Collapsible>
-            <ThemedText
-              style={[
-                styles.text,
-                isDeleted(item.id)
-                  ? { textDecorationLine: "line-through", color: "gray" }
-                  : {},
-              ]}
-            >
-              {item.text}
-            </ThemedText>
-          </ThemedView>
-        )}
-      />
+                }
+              >
+                <ThemedView style={styles.options}>
+                  <Pressable
+                    style={[
+                      Styles.pressable,
+                      { borderColor: color },
+                      styles.optionButton,
+                      isDeleted(item.id) ? { borderColor: "gray" } : {},
+                    ]}
+                    onPress={() => {
+                      setEditBioID(item.id);
+                      setEditBioText(item.text);
+                      router.push("/editbiography");
+                    }}
+                  >
+                    <MaterialIcons
+                      name="mode-edit"
+                      size={24}
+                      color={isDeleted(item.id) ? "gray" : color}
+                    />
+                    <ThemedText
+                      style={
+                        isDeleted(item.id)
+                          ? {
+                              textDecorationLine: "line-through",
+                              color: "gray",
+                            }
+                          : {}
+                      }
+                    >
+                      Edit
+                    </ThemedText>
+                  </Pressable>
+                  <Pressable
+                    style={[
+                      Styles.pressable,
+                      { borderColor: color },
+                      styles.optionButton,
+                    ]}
+                    onPress={() => {
+                      startDeletionCountdown(item.id);
+                    }}
+                  >
+                    <MaterialIcons name="delete" size={24} color={color} />
+                    <ThemedText>{DeletionText(item.id)}</ThemedText>
+                  </Pressable>
+                </ThemedView>
+              </Collapsible>
+              <ThemedText
+                style={[
+                  styles.text,
+                  isDeleted(item.id)
+                    ? { textDecorationLine: "line-through", color: "gray" }
+                    : {},
+                ]}
+              >
+                {item.text}
+              </ThemedText>
+            </ThemedView>
+          )}
+          ListEmptyComponent={
+            <ThemedView style={Styles.container}>
+              <ThemedText>There once was a hero</ThemedText>
+              <ThemedText>named {user.hero?.name}...</ThemedText>
+            </ThemedView>
+          }
+        />
+      )}
     </ThemedView>
   );
 }

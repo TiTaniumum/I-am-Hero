@@ -3,12 +3,7 @@ import { useGlobalContext } from "@/components/ContextProvider";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import Styles from "@/constants/Styles";
-import {
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import { Platform, Pressable, ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Fontisto from "@expo/vector-icons/Fontisto";
@@ -21,10 +16,11 @@ import { useColorScheme } from "@/hooks/useColorScheme.web";
 import { Colors } from "@/constants/Colors";
 import QuestIcon from "@/icons/QuestIcon";
 import { router } from "expo-router";
+import ProgressBar from "@/components/ProgressBar";
 
 export default function MenuScreen() {
-  const { isToken,user } = useGlobalContext();
-  
+  const { isToken, user } = useGlobalContext();
+
   const Wrapper = Platform.OS === "web" ? ThemedView : SafeAreaView;
   const [listType, setListType] = useState(false);
   const [isHover, setIsHover] = useState(false);
@@ -32,18 +28,22 @@ export default function MenuScreen() {
   const color = Colors[colorScheme ?? "light"].tint;
   const background = Colors[colorScheme ?? "light"].background;
   const iconsize = 24 * (listType ? 1 : 2);
-  const styles = getStyles(listType, color, background, iconsize)
-  
+  const styles = getStyles(listType, color, background, iconsize);
+
   if (!isToken) return <Auth />;
   return (
-    <Wrapper style={[Styles.container,{gap: 0}]}>
+    <Wrapper style={[Styles.container, { gap: 0 }]}>
       <ThemedView style={Styles.header} tint={true}>
         <Pressable
-          onHoverIn={()=>{setIsHover(true);}}
-          onHoverOut={()=>{setIsHover(false);}}
+          onHoverIn={() => {
+            setIsHover(true);
+          }}
+          onHoverOut={() => {
+            setIsHover(false);
+          }}
           style={({ pressed }) => [
             Styles.headerButtons,
-            isHover ? {backgroundColor: "rgba(255, 255, 255, 0.5)"} : {},
+            isHover ? { backgroundColor: "rgba(255, 255, 255, 0.5)" } : {},
             pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
           ]}
           onPress={() => {
@@ -61,7 +61,9 @@ export default function MenuScreen() {
             Styles.headerButtons,
             pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
           ]}
-          onPress={()=>{router.push('/settings')}}
+          onPress={() => {
+            router.push("/settings");
+          }}
         >
           <FontAwesome5 name="cog" size={24} color={color} />
         </Pressable>
@@ -72,11 +74,17 @@ export default function MenuScreen() {
       >
         <ThemedView style={styles.profile}>
           <ThemedView style={styles.leftprofile}>
-            <ThemedText style={{ fontSize: 25 }}>I am {user.hero?.name}</ThemedText>
+            <ThemedText style={{ fontSize: 25 }}>
+              I am {user.hero?.name}
+            </ThemedText>
             <ThemedText>Level 10</ThemedText>
-            <ThemedView style={styles.bar}>
-              <ThemedView style={styles.progressbar}></ThemedView>
-            </ThemedView>
+            <ProgressBar
+              minValue={0}
+              curValue={70}
+              maxValue={100}
+              width={"70%"}
+              height={30}
+            />
           </ThemedView>
           <ThemedView style={styles.leftprofile}>
             <FontAwesome6 name="user-astronaut" size={100} color={color} />
@@ -127,7 +135,11 @@ export default function MenuScreen() {
             router.push("/habbits");
           }}
         >
-          <MaterialCommunityIcons name="progress-check" size={iconsize} color={color} />
+          <MaterialCommunityIcons
+            name="progress-check"
+            size={iconsize}
+            color={color}
+          />
           {listType && <ThemedText>Habits</ThemedText>}
         </Pressable>
         <Pressable
@@ -167,7 +179,11 @@ export default function MenuScreen() {
             router.push("/calendars");
           }}
         >
-          <MaterialCommunityIcons name="calendar-check" size={iconsize} color={color} />
+          <MaterialCommunityIcons
+            name="calendar-check"
+            size={iconsize}
+            color={color}
+          />
           {listType && <ThemedText>Daylies</ThemedText>}
         </Pressable>
         <Pressable
@@ -200,7 +216,12 @@ export default function MenuScreen() {
   );
 }
 
-function getStyles(listType: boolean, color: string, background: string, iconsize: number){
+function getStyles(
+  listType: boolean,
+  color: string,
+  background: string,
+  iconsize: number
+) {
   const styles = StyleSheet.create({
     box: {
       width: 100,
@@ -208,16 +229,16 @@ function getStyles(listType: boolean, color: string, background: string, iconsiz
       backgroundColor: "red",
     },
     button: {
-      width: listType ? "60%" : iconsize*2,
+      width: listType ? "60%" : iconsize * 2,
       borderWidth: 2,
       borderRadius: 10,
       padding: 5,
       paddingVertical: 15,
       justifyContent: "center",
       borderColor: color,
-      display: 'flex',
-      flexDirection: 'row',
-      gap: 10
+      display: "flex",
+      flexDirection: "row",
+      gap: 10,
     },
     profile: {
       width: "100%",
@@ -268,8 +289,7 @@ function getStyles(listType: boolean, color: string, background: string, iconsiz
       justifyContent: "center",
       flexWrap: "wrap",
     },
-    scrollview: { width: "100%", backgroundColor: background }
+    scrollview: { width: "100%", backgroundColor: background },
   });
-  return styles
+  return styles;
 }
-
