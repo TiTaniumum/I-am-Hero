@@ -35,6 +35,16 @@ export interface IAttribute {
   currentStateID: number | AttributeState | null;
 }
 
+export interface IAttributeDTO{
+  name: string;
+  description: string | null;
+  cAttributeTypeID: number | null;
+  minValue: number | null;
+  value: number | null;
+  maxValue: number | null;
+  currentStateID: number | null;
+}
+
 export class Attribute implements IAttribute {
   id: number;
   name: string;

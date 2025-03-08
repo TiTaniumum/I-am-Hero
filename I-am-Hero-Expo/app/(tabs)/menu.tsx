@@ -17,9 +17,10 @@ import { Colors } from "@/constants/Colors";
 import QuestIcon from "@/icons/QuestIcon";
 import { router } from "expo-router";
 import ProgressBar from "@/components/ProgressBar";
+import CreateHero from "@/components/CreateHero";
 
 export default function MenuScreen() {
-  const { isToken, user } = useGlobalContext();
+  const { isToken, user, isHero } = useGlobalContext();
 
   const Wrapper = Platform.OS === "web" ? ThemedView : SafeAreaView;
   const [listType, setListType] = useState(false);
@@ -31,6 +32,7 @@ export default function MenuScreen() {
   const styles = getStyles(listType, color, background, iconsize);
 
   if (!isToken) return <Auth />;
+  if (!isHero) return <CreateHero />;
   return (
     <Wrapper style={[Styles.container, { gap: 0 }]}>
       <ThemedView style={Styles.header} tint={true}>
@@ -72,7 +74,7 @@ export default function MenuScreen() {
         style={{ width: "100%", backgroundColor: background }}
         contentContainerStyle={listType ? styles.menulist : styles.menugrid}
       >
-        <ThemedView style={styles.profile}>
+        <ThemedView style={[styles.profile, {borderColor: color}]}>
           <ThemedView style={styles.leftprofile}>
             <ThemedText style={{ fontSize: 25 }}>
               I am {user.hero?.name}
@@ -84,6 +86,7 @@ export default function MenuScreen() {
               maxValue={100}
               width={"70%"}
               height={30}
+              color={color}
             />
           </ThemedView>
           <ThemedView style={styles.leftprofile}>

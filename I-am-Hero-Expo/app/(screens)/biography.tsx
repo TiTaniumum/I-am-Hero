@@ -7,6 +7,7 @@ import {
   Pressable,
   RefreshControl,
   StyleSheet,
+  View,
 } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
@@ -18,6 +19,7 @@ import { useGlobalContext } from "@/components/ContextProvider";
 import { Collapsible } from "@/components/Collapsible";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import Animated, { FadeIn, FlipInXUp, ZoomOut } from "react-native-reanimated";
 
 export default function BiographyScreen() {
   const { user, api, alert, setEditBioID, setEditBioText } = useGlobalContext();
@@ -50,7 +52,7 @@ export default function BiographyScreen() {
     api.GetBioPieces().then(() => {
       setBioPieces(user.biopieces ?? []);
       setRefreshing(false);
-      if(loading) setLoading(false);
+      if (loading) setLoading(false);
     });
   }, []);
 
@@ -190,74 +192,82 @@ export default function BiographyScreen() {
           contentContainerStyle={styles.listcontainer}
           data={bioPieces}
           renderItem={({ index, item }) => (
-            <ThemedView key={item.id} style={styles.item}>
-              <Collapsible
-                title={
-                  <ThemedText style={styles.date}>
-                    {item.createDate instanceof Date
-                      ? item.createDate.toLocaleDateString()
-                      : new Date(item.createDate).toLocaleDateString()}
-                  </ThemedText>
-                }
+            <Animated.View key={item.id} entering={FlipInXUp} exiting={ZoomOut}>
+              <ThemedView
+                key={item.id}
+                style={[styles.item, { borderColor: color }]}
               >
-                <ThemedView style={styles.options}>
-                  <Pressable
-                    style={[
-                      Styles.pressable,
-                      { borderColor: color },
-                      styles.optionButton,
-                      isDeleted(item.id) ? { borderColor: "gray" } : {},
-                    ]}
-                    onPress={() => {
-                      setEditBioID(item.id);
-                      setEditBioText(item.text);
-                      router.push("/editbiography");
-                    }}
-                  >
-                    <MaterialIcons
-                      name="mode-edit"
-                      size={24}
-                      color={isDeleted(item.id) ? "gray" : color}
-                    />
-                    <ThemedText
-                      style={
-                        isDeleted(item.id)
-                          ? {
-                              textDecorationLine: "line-through",
-                              color: "gray",
-                            }
-                          : {}
-                      }
-                    >
-                      Edit
+                <Collapsible
+                  title={
+                    <ThemedText style={styles.date}>
+                      {item.createDate instanceof Date
+                        ? item.createDate.toLocaleDateString()
+                        : new Date(item.createDate).toLocaleDateString()}
                     </ThemedText>
-                  </Pressable>
-                  <Pressable
-                    style={[
-                      Styles.pressable,
-                      { borderColor: color },
-                      styles.optionButton,
-                    ]}
-                    onPress={() => {
-                      startDeletionCountdown(item.id);
-                    }}
-                  >
-                    <MaterialIcons name="delete" size={24} color={color} />
-                    <ThemedText>{DeletionText(item.id)}</ThemedText>
-                  </Pressable>
-                </ThemedView>
-              </Collapsible>
-              <ThemedText
-                style={[
-                  styles.text,
-                  isDeleted(item.id)
-                    ? { textDecorationLine: "line-through", color: "gray" }
-                    : {},
-                ]}
-              >
-                {item.text}
-              </ThemedText>
-            </ThemedView>
+                  }
+                >
+                  <Animated.View entering={FadeIn}>
+                    <View style={styles.options}>
+                      <Pressable
+                        style={[
+                          Styles.pressable,
+                          { borderColor: color },
+                          styles.optionButton,
+                          isDeleted(item.id) ? { borderColor: "gray" } : {},
+                        ]}
+                        onPress={() => {
+                          if (isDeleted(item.id)) return;
+                          setEditBioID(item.id);
+                          setEditBioText(item.text);
+                          router.push("/editbiography");
+                        }}
+                      >
+                        <MaterialIcons
+                          name="mode-edit"
+                          size={24}
+                          color={isDeleted(item.id) ? "gray" : color}
+                        />
+                        <ThemedText
+                          style={
+                            isDeleted(item.id)
+                              ? {
+                                  textDecorationLine: "line-through",
+                                  color: "gray",
+                                }
+                              : {}
+                          }
+                        >
+                          Edit
+                        </ThemedText>
+                      </Pressable>
+                      <Pressable
+                        style={[
+                          Styles.pressable,
+                          { borderColor: color },
+                          styles.optionButton,
+                        ]}
+                        onPress={() => {
+                          startDeletionCountdown(item.id);
+                        }}
+                      >
+                        <MaterialIcons name="delete" size={24} color={color} />
+                        <ThemedText>{DeletionText(item.id)}</ThemedText>
+                      </Pressable>
+                    </View>
+                  </Animated.View>
+                </Collapsible>
+                <ThemedText
+                  style={[
+                    styles.text,
+                    isDeleted(item.id)
+                      ? { textDecorationLine: "line-through", color: "gray" }
+                      : {},
+                  ]}
+                >
+                  {item.text}
+                </ThemedText>
+              </ThemedView>
+            </Animated.View>
           )}
           ListEmptyComponent={
             <ThemedView style={Styles.container}>

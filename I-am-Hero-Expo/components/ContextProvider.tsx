@@ -11,6 +11,7 @@ import ApiService from "@/services/ApiService";
 import AlertModal, { AlertModalProps } from "./AlertModal";
 import SettingsService from "@/services/SettingsService";
 import User from "@/models/User";
+import { Attribute } from "@/models/Attribute";
 
 const user = new User();
 const api = new ApiService(user);
@@ -33,6 +34,8 @@ type GlobalContext = {
   setEditBioID: (value: number)=>void;
   editBioText: string;
   setEditBioText: (value: string)=>void;
+  editAttribute: Attribute | undefined;
+  setEditAttribute: (value: Attribute) => void;
 };
 
 const Context = createContext<GlobalContext>({} as GlobalContext);
@@ -45,6 +48,7 @@ export function ContextProvider({ children }: { children: ReactNode }) {
   const [bioText, setBioText] = useState("");
   const [editBioID, setEditBioID] = useState<number>(0);
   const [editBioText, setEditBioText] = useState("");
+  const [editAttribute, setEditAttribute] = useState<Attribute>()
   function onAlertClose() {
     setIsAlertVisible(false);
   }
@@ -79,6 +83,8 @@ export function ContextProvider({ children }: { children: ReactNode }) {
         setEditBioID,
         editBioText,
         setEditBioText,
+        editAttribute,
+        setEditAttribute,
       }}
     >
       {children}

@@ -7,6 +7,8 @@ import {
 } from "react-native";
 
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme.web";
 
 export type ThemedInputProps = TextInputProps & {
   lightColor?: string;
@@ -23,7 +25,8 @@ export function ThemedInput({
     { light: lightColor, dark: darkColor },
     "background"
   );
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
+  const colorScheme = useColorScheme();
+    const color = Colors[colorScheme ?? "light"].tint;
   return (
     <TextInput
       style={[

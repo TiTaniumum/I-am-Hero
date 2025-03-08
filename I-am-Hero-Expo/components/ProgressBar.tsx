@@ -63,9 +63,9 @@ export default function ProgressBar({
       </ThemedView>
       {numbersVisible && (
         <ThemedView style={styles.numericData}>
-          <ThemedText>{minValue}</ThemedText>
-          <ThemedText>{curValue}</ThemedText>
-          <ThemedText>{maxValue}</ThemedText>
+          <ThemedText style={{color: color}}>{minValue}</ThemedText>
+          <ThemedText style={{color: color}}>{curValue}</ThemedText>
+          <ThemedText style={{color: color}}>{maxValue}</ThemedText>
         </ThemedView>
       )}
     </ThemedView>
