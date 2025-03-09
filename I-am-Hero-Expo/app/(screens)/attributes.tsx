@@ -71,8 +71,8 @@ export default function AttributesScreen() {
       .GetAttributes()
       .then(() => {
         api
-        .GetAttributeStates()
-        .then(() => {
+          .GetAttributeStates()
+          .then(() => {
             setAttributes([...user.attributes]);
             setAttributeStates([...user.attributeStates]);
             setRefreshing(false);
@@ -173,17 +173,6 @@ export default function AttributesScreen() {
     [itemsCountdown]
   );
 
-  function getState(attributeID: number, attributeStateID: number) {
-    const attributes: Attribute[] = user.attributes ?? [];
-    const attribute: Attribute | undefined = attributes.find(
-      (x) => x.id == attributeID
-    );
-    const states: AttributeState[] = attribute?.states ?? [];
-    const str: string =
-      states.find((x) => x.id == attributeStateID)?.name ?? "-";
-    return str;
-  }
-
   return (
     <ThemedView style={Styles.container}>
       <Pressable
@@ -235,42 +224,64 @@ export default function AttributesScreen() {
             <Animated.View key={item.id} entering={FlipInXUp} exiting={ZoomOut}>
               <Collapsible
                 title={
-                  <ThemedView style={styles.item}>
-                    <ThemedText
-                      style={[
-                        styles.text,
-                        isDeleted(item.id)
-                          ? {
-                              textDecorationLine: "line-through",
-                              color: "gray",
-                            }
-                          : {},
-                      ]}
-                    >
-                      {item.name}
-                    </ThemedText>
+                  <ThemedView
+                    style={
+                      item.cAttributeTypeId == 1
+                        ? styles.item
+                        : styles.itemStateType
+                    }
+                  >
                     {item.cAttributeTypeId == 1 && (
-                      <ProgressBar
-                        minValue={item.minValue ?? 0}
-                        curValue={item.value ?? item.minValue ?? 0}
-                        maxValue={item.maxValue ?? 0}
-                        color={isDeleted(item.id) ? "gray" : color}
-                        height={15}
-                        numbersVisible
-                        colorfull={!isDeleted(item.id)}
-                      />
+                      <>
+                        <ThemedText
+                          style={[
+                            isDeleted(item.id)
+                              ? {
+                                  textDecorationLine: "line-through",
+                                  color: "gray",
+                                }
+                              : {},
+                          ]}
+                        >
+                          {item.name}
+                        </ThemedText>
+                        <ProgressBar
+                          minValue={item.minValue ?? 0}
+                          curValue={item.value ?? item.minValue ?? 0}
+                          maxValue={item.maxValue ?? 0}
+                          color={isDeleted(item.id) ? "gray" : color}
+                          height={15}
+                          numbersVisible
+                          colorfull={!isDeleted(item.id)}
+                        />
+                      </>
                     )}
                     {item.cAttributeTypeId == 2 && (
-                      <ThemedText>
-                        {
-                          attributeStates.find(
-                            (x) => x.id == item.currentStateId
-                          )?.name
-                        }
-                      </ThemedText>
+                      <>
+                        <ThemedText
+                          style={[
+                            isDeleted(item.id)
+                              ? {
+                                  textDecorationLine: "line-through",
+                                  color: "gray",
+                                }
+                              : {},
+                          ]}
+                        >
+                          {item.name} :
+                        </ThemedText>
+                        <ThemedText style={styles.state}>
+                          {
+                            attributeStates.find(
+                              (x) => x.id == item.currentStateId
+                            )?.name
+                          }
+                        </ThemedText>
+                      </>
                     )}
                   </ThemedView>
                 }
+                style={ item.cAttributeTypeId == 2 ? styles.itemCollapsable : {}}
               >
                 <Animated.View entering={FadeIn}>
                   <ThemedView style={styles.innerItem}>
@@ -353,6 +364,21 @@ const styles = StyleSheet.create({
     width: "100%",
     gap: 5,
   },
+  itemCollapsable:{
+    borderTopWidth: 2,
+    borderBottomWidth: 2,
+    borderStyle: 'dashed',
+    borderColor: 'gray'
+  },
+  itemStateType: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 10,
+    gap: 20,
+    flexWrap: "wrap",
+  },
   innerItem: {
     paddingHorizontal: "6%",
     paddingVertical: 10,
@@ -371,4 +397,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 10,
   },
+  state: {
+    padding:5,
+    paddingHorizontal: 10,
+    borderWidth:2,
+    //borderStyle: 'dashed',
+    borderRadius: 30
+  }
 });

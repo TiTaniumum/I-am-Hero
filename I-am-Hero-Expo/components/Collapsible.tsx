@@ -1,5 +1,5 @@
 import React, { PropsWithChildren, useState } from "react";
-import { DimensionValue, StyleSheet, TouchableOpacity } from "react-native";
+import { DimensionValue, StyleSheet, TouchableOpacity, ViewProps, ViewStyle } from "react-native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -10,11 +10,12 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 export function Collapsible({
   children,
   title,
-}: PropsWithChildren & { title: string | React.JSX.Element }) {
+  style
+}: PropsWithChildren & { title: string | React.JSX.Element, style?: ViewStyle}) {
   const [isOpen, setIsOpen] = useState(false);
   const theme = useColorScheme() ?? "light";
   return (
-    <ThemedView>
+    <ThemedView style={style}>
       <TouchableOpacity
         style={[styles.heading]}
         onPress={() => setIsOpen((value) => !value)}
