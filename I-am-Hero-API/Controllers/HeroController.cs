@@ -167,7 +167,7 @@ namespace I_am_Hero_API.Controllers
         // api/Hero/get/HeroAttributeStates
         [Authorize]
         [HttpGet("get/HeroAttributeStates")]
-        public async Task<ActionResult<TokenDto>> GetHeroAttributeStates(long heroAttributeId)
+        public async Task<ActionResult<TokenDto>> GetHeroAttributeStates(long? heroAttributeId)
         {
             return await HandleEndpoint(async () =>
             {
