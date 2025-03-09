@@ -28,42 +28,45 @@ export interface IAttribute {
   id: number;
   name: string;
   description: string | null ;
-  cAttributeTypeID: number | null;
+  cAttributeTypeId: number | null;
   minValue: number | null;
   value: number | null;
   maxValue: number | null;
-  currentStateID: number | AttributeState | null;
+  currentStateId: number | null;
+  states: AttributeState[] | undefined;
 }
 
 export interface IAttributeDTO{
   name: string;
   description: string | null;
-  cAttributeTypeID: number | null;
+  cAttributeTypeId: number | null;
   minValue: number | null;
   value: number | null;
   maxValue: number | null;
-  currentStateID: number | null;
+  currentStateId: number | null;
 }
 
 export class Attribute implements IAttribute {
   id: number;
   name: string;
   description: string | null;
-  cAttributeTypeID: number | null;
+  cAttributeTypeId: number | null;
   minValue: number | null;
   value: number | null;
   maxValue: number | null;
-  currentStateID: number | AttributeState | null;
+  currentStateId: number | null;
+  states: AttributeState[] | undefined;
 
   constructor(attribute: IAttribute) {
     this.id = attribute.id;
     this.name = attribute.name;
     this.description = attribute.description;
-    this.cAttributeTypeID = attribute.cAttributeTypeID;
+    this.cAttributeTypeId = attribute.cAttributeTypeId;
     this.minValue = attribute.minValue;
     this.value = attribute.value;
     this.maxValue = attribute.maxValue;
-    this.currentStateID = attribute.currentStateID;
+    this.currentStateId = attribute.currentStateId;
+    this.states = attribute.states;
   }
 
   static AcceptArr(attributes: IAttribute[]): Attribute[] {

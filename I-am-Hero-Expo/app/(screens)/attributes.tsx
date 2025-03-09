@@ -5,7 +5,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import Styles from "@/constants/Styles";
-import { Attribute } from "@/models/Attribute";
+import { Attribute, AttributeState } from "@/models/Attribute";
 import { AntDesign, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
@@ -21,9 +21,12 @@ import Animated, { FadeIn, FlipInXUp, ZoomOut } from "react-native-reanimated";
 
 export default function AttributesScreen() {
   const { user, api, alert, setEditAttribute } = useGlobalContext();
-  const [attributes, setAttributes] = useState<Attribute[]>(
-    user.attributes ?? []
-  );
+  const [attributes, setAttributes] = useState<Attribute[]>([
+    ...user.attributes,
+  ]);
+  const [attributeStates, setAttributeStates] = useState<AttributeState[]>([
+    ...user.attributeStates,
+  ]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [itemsCountdown, setItemsCountdown] = useState<
@@ -67,12 +70,23 @@ export default function AttributesScreen() {
     api
       .GetAttributes()
       .then(() => {
-        setAttributes(user.attributes ?? []);
-        setRefreshing(false);
-        setLoading(false);
+        api
+        .GetAttributeStates()
+        .then(() => {
+            setAttributes([...user.attributes]);
+            setAttributeStates([...user.attributeStates]);
+            setRefreshing(false);
+            setLoading(false);
+          })
+          .catch((error) => {
+            setLoading(false);
+            setRefreshing(false);
+            alert("ERROR", "Something went wrong");
+          });
       })
       .catch((error) => {
         setLoading(false);
+        setRefreshing(false);
         alert("ERROR", "Something went wrong");
       });
   }, []);
@@ -159,6 +173,17 @@ export default function AttributesScreen() {
     [itemsCountdown]
   );
 
+  function getState(attributeID: number, attributeStateID: number) {
+    const attributes: Attribute[] = user.attributes ?? [];
+    const attribute: Attribute | undefined = attributes.find(
+      (x) => x.id == attributeID
+    );
+    const states: AttributeState[] = attribute?.states ?? [];
+    const str: string =
+      states.find((x) => x.id == attributeStateID)?.name ?? "-";
+    return str;
+  }
+
   return (
     <ThemedView style={Styles.container}>
       <Pressable
@@ -210,7 +235,7 @@ export default function AttributesScreen() {
             <Animated.View key={item.id} entering={FlipInXUp} exiting={ZoomOut}>
               <Collapsible
                 title={
-                  <ThemedView  style={styles.item}>
+                  <ThemedView style={styles.item}>
                     <ThemedText
                       style={[
                         styles.text,
@@ -224,15 +249,26 @@ export default function AttributesScreen() {
                     >
                       {item.name}
                     </ThemedText>
-                    <ProgressBar
-                      minValue={item.minValue ?? 0}
-                      curValue={item.value ?? item.minValue ?? 0}
-                      maxValue={item.maxValue ?? 0}
-                      color={isDeleted(item.id) ? "gray" : color}
-                      height={15}
-                      numbersVisible
-                      colorfull={!isDeleted(item.id)}
-                    />
+                    {item.cAttributeTypeId == 1 && (
+                      <ProgressBar
+                        minValue={item.minValue ?? 0}
+                        curValue={item.value ?? item.minValue ?? 0}
+                        maxValue={item.maxValue ?? 0}
+                        color={isDeleted(item.id) ? "gray" : color}
+                        height={15}
+                        numbersVisible
+                        colorfull={!isDeleted(item.id)}
+                      />
+                    )}
+                    {item.cAttributeTypeId == 2 && (
+                      <ThemedText>
+                        {
+                          attributeStates.find(
+                            (x) => x.id == item.currentStateId
+                          )?.name
+                        }
+                      </ThemedText>
+                    )}
                   </ThemedView>
                 }
               >

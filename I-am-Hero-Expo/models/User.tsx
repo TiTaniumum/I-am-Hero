@@ -6,10 +6,10 @@ import { Attribute, AttributeState } from "./Attribute";
 export default class User {
   hero?: Hero;
   skills?: any;
-  attributes?: Attribute[];
-  attributeStates?: AttributeState[];
+  attributes: Attribute[] = [];
+  attributeStates: AttributeState[] = [];
   statuseffects?: any;
-  biopieces?: BioPiece[];
+  biopieces: BioPiece[] = [];
   achievements?: any;
   quests?: any;
   questlines?: any;

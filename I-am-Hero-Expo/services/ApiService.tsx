@@ -206,15 +206,17 @@ export default class ApiService {
     attributeStates: { heroAttributeId: number; name: string }[]
   ) {
     const api = this;
-    return axios.post(
-      this.uri("Hero/create/HeroAttributeStates"),
-      { heroAttributeStates: attributeStates },
-      {
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-        },
-      }
-    ).then(api.handleToken);
+    return axios
+      .post(
+        this.uri("Hero/create/HeroAttributeStates"),
+        { heroAttributeStates: attributeStates },
+        {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        }
+      )
+      .then(api.handleToken);
   }
 
   GetAttributes() {
@@ -229,7 +231,7 @@ export default class ApiService {
       .then((response) => {
         const j = api.handleToken(response);
         user.attributes = Attribute.AcceptArr(j.heroAttributes);
-        api.PullAttributeStates();
+        //api.PullAttributeStates();
       });
   }
 
@@ -237,17 +239,28 @@ export default class ApiService {
     const user = this.user;
     user.attributes?.forEach(async (attribute) => {
       // 2 - тип состояние; 1 - численный
-      if (
-        attribute.currentStateID === undefined ||
-        attribute.currentStateID instanceof AttributeState ||
-        attribute.currentStateID == 1
-      )
-        return;
+      if (attribute.cAttributeTypeId == 1) return;
       const response = await axios.get(
-        this.uri(`Hero/get/HeroAttributeStates?id=${attribute.currentStateID}`)
+        this.uri(`Hero/get/HeroAttributeStates?heroAttributeId=${attribute.id}`),{
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        }
       );
-      const attributeState = new AttributeState(response.data);
-      attribute.currentStateID = attributeState;
+      attribute.states = AttributeState.AcceptArr(response.data.heroAttributeStates);
+    });
+  }
+
+  GetAttributeStates(){
+    const api = this;
+    const user = this.user;
+    return axios.get(this.uri("Hero/get/HeroAttributeStates"),{
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+    }).then(response=>{
+      const j = api.handleToken(response);
+      user.attributeStates = AttributeState.AcceptArr(response.data.heroAttributeStates);
     });
   }
 

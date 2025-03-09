@@ -67,11 +67,11 @@ export default function CreateAttributeScreen() {
     const attribute: IAttributeDTO = {
       name,
       description,
-      cAttributeTypeID: attributeType,
+      cAttributeTypeId: attributeType,
       minValue: minValue,
       value: curValue,
       maxValue: maxValue,
-      currentStateID: null,
+      currentStateId: null,
     };
     api
       .CreateAttribute(attribute)
