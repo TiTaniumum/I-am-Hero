@@ -120,7 +120,7 @@ namespace I_am_Hero_API.Controllers
         
         // api/Hero/edit/HeroAttribute
         [Authorize]
-        [HttpPut("edit/HeroAttriute")]
+        [HttpPut("edit/HeroAttribute")]
         public async Task<ActionResult<TokenDto>> EditHeroAttribute(HeroAttributeDto dto)
         {
             return await HandleEndpoint(async () =>
