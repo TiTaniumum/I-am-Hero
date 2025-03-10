@@ -18,6 +18,7 @@ public class DashboardViewModel : ViewModelBase
     public RelayCommand CloseAttributeModalCommand { get; }
     public RelayCommand OpenQuestModalCommand { get; }
     public RelayCommand CloseQuestModalCommand { get; }
+    public RelayCommand ToggleEditModeCommand { get; }
 
     private readonly ApiService _apiService;
 
@@ -25,6 +26,7 @@ public class DashboardViewModel : ViewModelBase
     private bool _isQuestModalOpen;
     private bool _isAttributeModalOpen;
     private bool _isModalOpen;
+    private bool _isEditMode;
     public bool IsSkillModalOpen
     {
         get => _isSkillModalOpen;
@@ -44,6 +46,11 @@ public class DashboardViewModel : ViewModelBase
     {
         get => _isModalOpen;
         set { _isModalOpen = value; OnPropertyChanged(nameof(IsModalOpen)); }
+    }
+    public bool IsEditMode
+    {
+        get => _isEditMode;
+        set { _isEditMode = value; OnPropertyChanged(nameof(IsEditMode)); }
     }
 
 
@@ -173,6 +180,8 @@ public class DashboardViewModel : ViewModelBase
         OpenQuestModalCommand = new RelayCommand(_ => { IsQuestModalOpen = true; IsModalOpen = true; });
         CloseQuestModalCommand = new RelayCommand(_ => { IsQuestModalOpen = false; IsModalOpen = false; });
 
+        ToggleEditModeCommand = new RelayCommand(_ => { IsEditMode = !IsEditMode; });
+
         AddSkillCommand = new RelayCommand(async _ => await AddSkill());
         AddAttributeCommand = new RelayCommand(async _ => await AddAttribute());
         //AddQuestCommand = new RelayCommand(async _ => await AddQuest());
@@ -185,7 +194,7 @@ public class DashboardViewModel : ViewModelBase
         await LoadHero();
         await LoadSkills();
         await LoadAttributes();
-        await LoadQuests(); 
+        await LoadQuests();
     }
     private async Task LoadHero()
     {
@@ -303,9 +312,9 @@ public class DashboardViewModel : ViewModelBase
 
     private async Task AddSkill()
     {
-        if (string.IsNullOrWhiteSpace(SkillName) || string.IsNullOrWhiteSpace(SkillDescription))
+        if (string.IsNullOrWhiteSpace(SkillName))
         {
-            MessageBox.Show("Введите название и описание навыка.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show("Введите название навыка.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
@@ -323,7 +332,7 @@ public class DashboardViewModel : ViewModelBase
         {
             MessageBox.Show("Навык успешно добавлен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
             _ = LoadData();
-            IsSkillModalOpen= false;
+            IsSkillModalOpen = false;
             IsModalOpen = false;
         }
         else
@@ -333,9 +342,9 @@ public class DashboardViewModel : ViewModelBase
     }
     private async Task AddAttribute()
     {
-        if (string.IsNullOrWhiteSpace(AttributeName) || string.IsNullOrWhiteSpace(AttributeDescription))
+        if (string.IsNullOrWhiteSpace(AttributeName))
         {
-            MessageBox.Show("Введите название и описание аттрибута.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show("Введите название аттрибута.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 

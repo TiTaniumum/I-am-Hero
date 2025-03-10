@@ -3,9 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:c="clr-namespace:I_am_Hero_WPF.Properties" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
+
     <Grid>
         <!-- Динамический Dashboard -->
         <Canvas Grid.Row="1" Grid.Column="1" Background="#f2f2f2" Name="MainCanvas" Loaded="MainCanvas_Loaded" SizeChanged="MainCanvas_SizeChanged">
+            <Grid x:Name="EditModeBlock" Canvas.ZIndex="3" Canvas.Right="10" Canvas.Top="10">
+                <Button Content="✎"
+                    Command="{Binding ToggleEditModeCommand}"
+                    Click="OnEditModeButtonClick"
+                    Style="{StaticResource MaterialDesignFloatingActionButton}"
+                    HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                    Width="25" Height="25"/>
+            </Grid>
+
             <!-- Profile -->
             <Grid x:Name="ProfileBlock" Canvas.Left="10" Canvas.Top="10" Canvas.ZIndex="2" Margin="5"
                     Width="250" Height="210" Background="White"
@@ -29,7 +42,7 @@
 
                 <Thumb Width="10" Height="10" Background="Gray" Margin="10"
                         HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                        DragDelta="Thumb_DragDelta"/>
+                        DragDelta="Thumb_DragDelta" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </Grid>
 
             <!-- Skills -->
@@ -77,7 +90,7 @@
 
                 <Thumb Width="10" Height="10" Background="Gray" Margin="10"
                         HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                        DragDelta="Thumb_DragDelta"/>
+                        DragDelta="Thumb_DragDelta" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </Grid>
 
             <!-- Calendar -->
@@ -96,7 +109,7 @@
 
                 <Thumb Width="10" Height="10" Background="Gray" Margin="10"
                         HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                        DragDelta="Thumb_DragDelta"/>
+                        DragDelta="Thumb_DragDelta" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </Grid>
 
             <!-- Quests -->
@@ -127,7 +140,7 @@
 
                 <Thumb Width="10" Height="10" Background="Gray" Margin="10"
                         HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                        DragDelta="Thumb_DragDelta"/>
+                        DragDelta="Thumb_DragDelta" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </Grid>
 
             <!-- Attributes -->
@@ -173,7 +186,7 @@
 
                 <Thumb Width="10" Height="10" Background="Gray" Margin="10"
                 HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                DragDelta="Thumb_DragDelta"/>
+                DragDelta="Thumb_DragDelta" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </Grid>
         </Canvas>
 

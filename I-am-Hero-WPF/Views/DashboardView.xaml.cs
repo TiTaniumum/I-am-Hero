@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace I_am_Hero_WPF.Views
@@ -29,6 +23,8 @@ namespace I_am_Hero_WPF.Views
         private readonly int _columns = 9;
         private readonly int _rows = 6;
         private readonly double _thumbMargin = 10;
+        private DashboardViewModel ViewModel => DataContext as DashboardViewModel;
+
         public DashboardView()
         {
             InitializeComponent();
@@ -37,6 +33,8 @@ namespace I_am_Hero_WPF.Views
 
         private void Block_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (ViewModel?.IsEditMode == false) return;
+
             if (sender is Grid grid)
             {
                 _draggedElement = grid;
@@ -52,6 +50,8 @@ namespace I_am_Hero_WPF.Views
 
         private void Block_MouseMove(object sender, MouseEventArgs e)
         {
+            if (ViewModel?.IsEditMode == false) return;
+
             if (!_isDragging || _draggedElement == null) return;
             Point currentPoint = e.GetPosition(this);
             double newLeft = Canvas.GetLeft(_draggedElement) + (currentPoint.X - _startPoint.X);
@@ -68,6 +68,8 @@ namespace I_am_Hero_WPF.Views
 
         private void Block_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            if (ViewModel?.IsEditMode == false) return;
+
             if (_draggedElement == null) return;
             _isDragging = false;
             _draggedElement.ReleaseMouseCapture();
@@ -95,6 +97,8 @@ namespace I_am_Hero_WPF.Views
 
         private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
+            if (ViewModel?.IsEditMode == false) return;
+
             if (sender is Thumb thumb)
             {
                 Grid grid = thumb.TemplatedParent as Grid ?? thumb.Parent as Grid;
@@ -102,27 +106,14 @@ namespace I_am_Hero_WPF.Views
 
                 double left = Canvas.GetLeft(grid);
                 double top = Canvas.GetTop(grid);
-                double newWidth = Math.Max(grid.Width + e.HorizontalChange, 50);
-                double newHeight = Math.Max(grid.Height + e.VerticalChange, 50);
+                double newWidth = Math.Max(grid.Width + e.HorizontalChange, MainCanvas.ActualWidth / _columns - _thumbMargin);
+                double newHeight = Math.Max(grid.Height + e.VerticalChange, MainCanvas.ActualHeight / _rows - _thumbMargin);
                 Point nearestBottomRight = GetNearestGridPoint(left + newWidth, top + newHeight);
 
                 if (!IsPositionOccupied(grid, new Point(left, top), newWidth, newHeight))
                 {
-                    if(nearestBottomRight.X - left - _thumbMargin > 0)
-                    {
-                        grid.Width = nearestBottomRight.X - left - _thumbMargin;
-                    } else
-                    {
-                        grid.Width = 0;
-                    }
-                    if(nearestBottomRight.Y - top - _thumbMargin > 0)
-                    {
-                        grid.Height = nearestBottomRight.Y - top - _thumbMargin;
-                    }
-                    else
-                    {
-                        grid.Height = 0;
-                    }
+                    grid.Width = Math.Max(MainCanvas.ActualWidth / _columns - _thumbMargin, nearestBottomRight.X - left - _thumbMargin);
+                    grid.Height = Math.Max(MainCanvas.ActualHeight / _rows - _thumbMargin, nearestBottomRight.Y - top - _thumbMargin);
                     grid.Clip = new RectangleGeometry(new Rect(0, 0, grid.Width, grid.Height), 10, 10);
                     double canvasWidth = MainCanvas.ActualWidth;
                     double canvasHeight = MainCanvas.ActualHeight;
@@ -138,6 +129,7 @@ namespace I_am_Hero_WPF.Views
 
             foreach (var grid in MainCanvas.Children.OfType<Grid>())
             {
+                if (grid.Name == "EditModeBlock") continue;
                 if (grid == element) continue;
                 double gridLeft = Canvas.GetLeft(grid);
                 double gridTop = Canvas.GetTop(grid);
@@ -165,16 +157,29 @@ namespace I_am_Hero_WPF.Views
             AlignBlocksToGrid();
         }
 
+        private void OnEditModeButtonClick(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.InvokeAsync(() =>
+            {
+                DrawGridLines();
+            }, System.Windows.Threading.DispatcherPriority.Background);
+        }
+
         private void DrawGridLines()
         {
             if (MainCanvas == null) return;
             var savedGrids = MainCanvas.Children.OfType<Grid>().ToList();
             MainCanvas.Children.Clear();
             double width = MainCanvas.ActualWidth, height = MainCanvas.ActualHeight;
-
-            for (int i = 1; i < _columns; i++) AddGridLine(i * width / _columns, 0, i * width / _columns, height);
-            for (int i = 1; i < _rows; i++) AddGridLine(0, i * height / _rows, width, i * height / _rows);
+            if (ViewModel?.IsEditMode == true)
+            {
+                for (int i = 1; i < _columns; i++) AddGridLine(i * width / _columns, 0, i * width / _columns, height);
+                for (int i = 1; i < _rows; i++) AddGridLine(0, i * height / _rows, width, i * height / _rows);
+            }
             savedGrids.ForEach(grid => MainCanvas.Children.Add(grid));
+
+            MainCanvas.UpdateLayout();
+            Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
         }
 
         private void AddGridLine(double x1, double y1, double x2, double y2)
@@ -202,13 +207,14 @@ namespace I_am_Hero_WPF.Views
         {
             foreach (var grid in MainCanvas.Children.OfType<Grid>())
             {
+                if (grid.Name == "EditModeBlock") continue;
                 double left = Canvas.GetLeft(grid);
                 double top = Canvas.GetTop(grid);
                 Point nearestTopLeft = GetNearestGridPoint(left, top);
                 Point nearestBottomRight = GetNearestGridPoint(left + grid.Width, top + grid.Height);
 
-                grid.Width = nearestBottomRight.X - nearestTopLeft.X - _thumbMargin;
-                grid.Height = nearestBottomRight.Y - nearestTopLeft.Y - _thumbMargin;
+                grid.Width = Math.Max(MainCanvas.ActualWidth / _columns - _thumbMargin, nearestBottomRight.X - nearestTopLeft.X - _thumbMargin);
+                grid.Height = Math.Max(MainCanvas.ActualHeight / _rows - _thumbMargin, nearestBottomRight.Y - nearestTopLeft.Y - _thumbMargin);
                 Canvas.SetLeft(grid, nearestTopLeft.X);
                 Canvas.SetTop(grid, nearestTopLeft.Y);
                 grid.Clip = new RectangleGeometry(new Rect(0, 0, grid.Width, grid.Height), 10, 10);
@@ -220,8 +226,11 @@ namespace I_am_Hero_WPF.Views
             double width = MainCanvas.ActualWidth, height = MainCanvas.ActualHeight;
             _relativePositions.Clear();
             foreach (var grid in MainCanvas.Children.OfType<Grid>())
+            {
+                if (grid.Name == "EditModeBlock") continue;
                 _relativePositions[grid] = (new Point(Canvas.GetLeft(grid) / width, Canvas.GetTop(grid) / height),
                                             new Point((Canvas.GetLeft(grid) + grid.Width) / width, (Canvas.GetTop(grid) + grid.Height) / height));
+            }
         }
 
         private void RestorePositions() // Restore blocks positions after resizing
