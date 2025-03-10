@@ -1,12 +1,15 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Hero, IHero } from "./Hero";
+import { BioPiece } from "./BioPiece";
+import { Attribute, AttributeState } from "./Attribute";
 
 export default class User {
   hero?: Hero;
   skills?: any;
-  attributes?: any;
+  attributes: Attribute[] = [];
+  attributeStates: AttributeState[] = [];
   statuseffects?: any;
-  biopieces?: any;
+  biopieces: BioPiece[] = [];
   achievements?: any;
   quests?: any;
   questlines?: any;

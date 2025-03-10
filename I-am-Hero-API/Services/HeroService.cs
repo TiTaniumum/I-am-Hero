@@ -239,9 +239,14 @@ namespace I_am_Hero_API.Services
             await context.SaveChangesAsync();
             return new IdsDto { Ids = list.Select(x => x.Id).ToArray() };
         }
-        public async Task<HeroAttributeStatesDto> GetHeroAttributeStates(long heroAttributeId)
+        public async Task<HeroAttributeStatesDto> GetHeroAttributeStates(long? heroAttributeId)
         {
-            List<HeroAttributeState> list = await context.HeroAttributeStates.Where(x => x.HeroAttributeId == heroAttributeId).ToListAsync();
+            List<HeroAttributeState> list;
+            if (heroAttributeId == null)
+                list = await userHeroAttribute.SelectMany(x => x.HeroAttributeStates).ToListAsync();
+            else
+                list = await context.HeroAttributeStates.Where(x => x.HeroAttributeId == heroAttributeId).ToListAsync();
+            //List<HeroAttributeState> list = await context.HeroAttributeStates.Where(x => x.HeroAttributeId == heroAttributeId).ToListAsync();
             return new HeroAttributeStatesDto(list);
         }
         public async Task DeleteHeroAttributeState(long id)

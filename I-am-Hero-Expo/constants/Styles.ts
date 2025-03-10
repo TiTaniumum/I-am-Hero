@@ -8,15 +8,15 @@ const Styles = StyleSheet.create({
   pressable: {
     padding: 5,
     borderRadius: 10,
-    borderWidth: 1,
+    borderWidth: 2,
     width: "auto",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    overflow: 'hidden'
   },
   pressablePressed:{
     backgroundColor: "white",
-    
   },
   pressableNotPressed:{
     transitionDuration: '0.5s',

@@ -23,7 +23,7 @@ namespace I_am_Hero_API.Services.Interfaces
         Task DeleteHeroAttribute(long id);
         Task<IdDto> CreateHeroAttributeState(HeroAttributeStateDto dto);
         Task<IdsDto> CreateHeroAttributeStates(HeroAttributeStatesDto dto);
-        Task<HeroAttributeStatesDto> GetHeroAttributeStates(long heroAttributeId);
+        Task<HeroAttributeStatesDto> GetHeroAttributeStates(long? heroAttributeId);
         Task DeleteHeroAttributeState(long id);
         Task<IdDto> CreateHeroSkill(HeroSkillDto dto);
         Task<HeroSkillsDto> GetHeroSkills(long? id);
