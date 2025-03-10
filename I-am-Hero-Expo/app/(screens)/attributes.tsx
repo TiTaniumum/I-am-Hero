@@ -7,7 +7,7 @@ import { Colors } from "@/constants/Colors";
 import Styles from "@/constants/Styles";
 import { Attribute, AttributeState } from "@/models/Attribute";
 import { AntDesign, Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -52,20 +52,6 @@ export default function AttributesScreen() {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    api
-      .GetAttributes()
-      .then(() => {
-        setAttributes(user.attributes ?? []);
-        setRefreshing(false);
-        if (loading) setLoading(false);
-      })
-      .catch((error) => {
-        alert("ERROR", "Something went wrong");
-      });
-  }, []);
-
-  useEffect(() => {
-    setRefreshing(true);
     setLoading(true);
     api
       .GetAttributes()
@@ -90,6 +76,8 @@ export default function AttributesScreen() {
         alert("ERROR", "Something went wrong");
       });
   }, []);
+
+  useFocusEffect(onRefresh);
 
   useEffect(() => {
     setItemsCountdown(
@@ -270,7 +258,19 @@ export default function AttributesScreen() {
                         >
                           {item.name} :
                         </ThemedText>
-                        <ThemedText style={styles.state}>
+                        <ThemedText
+                          style={[
+                            isDeleted(item.id)
+                              ? {
+                                  textDecorationLine: "line-through",
+                                  color: "gray",
+                                  borderColor: "gray"
+                                }
+                              : {},
+                            ,
+                            styles.state,
+                          ]}
+                        >
                           {
                             attributeStates.find(
                               (x) => x.id == item.currentStateId
@@ -281,7 +281,7 @@ export default function AttributesScreen() {
                     )}
                   </ThemedView>
                 }
-                style={ item.cAttributeTypeId == 2 ? styles.itemCollapsable : {}}
+                style={item.cAttributeTypeId == 2 ? styles.itemCollapsable : {}}
               >
                 <Animated.View entering={FadeIn}>
                   <ThemedView style={styles.innerItem}>
@@ -364,11 +364,11 @@ const styles = StyleSheet.create({
     width: "100%",
     gap: 5,
   },
-  itemCollapsable:{
+  itemCollapsable: {
     borderTopWidth: 2,
     borderBottomWidth: 2,
-    borderStyle: 'dashed',
-    borderColor: 'gray'
+    borderStyle: "dashed",
+    borderColor: "gray",
   },
   itemStateType: {
     width: "100%",
@@ -398,10 +398,9 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   state: {
-    padding:5,
+    padding: 5,
     paddingHorizontal: 10,
-    borderWidth:2,
-    //borderStyle: 'dashed',
-    borderRadius: 30
-  }
+    borderWidth: 2,
+    borderRadius: 30,
+  },
 });

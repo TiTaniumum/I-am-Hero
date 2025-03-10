@@ -12,7 +12,7 @@ import {
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
 import { Colors } from "@/constants/Colors";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { BioPiece } from "@/models/BioPiece";
 import { useGlobalContext } from "@/components/ContextProvider";
@@ -49,15 +49,6 @@ export default function BiographyScreen() {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    api.GetBioPieces().then(() => {
-      setBioPieces(user.biopieces ?? []);
-      setRefreshing(false);
-      if (loading) setLoading(false);
-    });
-  }, []);
-
-  useEffect(() => {
-    setRefreshing(true);
     setLoading(true);
     api.GetBioPieces().then(() => {
       setBioPieces(user.biopieces ?? []);
@@ -65,6 +56,9 @@ export default function BiographyScreen() {
       setLoading(false);
     });
   }, []);
+
+  useFocusEffect(onRefresh);
+
   useEffect(() => {
     setItemsCountdown(
       bioPieces.map((item) => {

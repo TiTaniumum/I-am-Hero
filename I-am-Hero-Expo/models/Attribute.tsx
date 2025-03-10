@@ -37,6 +37,7 @@ export interface IAttribute {
 }
 
 export interface IAttributeDTO{
+  id?: number;
   name: string;
   description: string | null;
   cAttributeTypeId: number | null;

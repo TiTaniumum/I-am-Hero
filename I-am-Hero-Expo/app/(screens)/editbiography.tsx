@@ -91,7 +91,7 @@ function createStyle(color: any) {
       width: "100%",
       borderWidth: 0,
     },
-    button: { borderColor: color, width: "20%" },
+    button: { borderColor: color, width: "30%" },
     scroll: {
       width: "100%",
     },

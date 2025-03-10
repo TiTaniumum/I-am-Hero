@@ -202,6 +202,17 @@ export default class ApiService {
       .then(api.handleToken);
   }
 
+  EditAttribute(attribute: IAttributeDTO){
+    const api= this;
+    return axios
+      .put(this.uri("Hero/edit/HeroAttribute"), attribute, {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      .then(api.handleToken);
+  }
+
   CreateAttributeStates(
     attributeStates: { heroAttributeId: number; name: string }[]
   ) {
@@ -233,6 +244,20 @@ export default class ApiService {
         user.attributes = Attribute.AcceptArr(j.heroAttributes);
         //api.PullAttributeStates();
       });
+  }
+
+  DeleteAttributeStates(ids: number[]) {
+    const api = this;
+    ids.forEach(id=>{
+      axios
+        .delete(this.uri("Hero/delete/HeroAttributeState"), {
+          params: { id: id },
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        })
+        .then(api.handleToken).catch(error=>api.alert("ERROR","Something went wrong!"));
+    })
   }
 
   PullAttributeStates() {

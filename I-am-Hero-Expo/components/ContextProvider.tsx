@@ -12,6 +12,7 @@ import AlertModal, { AlertModalProps } from "./AlertModal";
 import SettingsService from "@/services/SettingsService";
 import User from "@/models/User";
 import { Attribute } from "@/models/Attribute";
+import { Portal, Provider } from "react-native-paper";
 
 const user = new User();
 const api = new ApiService(user);
@@ -29,13 +30,15 @@ type GlobalContext = {
   isHero: boolean;
   user: User;
   bioText: string;
-  setBioText: (value: string)=>void;
+  setBioText: (value: string) => void;
   editBioID: number;
-  setEditBioID: (value: number)=>void;
+  setEditBioID: (value: number) => void;
   editBioText: string;
-  setEditBioText: (value: string)=>void;
+  setEditBioText: (value: string) => void;
   editAttribute: Attribute | undefined;
   setEditAttribute: (value: Attribute) => void;
+  editAttributeRefresh: boolean;
+  setEditAttributeRefresh: (value: boolean) => void;
 };
 
 const Context = createContext<GlobalContext>({} as GlobalContext);
@@ -48,12 +51,13 @@ export function ContextProvider({ children }: { children: ReactNode }) {
   const [bioText, setBioText] = useState("");
   const [editBioID, setEditBioID] = useState<number>(0);
   const [editBioText, setEditBioText] = useState("");
-  const [editAttribute, setEditAttribute] = useState<Attribute>()
+  const [editAttribute, setEditAttribute] = useState<Attribute>();
+  const [editAttributeRefresh, setEditAttributeRefresh] = useState(false);
   function onAlertClose() {
     setIsAlertVisible(false);
   }
   function alert(title?: string, message?: string) {
-    setAlertObj({ title, message});
+    setAlertObj({ title, message });
     setIsAlertVisible(true);
   }
   api.setIsToken = setIsToken;
@@ -62,11 +66,9 @@ export function ContextProvider({ children }: { children: ReactNode }) {
     settings.UpdateLocalization();
     api.GetToken();
     api.alert = alert;
-    user.Init()
-    .then(()=>{
-      if(!user.hero)
-        api.GetHero(user);
-    })
+    user.Init().then(() => {
+      if (!user.hero) api.GetHero(user);
+    });
   }, []);
 
   return (
@@ -85,15 +87,21 @@ export function ContextProvider({ children }: { children: ReactNode }) {
         setEditBioText,
         editAttribute,
         setEditAttribute,
+        editAttributeRefresh,
+        setEditAttributeRefresh,
       }}
     >
-      {children}
-      <AlertModal
-        visible={isAlertVisible}
-        title={alertObj.title}
-        message={alertObj.message}
-        onClose={onAlertClose}
-      />
+      <Provider>
+        {children}
+        <Portal>
+          <AlertModal
+            visible={isAlertVisible}
+            title={alertObj.title}
+            message={alertObj.message}
+            onClose={onAlertClose}
+          />
+        </Portal>
+      </Provider>
     </Context.Provider>
   );
 }

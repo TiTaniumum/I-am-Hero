@@ -13,7 +13,7 @@ export interface AlertModalProps {
 const AlertModal: React.FC<AlertModalProps> = ({ visible, title, message, onClose}) => {
   return (
     <Modal transparent animationType="fade" visible={visible} onRequestClose={onClose} presentationStyle="overFullScreen">
-      <ThemedView style={[styles.overlay]}>
+      <ThemedView style={[styles.overlay, {left: 0, top: 0}]}>
         <ThemedView style={styles.alertBox}>
           <ThemedText style={styles.title}>{title}</ThemedText>
           <ThemedText style={styles.message}>{message}</ThemedText>
