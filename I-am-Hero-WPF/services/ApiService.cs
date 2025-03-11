@@ -112,20 +112,9 @@ public class ApiService
     public async Task<HttpResponseMessage> DeleteSkillAsync(long id)
     {
         if (id <= 0)
-            throw new ArgumentException("Invalid attribute ID", nameof(id));
+            throw new ArgumentException("Invalid skill ID", nameof(id));
 
-        string json = JsonSerializer.Serialize(id);
-        HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
-
-        HttpRequestMessage request = new HttpRequestMessage
-        {
-            Method = HttpMethod.Delete,
-            RequestUri = new Uri("api/Hero/delete/HeroSkill", UriKind.Relative),
-            Content = content
-        };
-
-        HttpResponseMessage response = await _httpClient.SendAsync(request);
-        return response;
+        return await _httpClient.DeleteAsync($"api/Hero/delete/HeroSkill?id={id}");
     }
     public async Task<HttpResponseMessage> EditSkillAsync(HeroSkill skill)
     {
@@ -160,21 +149,11 @@ public class ApiService
     public async Task<HttpResponseMessage> DeleteHeroAttributeAsync(long id)
     {
         if (id <= 0)
-            throw new ArgumentException("Invalid attribute ID", nameof(id));
+            throw new ArgumentException("Invalid skill ID", nameof(id));
 
-        string json = JsonSerializer.Serialize(id);
-        HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
-
-        HttpRequestMessage request = new HttpRequestMessage
-        {
-            Method = HttpMethod.Delete,
-            RequestUri = new Uri("api/Hero/delete/HeroAttribute", UriKind.Relative),
-            Content = content
-        };
-
-        HttpResponseMessage response = await _httpClient.SendAsync(request);
-        return response;
+        return await _httpClient.DeleteAsync($"api/Hero/delete/HeroAttribute?id={id}");
     }
+
     public async Task<HttpResponseMessage> EditHeroAttributeAsync(HeroAttribute attribute)
     {
         if (attribute == null)

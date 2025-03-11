@@ -14,8 +14,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Определение цветовой схемы -->
-            <materialDesign:BundledTheme x:Key="AppTheme"
-                             BaseTheme="Light"/>
+            <materialDesign:BundledTheme x:Key="AppTheme" BaseTheme="Light"/>
 
 
             <!-- Глобальный стиль для кнопок -->
@@ -28,14 +27,49 @@
                 <Setter Property="Width" Value="Auto"/>
             </Style>
 
+            <Style x:Key="RoundedButtonStyle" TargetType="Button">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Padding" Value="8,4"/>
+                <Setter Property="Background" Value="Gray"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Width" Value="90"/>
+                <Setter Property="Height" Value="35"/>
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect BlurRadius="5" Opacity="0.3"/>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                        CornerRadius="8"
+                        Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
+
             <!-- TextBox -->
             <Style x:Key="CustomTextBoxStyle" TargetType="TextBox">
-                <Setter Property="Margin" Value="0,5,0,5"/>
-                <Setter Property="Padding" Value="10,5"/>
-                <Setter Property="BorderBrush" Value="{DynamicResource MaterialDesignOutline}"/>
-                <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TextBox">
+                            <Border Background="White"
+                                    BorderBrush="Gray"
+                                    BorderThickness="1"
+                                    CornerRadius="10">
+                                <ScrollViewer Margin="5" x:Name="PART_ContentHost"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
             </Style>
+
 
             <!-- PasswordBox -->
             <Style x:Key="CustomPasswordBoxStyle" TargetType="PasswordBox">
@@ -68,6 +102,8 @@
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
+
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -121,7 +121,7 @@
                 <Grid.Clip>
                     <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,250,150"/>
                 </Grid.Clip>
-                <StackPanel>
+                <StackPanel Margin="10">
                     <StackPanel Orientation="Horizontal" Margin="10">
                         <TextBlock Text="Квесты" FontSize="16" FontWeight="Bold"/>
                         <Button Content="+" Command="{Binding OpenQuestModalCommand}" Width="20" Height="20" Margin="5,0,0,0"/>
