@@ -8,12 +8,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web.UI.WebControls;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using ControlzEx.Standard;
-using System.Windows.Media.Effects;
-using System.Windows.Media.Media3D;
-using System.Xml.Linq;
 using I_am_Hero_WPF.Models;
 
 public class AttributeViewModel : ViewModelBase
@@ -31,6 +25,7 @@ public class AttributeViewModel : ViewModelBase
         }
     }
     private Visibility _editModalVisibility = Visibility.Collapsed;
+    private Visibility _addModalVisibility = Visibility.Collapsed;
     public Visibility EditModalVisibility
     {
         get => _editModalVisibility;
@@ -40,8 +35,17 @@ public class AttributeViewModel : ViewModelBase
             OnPropertyChanged(nameof(EditModalVisibility));
         }
     }
+    public Visibility AddModalVisibility
+    {
+        get => _addModalVisibility;
+        set
+        {
+            _addModalVisibility = value;
+            OnPropertyChanged(nameof(AddModalVisibility));
+        }
+    }
 
-    public List<string> SortOptions { get; } = new List<string> { "Name", "Value", "MinValue", "MaxValue" };
+    public List<string> SortOptions { get; } = new List<string> { "None", "Name", "Value", "MinValue", "MaxValue" };
 
     private string _searchText;
     public string SearchText
@@ -70,11 +74,45 @@ public class AttributeViewModel : ViewModelBase
         }
     }
 
+
+    private string _attributeName;
+    private string _attributeDescription;
+    private int _attributeMinValue;
+    private int _attributeMaxValue;
+    private int _attributeValue;
+    public string AttributeName
+    {
+        get => _attributeName;
+        set => SetProperty(ref _attributeName, value);
+    }
+    public string AttributeDescription
+    {
+        get => _attributeDescription;
+        set => SetProperty(ref _attributeDescription, value);
+    }
+    public int AttributeMinValue
+    {
+        get => _attributeMinValue;
+        set => SetProperty(ref _attributeMinValue, value);
+    }
+    public int AttributeMaxValue
+    {
+        get => _attributeMaxValue;
+        set => SetProperty(ref _attributeMaxValue, value);
+    }
+    public int AttributeValue
+    {
+        get => _attributeValue;
+        set => SetProperty(ref _attributeValue, value);
+    }
+
     public RelayCommand ClearSearchCommand { get; }
-    public RelayCommand OpenEditDialogCommand { get; }
-    public RelayCommand CloseEditDialogCommand { get; }
+    public RelayCommand OpenAddModalCommand { get; }
+    public RelayCommand CloseAddModalCommand { get; }
+    public RelayCommand OpenEditModalCommand { get; }
+    public RelayCommand CloseEditModalCommand { get; }
+    public RelayCommand AddAttributeCommand { get; }
     public RelayCommand SaveEditCommand { get; }
-    public RelayCommand EditAttributeCommand { get; }
     public RelayCommand ConfirmDeleteCommand { get; }
 
     private ObservableCollection<HeroAttribute> _attributes = new ObservableCollection<HeroAttribute>();
@@ -105,19 +143,21 @@ public class AttributeViewModel : ViewModelBase
         Attributes = new ObservableCollection<HeroAttribute>();
         FilteredAttributes = new ObservableCollection<HeroAttribute>();
 
-        OpenEditDialogCommand = new RelayCommand<long>(param =>
+        OpenEditModalCommand = new RelayCommand<long>(param =>
         {
             if (param is long id)
             {
-                OpenEditDialog(id);
+                OpenEditModal(id);
             }
             else if (param is int intId)
             {
-                OpenEditDialog((long)intId);
+                OpenEditModal((long)intId);
             }
         });
+        OpenAddModalCommand = new RelayCommand<long>(_ => OpenAddModal());
         SaveEditCommand = new RelayCommand(async _ => await EditAttribute());
-        CloseEditDialogCommand = new RelayCommand(_ => CloseEditDialog());
+        CloseEditModalCommand = new RelayCommand(_ => CloseEditModal());
+        CloseAddModalCommand = new RelayCommand(_ => CloseAddModal());
         ConfirmDeleteCommand = new RelayCommand<long>(param =>
         {
             if (param is long id)
@@ -130,6 +170,7 @@ public class AttributeViewModel : ViewModelBase
             }
         });
 
+        AddAttributeCommand = new RelayCommand(async _ => await AddAttribute());
         ClearSearchCommand = new RelayCommand(_ => ClearSearch());
 
         _ = LoadAttributes();
@@ -175,6 +216,8 @@ public class AttributeViewModel : ViewModelBase
         {
             switch (SelectedSortOption)
             {
+                case "None":
+                    break;
                 case "Name":
                     filtered = filtered.OrderBy(a => a.Name).ToList();
                     break;
@@ -200,14 +243,53 @@ public class AttributeViewModel : ViewModelBase
         ApplyFilters();
     }
 
-    private void OpenEditDialog(long id)
+    private void OpenEditModal(long id)
     {
         SelectedAttribute = FilteredAttributes.FirstOrDefault(a => a.Id == id);
         EditModalVisibility = Visibility.Visible;
     }
-    private void CloseEditDialog()
+    private void CloseEditModal()
     {
         EditModalVisibility = Visibility.Collapsed;
+    }
+    private void OpenAddModal()
+    {
+        AddModalVisibility = Visibility.Visible;
+    }
+    private void CloseAddModal()
+    {
+        AddModalVisibility = Visibility.Collapsed;
+    }
+
+    private async Task AddAttribute()
+    {
+        if (string.IsNullOrWhiteSpace(AttributeName))
+        {
+            MessageBox.Show("Введите название аттрибута.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        var newAttribute = new HeroAttribute
+        {
+            Name = AttributeName,
+            Description = AttributeDescription,
+            MinValue = AttributeMinValue,
+            MaxValue = AttributeMaxValue,
+            Value = AttributeValue,
+            CAttributeTypeId = 1
+        };
+
+        HttpResponseMessage response = await _apiService.CreateAttributeAsync(newAttribute);
+
+        if (response.IsSuccessStatusCode)
+        {
+            _ = LoadAttributes();
+            AddModalVisibility = Visibility.Collapsed;
+        }
+        else
+        {
+            MessageBox.Show(response.ToString(), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private async Task EditAttribute()
@@ -218,12 +300,12 @@ public class AttributeViewModel : ViewModelBase
         if (response.IsSuccessStatusCode)
         {
             Debug.WriteLine($"Атрибут {SelectedAttribute.Id} обновлён!");
-            EditModalVisibility = Visibility.Collapsed;
             _ = LoadAttributes();
+            EditModalVisibility = Visibility.Collapsed;
         }
         else
         {
-            Debug.WriteLine($"Ошибка обновления: {response.StatusCode}");
+            Debug.WriteLine($"Ошибка обновления: {response}");
         }
     }
 

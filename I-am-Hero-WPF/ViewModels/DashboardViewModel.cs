@@ -22,37 +22,12 @@ public class DashboardViewModel : ViewModelBase
 
     private readonly ApiService _apiService;
 
-    private bool _isSkillModalOpen;
-    private bool _isQuestModalOpen;
-    private bool _isAttributeModalOpen;
-    private bool _isModalOpen;
     private bool _isEditMode;
-    public bool IsSkillModalOpen
-    {
-        get => _isSkillModalOpen;
-        set { _isSkillModalOpen = value; OnPropertyChanged(nameof(IsSkillModalOpen)); }
-    }
-    public bool IsQuestModalOpen
-    {
-        get => _isQuestModalOpen;
-        set { _isQuestModalOpen = value; OnPropertyChanged(nameof(IsQuestModalOpen)); }
-    }
-    public bool IsAttributeModalOpen
-    {
-        get => _isAttributeModalOpen;
-        set { _isAttributeModalOpen = value; OnPropertyChanged(nameof(IsAttributeModalOpen)); }
-    }
-    public bool IsModalOpen
-    {
-        get => _isModalOpen;
-        set { _isModalOpen = value; OnPropertyChanged(nameof(IsModalOpen)); }
-    }
     public bool IsEditMode
     {
         get => _isEditMode;
         set { _isEditMode = value; OnPropertyChanged(nameof(IsEditMode)); }
     }
-
 
     private string _heroName;
     private int _heroExperience;
@@ -91,10 +66,19 @@ public class DashboardViewModel : ViewModelBase
         set => SetProperty(ref _quests, value);
     }
 
-
+    private Visibility _addSkillVisibility = Visibility.Collapsed;
     private string _skillName;
     private string _skillDescription;
     private int _skillExperience;
+    public Visibility AddSkillVisibility
+    {
+        get => _addSkillVisibility;
+        set
+        {
+            _addSkillVisibility = value;
+            OnPropertyChanged(nameof(AddSkillVisibility));
+        }
+    }
     public string SkillName
     {
         get => _skillName;
@@ -112,11 +96,21 @@ public class DashboardViewModel : ViewModelBase
     }
 
 
+    private Visibility _addAttributeVisibility = Visibility.Collapsed;
     private string _attributeName;
     private string _attributeDescription;
     private int _attributeMinValue;
     private int _attributeMaxValue;
     private int _attributeValue;
+    public Visibility AddAttributeVisibility
+    {
+        get => _addAttributeVisibility;
+        set
+        {
+            _addAttributeVisibility = value;
+            OnPropertyChanged(nameof(AddAttributeVisibility));
+        }
+    }
     public string AttributeName
     {
         get => _attributeName;
@@ -143,10 +137,20 @@ public class DashboardViewModel : ViewModelBase
         set => SetProperty(ref _attributeValue, value);
     }
 
-
+    private Visibility _addQuestVisibility = Visibility.Collapsed;
     private string _questTitle;
     private string _questDescription;
     private int _questExperience;
+
+    public Visibility AddQuestVisibility
+    {
+        get => _addQuestVisibility;
+        set
+        {
+            _addQuestVisibility = value;
+            OnPropertyChanged(nameof(AddQuestVisibility));
+        }
+    }
     public string QuestTitle
     {
         get => _questTitle;
@@ -171,14 +175,14 @@ public class DashboardViewModel : ViewModelBase
         Attributes = new ObservableCollection<HeroAttribute>();
         Quests = new ObservableCollection<Quest>();
 
-        OpenSkillModalCommand = new RelayCommand(_ => { IsSkillModalOpen = true; IsModalOpen = true; });
-        CloseSkillModalCommand = new RelayCommand(_ => { IsSkillModalOpen = false; IsModalOpen = false; });
+        OpenSkillModalCommand = new RelayCommand(_ => { AddSkillVisibility = Visibility.Visible; });
+        CloseSkillModalCommand = new RelayCommand(_ => { AddSkillVisibility = Visibility.Collapsed; });
 
-        OpenAttributeModalCommand = new RelayCommand(_ => { IsAttributeModalOpen = true; IsModalOpen = true; });
-        CloseAttributeModalCommand = new RelayCommand(_ => { IsAttributeModalOpen = false; IsModalOpen = false; });
+        OpenAttributeModalCommand = new RelayCommand(_ => { AddAttributeVisibility = Visibility.Visible; });
+        CloseAttributeModalCommand = new RelayCommand(_ => { AddAttributeVisibility = Visibility.Collapsed; });
 
-        OpenQuestModalCommand = new RelayCommand(_ => { IsQuestModalOpen = true; IsModalOpen = true; });
-        CloseQuestModalCommand = new RelayCommand(_ => { IsQuestModalOpen = false; IsModalOpen = false; });
+        OpenQuestModalCommand = new RelayCommand(_ => { AddQuestVisibility = Visibility.Visible; });
+        CloseQuestModalCommand = new RelayCommand(_ => { AddQuestVisibility = Visibility.Collapsed; });
 
         ToggleEditModeCommand = new RelayCommand(_ => { IsEditMode = !IsEditMode; });
 
@@ -330,10 +334,8 @@ public class DashboardViewModel : ViewModelBase
 
         if (response.IsSuccessStatusCode)
         {
-            MessageBox.Show("Навык успешно добавлен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
             _ = LoadData();
-            IsSkillModalOpen = false;
-            IsModalOpen = false;
+            AddSkillVisibility = Visibility.Collapsed;
         }
         else
         {
@@ -362,10 +364,8 @@ public class DashboardViewModel : ViewModelBase
 
         if (response.IsSuccessStatusCode)
         {
-            MessageBox.Show("Аттрибут успешно добавлен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
             _ = LoadData();
-            IsAttributeModalOpen = false;
-            IsModalOpen = false;
+            AddAttributeVisibility = Visibility.Collapsed;
         }
         else
         {

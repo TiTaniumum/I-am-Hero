@@ -162,7 +162,7 @@ public class ApiService
         string json = JsonSerializer.Serialize(attribute);
         HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        HttpResponseMessage response = await _httpClient.PutAsync("api/Hero/edit/HeroAttriute", content);
+        HttpResponseMessage response = await _httpClient.PutAsync("api/Hero/edit/HeroAttribute", content);
         return response;
     }
 
