@@ -98,7 +98,7 @@ public class ApiService
         HttpResponseMessage response = await _httpClient.GetAsync("api/Hero/get/HeroSkills");
         return response;
     }
-    public async Task<HttpResponseMessage> CreateSkillAsync(HeroSkill skill)
+    public async Task<HttpResponseMessage> CreateHeroSkillAsync(HeroSkill skill)
     {
         if (skill == null)
             throw new ArgumentNullException(nameof(skill));
@@ -109,14 +109,14 @@ public class ApiService
         HttpResponseMessage response = await _httpClient.PostAsync("api/Hero/create/HeroSkill", content);
         return response;
     }
-    public async Task<HttpResponseMessage> DeleteSkillAsync(long id)
+    public async Task<HttpResponseMessage> DeleteHeroSkillAsync(long id)
     {
         if (id <= 0)
             throw new ArgumentException("Invalid skill ID", nameof(id));
 
         return await _httpClient.DeleteAsync($"api/Hero/delete/HeroSkill?id={id}");
     }
-    public async Task<HttpResponseMessage> EditSkillAsync(HeroSkill skill)
+    public async Task<HttpResponseMessage> EditHeroSkillAsync(HeroSkill skill)
     {
         if (skill == null)
             throw new ArgumentNullException(nameof(skill));
@@ -135,7 +135,7 @@ public class ApiService
         HttpResponseMessage response = await _httpClient.GetAsync("api/Hero/get/HeroAttributes");
         return response;
     }
-    public async Task<HttpResponseMessage> CreateAttributeAsync(HeroAttribute attribute)
+    public async Task<HttpResponseMessage> CreateHeroAttributeAsync(HeroAttribute attribute)
     {
         if (attribute == null)
             throw new ArgumentNullException(nameof(attribute));
@@ -169,12 +169,12 @@ public class ApiService
 
 
     //Hero Quests
-    public async Task<HttpResponseMessage> GetQuestsAsync()
+    public async Task<HttpResponseMessage> GetHeroQuestsAsync()
     {
         HttpResponseMessage response = await _httpClient.GetAsync("api/Hero/get/Quests");
         return response;
     }
-    public async Task<HttpResponseMessage> CreateQuestAsync(Quest quest)
+    public async Task<HttpResponseMessage> CreateHeroQuestAsync(Quest quest)
     {
         if (quest == null)
             throw new ArgumentNullException(nameof(quest));

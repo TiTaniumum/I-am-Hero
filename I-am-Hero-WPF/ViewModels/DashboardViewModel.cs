@@ -288,7 +288,7 @@ public class DashboardViewModel : ViewModelBase
     {
         try
         {
-            HttpResponseMessage response = await _apiService.GetQuestsAsync();
+            HttpResponseMessage response = await _apiService.GetHeroQuestsAsync();
             if (response.IsSuccessStatusCode)
             {
                 string json = await response.Content.ReadAsStringAsync();
@@ -330,7 +330,7 @@ public class DashboardViewModel : ViewModelBase
             CLevelCalculationTypeId = cLevelCalculationTypeId
         };
 
-        HttpResponseMessage response = await _apiService.CreateSkillAsync(newSkill);
+        HttpResponseMessage response = await _apiService.CreateHeroSkillAsync(newSkill);
 
         if (response.IsSuccessStatusCode)
         {
@@ -360,7 +360,7 @@ public class DashboardViewModel : ViewModelBase
             CAttributeTypeId = cLevelCalculationTypeId
         };
 
-        HttpResponseMessage response = await _apiService.CreateAttributeAsync(newAttribute);
+        HttpResponseMessage response = await _apiService.CreateHeroAttributeAsync(newAttribute);
 
         if (response.IsSuccessStatusCode)
         {

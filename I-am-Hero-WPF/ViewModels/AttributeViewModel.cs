@@ -279,7 +279,7 @@ public class AttributeViewModel : ViewModelBase
             CAttributeTypeId = 1
         };
 
-        HttpResponseMessage response = await _apiService.CreateAttributeAsync(newAttribute);
+        HttpResponseMessage response = await _apiService.CreateHeroAttributeAsync(newAttribute);
 
         if (response.IsSuccessStatusCode)
         {
@@ -305,7 +305,7 @@ public class AttributeViewModel : ViewModelBase
         }
         else
         {
-            Debug.WriteLine($"Ошибка обновления: {response}");
+            Debug.WriteLine($"Ошибка обновления: {response.ReasonPhrase}");
         }
     }
 
