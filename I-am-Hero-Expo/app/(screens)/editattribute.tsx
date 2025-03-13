@@ -4,6 +4,7 @@ import { ThemedInput } from "@/components/ThemedInput";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
+import Resource from "@/constants/Resource";
 import Styles from "@/constants/Styles";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
 import { AttributeState, IAttributeDTO } from "@/models/Attribute";
@@ -17,7 +18,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 export default function EditAttributeScreen() {
-  const { api, alert, editAttribute, user } = useGlobalContext();
+  const { api, alert, editAttribute, user, setAlpha } = useGlobalContext();
   const [name, setName] = useState("");
   const [description, setdescription] = useState("");
   const [attributeType, setAttributeType] = useState(0);
@@ -103,17 +104,17 @@ export default function EditAttributeScreen() {
     let curValue: number = +cur;
     let maxValue: number = +max;
     if (minValue > maxValue) {
-      alert("Warning", "Minimum value cannot be bigger than maximum");
+      alert(Resource.get("warning!"), Resource.get("minbigmax"));
       setMin(max);
       return;
     }
     if (curValue > maxValue) {
-      alert("Warning", "Current value cannot be bigger than maximum");
+      alert(Resource.get("warning!"), Resource.get("curbigmax"));
       setCur(max);
       return;
     }
     if (curValue < minValue) {
-      alert("Warning", "Current value cannot be lesser than minimum");
+      alert(Resource.get("warning!"), Resource.get("curlesmin"));
       setCur(min);
       return;
     }
@@ -122,7 +123,9 @@ export default function EditAttributeScreen() {
     });
     api
       .CreateAttributeStates(attributeStates)
-      .catch((error) => alert("ERROR", "Something went wrong..."));
+      .catch((error) =>
+        alert(Resource.get("error!"), Resource.get("somethingwrong"))
+      );
     const ids: number[] = deleteStates.map((x) => x.id);
     api.DeleteAttributeStates(ids);
     const attribute: IAttributeDTO = {
@@ -138,10 +141,10 @@ export default function EditAttributeScreen() {
     api
       .EditAttribute(attribute)
       .then(() => {
-        alert("Saved!");
+        alert(Resource.get("saved!"));
       })
       .catch((error) => {
-        alert("ERROR", "Something went wrong!");
+        alert(Resource.get("error!"), Resource.get("somethingwrong"));
       });
   }
 
@@ -155,20 +158,24 @@ export default function EditAttributeScreen() {
       <ThemedInput
         value={name}
         onChangeText={setName}
-        placeholder="Attribute name..."
+        placeholder={Resource.get("attributename")}
         placeholderTextColor="gray"
         style={styles.input}
       />
       <ThemedInput
         value={description}
         onChangeText={setdescription}
-        placeholder="Description ..."
+        placeholder={Resource.get("description")}
         placeholderTextColor="gray"
         style={styles.input}
       />
       <ThemedView style={styles.container}>
         <Pressable
-          style={[
+          style={({ pressed, hovered }) => [
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed
+              ? { backgroundColor: color }
+              : { transitionDuration: "0.2s" },
             Styles.pressable,
             styles.switchButton,
             { borderColor: attributeType == 1 ? color : "gray" },
@@ -178,11 +185,15 @@ export default function EditAttributeScreen() {
           }}
         >
           <ThemedText style={{ color: attributeType == 1 ? color : "gray" }}>
-            Numeric
+            {Resource.get("numeric")}
           </ThemedText>
         </Pressable>
         <Pressable
-          style={[
+          style={({ hovered, pressed }) => [
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed
+              ? { backgroundColor: color }
+              : { transitionDuration: "0.2s" },
             Styles.pressable,
             styles.switchButton,
             { borderColor: attributeType == 2 ? color : "gray" },
@@ -192,7 +203,7 @@ export default function EditAttributeScreen() {
           }}
         >
           <ThemedText style={{ color: attributeType == 2 ? color : "gray" }}>
-            State
+            {Resource.get("state")}
           </ThemedText>
         </Pressable>
       </ThemedView>
@@ -203,7 +214,7 @@ export default function EditAttributeScreen() {
           style={styles.container}
         >
           <ThemedInput
-            placeholder="min"
+            placeholder={Resource.get("min")}
             placeholderTextColor="gray"
             keyboardType="numeric"
             style={styles.numericInput}
@@ -211,7 +222,7 @@ export default function EditAttributeScreen() {
             onChangeText={setMin}
           />
           <ThemedInput
-            placeholder="cur"
+            placeholder={Resource.get("cur")}
             placeholderTextColor="gray"
             keyboardType="numeric"
             style={styles.numericInput}
@@ -219,7 +230,7 @@ export default function EditAttributeScreen() {
             onChangeText={setCur}
           />
           <ThemedInput
-            placeholder="max"
+            placeholder={Resource.get("max")}
             placeholderTextColor="gray"
             keyboardType="numeric"
             style={styles.numericInput}
@@ -236,7 +247,9 @@ export default function EditAttributeScreen() {
             style={[styles.container, { flexDirection: "column", gap: 10 }]}
           >
             <ThemedView style={styles.currentState}>
-              <ThemedText style={{width: '30%'}}>Current state: </ThemedText>
+              <ThemedText style={{ width: "30%" }}>
+                {Resource.get("curstate")}
+              </ThemedText>
               <Select
                 selectedValue={currentState}
                 data={[
@@ -245,20 +258,25 @@ export default function EditAttributeScreen() {
                   ),
                 ]}
                 getTitle={(item) => item.name}
+                displayTitle={(item) => item.name}
                 onSelect={setCurrentState}
-                style={{width:'70%'}}
+                style={{ width: "70%" }}
               />
             </ThemedView>
             <ThemedView style={{ flexDirection: "row", width: "100%" }}>
               <ThemedInput
-                placeholder="state name"
+                placeholder={Resource.get("statename")}
                 placeholderTextColor="gray"
                 style={{ width: "80%" }}
                 value={state}
                 onChangeText={setState}
               />
               <Pressable
-                style={[
+                style={({ pressed, hovered }) => [
+                  hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+                  pressed
+                    ? { backgroundColor: color }
+                    : { transitionDuration: "0.2s" },
                   {
                     borderColor: color,
                     width: "20%",
@@ -285,7 +303,16 @@ export default function EditAttributeScreen() {
                       {item.name}
                     </ThemedText>
                     <Pressable
-                      style={[Styles.pressable, { borderColor: color }]}
+                      style={({ pressed, hovered }) => [
+                        hovered
+                          ? { backgroundColor: setAlpha(color, 0.5) }
+                          : {},
+                        pressed
+                          ? { backgroundColor: color }
+                          : { transitionDuration: "0.2s" },
+                        Styles.pressable,
+                        { borderColor: color },
+                      ]}
                       onPress={() => {
                         DeleteState(index);
                       }}
@@ -302,14 +329,18 @@ export default function EditAttributeScreen() {
       )}
       {name != "" && attributeType != 0 && (
         <Pressable
-          style={[
+          style={({ pressed, hovered }) => [
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed
+              ? { backgroundColor: color }
+              : { transitionDuration: "0.2s" },
             Styles.pressable,
             styles.switchButton,
             { borderColor: color },
           ]}
           onPress={Save}
         >
-          <ThemedText>Save</ThemedText>
+          <ThemedText>{Resource.get("save")}</ThemedText>
         </Pressable>
       )}
     </ThemedView>
@@ -342,9 +373,9 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     paddingVertical: 5,
   },
-  currentState:{
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  }
+  currentState: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
 });

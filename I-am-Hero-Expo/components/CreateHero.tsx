@@ -7,6 +7,7 @@ import { useGlobalContext } from "./ContextProvider";
 import { Pressable, useColorScheme } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Colors } from "@/constants/Colors";
+import Resource from "@/constants/Resource";
 
 export default function CreateHero() {
   const [name, setName] = useState("");
@@ -16,8 +17,8 @@ export default function CreateHero() {
 
   return (
     <ThemedView style={Styles.container}>
-      <ThemedText>Wellcome, Hero!</ThemedText>
-      <ThemedText>What is your name?</ThemedText>
+      <ThemedText>{Resource.get("welcomehero")}</ThemedText>
+      <ThemedText>{Resource.get("whatname?")}</ThemedText>
       <ThemedInput
         style={{ width: "70%" }}
         value={name}
@@ -29,13 +30,13 @@ export default function CreateHero() {
         onPress={() => api.CreateHero(name, user)}
         style={[Styles.pressable, { width: "70%", borderColor: color }]}
       >
-        <ThemedText>Create</ThemedText>
+        <ThemedText>{Resource.get("create")}</ThemedText>
       </Pressable>
       <Pressable
         onPress={() => api.Logout()}
         style={[Styles.pressable, { width: "70%", borderColor: color }]}
       >
-        <ThemedText>Logout</ThemedText>
+        <ThemedText>{Resource.get("logout")}</ThemedText>
       </Pressable>
     </ThemedView>
   );

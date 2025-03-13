@@ -20,9 +20,11 @@ import { Collapsible } from "@/components/Collapsible";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Animated, { FadeIn, FlipInXUp, ZoomOut } from "react-native-reanimated";
+import Resource from "@/constants/Resource";
 
 export default function BiographyScreen() {
-  const { user, api, alert, setEditBioID, setEditBioText } = useGlobalContext();
+  const { user, api, alert, setEditBioID, setEditBioText, setAlpha } =
+    useGlobalContext();
   const [bioPieces, setBioPieces] = useState<BioPiece[]>(user.biopieces ?? []);
   const [itemsCountdown, setItemsCountdown] = useState<
     {
@@ -115,7 +117,9 @@ export default function BiographyScreen() {
         );
         api
           .DeleteBioPiece(id)
-          .catch((error) => alert("ERROR", "Something went wrong ..."));
+          .catch((error) =>
+            alert(Resource.get("error!"), Resource.get("somethingwrong"))
+          );
       }
     }, 1000);
   }
@@ -123,10 +127,10 @@ export default function BiographyScreen() {
     (id: number) => {
       const item = itemsCountdown.find((item) => item.id === id);
       return item !== undefined && item.countdown > 0
-        ? `Cancel ${item.countdown}`
+        ? `${Resource.get("cancel")} ${item.countdown}`
         : item?.isDeleted
-        ? "Deleted!"
-        : "Delete";
+        ? Resource.get("deleted!")
+        : Resource.get("delete");
     },
     [itemsCountdown]
   );
@@ -141,7 +145,8 @@ export default function BiographyScreen() {
   return (
     <ThemedView style={Styles.container}>
       <Pressable
-        style={({ pressed }) => [
+        style={({ pressed, hovered }) => [
+          hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
           {
             position: "absolute",
             bottom: 20,
@@ -149,9 +154,7 @@ export default function BiographyScreen() {
             borderRadius: "100%",
             zIndex: 1000,
           },
-          pressed
-            ? { backgroundColor: "white" }
-            : { transitionDuration: "0.2s" },
+          pressed ? { backgroundColor: color } : { transitionDuration: "0.2s" },
         ]}
         onPress={() => {
           router.push("/createbiography");
@@ -160,7 +163,9 @@ export default function BiographyScreen() {
         <AntDesign name="pluscircleo" size={50} color={color} />
       </Pressable>
       <Pressable
-        style={({ pressed }) => [
+        style={({ pressed, hovered }) => [
+          hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+          pressed ? { backgroundColor: color } : { transitionDuration: "0.2s" },
           {
             position: "absolute",
             bottom: 80,
@@ -168,9 +173,6 @@ export default function BiographyScreen() {
             borderRadius: "100%",
             zIndex: 1000,
           },
-          pressed
-            ? { backgroundColor: "white" }
-            : { transitionDuration: "0.2s" },
         ]}
         onPress={onRefresh}
       >
@@ -203,7 +205,13 @@ export default function BiographyScreen() {
                   <Animated.View entering={FadeIn}>
                     <View style={styles.options}>
                       <Pressable
-                        style={[
+                        style={({ pressed, hovered }) => [
+                          hovered
+                            ? { backgroundColor: setAlpha(color, 0.5) }
+                            : {},
+                          pressed
+                            ? { backgroundColor: color }
+                            : { transitionDuration: "0.2s" },
                           Styles.pressable,
                           { borderColor: color },
                           styles.optionButton,
@@ -231,11 +239,17 @@ export default function BiographyScreen() {
                               : {}
                           }
                         >
-                          Edit
+                          {Resource.get("edit")}
                         </ThemedText>
                       </Pressable>
                       <Pressable
-                        style={[
+                        style={({ pressed, hovered }) => [
+                          hovered
+                            ? { backgroundColor: setAlpha(color, 0.5) }
+                            : {},
+                          pressed
+                            ? { backgroundColor: color }
+                            : { transitionDuration: "0.2s" },
                           Styles.pressable,
                           { borderColor: color },
                           styles.optionButton,
@@ -265,8 +279,10 @@ export default function BiographyScreen() {
           )}
           ListEmptyComponent={
             <ThemedView style={Styles.container}>
-              <ThemedText>There once was a hero</ThemedText>
-              <ThemedText>named {user.hero?.name}...</ThemedText>
+              <ThemedText>{Resource.get("washero")}</ThemedText>
+              <ThemedText>
+                {Resource.get("named")} {user.hero?.name}...
+              </ThemedText>
             </ThemedView>
           }
         />

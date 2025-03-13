@@ -3,6 +3,7 @@ import { ThemedInput } from "@/components/ThemedInput";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
+import Resource from "@/constants/Resource";
 import Styles from "@/constants/Styles";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
 import { useLocalSearchParams } from "expo-router";
@@ -10,7 +11,8 @@ import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet } from "react-native";
 
 export default function EditBiographyScreen() {
-  const { editBioID, editBioText, setEditBioText, alert, api } = useGlobalContext();
+  const { editBioID, editBioText, setEditBioText, alert, api, setAlpha } =
+    useGlobalContext();
   const [height, setHeight] = useState(40);
   const [backupText, setBackupText] = useState<string>("");
   const colorScheme = useColorScheme();
@@ -33,10 +35,10 @@ export default function EditBiographyScreen() {
     api
       .EditBioPiece(editBioID, editBioText)
       .then(() => {
-        alert("Saved!", "");
+        alert(Resource.get("saved!"));
       })
       .catch((error) => {
-        alert("ERROR", "Something went wrong...");
+        alert(Resource.get("error!"), Resource.get("somethingwrong"));
       });
   }
 
@@ -44,7 +46,7 @@ export default function EditBiographyScreen() {
     <ThemedView style={Styles.container}>
       <ScrollView style={styles.scroll}>
         <ThemedInput
-          placeholder="your biography goes here..."
+          placeholder={Resource.get("typehere")}
           placeholderTextColor="gray"
           style={[styles.input, { height }, { outline: "none" }]}
           multiline
@@ -57,28 +59,43 @@ export default function EditBiographyScreen() {
       </ScrollView>
       <ThemedView style={styles.control}>
         <Pressable
-          style={[Styles.pressable, styles.button]}
+          style={({ pressed, hovered }) => [
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed
+              ? { backgroundColor: color }
+              : { transitionDuration: "0.2s" },
+            Styles.pressable,
+            styles.button,
+          ]}
           onPress={handleClear}
         >
-          <ThemedView>
-            <ThemedText>Erase</ThemedText>
-          </ThemedView>
+          <ThemedText>{Resource.get("erase")}</ThemedText>
         </Pressable>
         <Pressable
-          style={[Styles.pressable, styles.button]}
+          style={({ hovered, pressed }) => [
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed
+              ? { backgroundColor: color }
+              : { transitionDuration: "0.2s" },
+            Styles.pressable,
+            styles.button,
+          ]}
           onPress={cancelChanges}
         >
-          <ThemedView>
-            <ThemedText>Rollback</ThemedText>
-          </ThemedView>
+          <ThemedText>{Resource.get("rollback")}</ThemedText>
         </Pressable>
         <Pressable
-          style={[Styles.pressable, styles.button]}
+          style={({ pressed, hovered }) => [
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed
+              ? { backgroundColor: color }
+              : { transitionDuration: "0.2s" },
+            Styles.pressable,
+            styles.button,
+          ]}
           onPress={handleSave}
         >
-          <ThemedView>
-            <ThemedText>Save</ThemedText>
-          </ThemedView>
+          <ThemedText>{Resource.get("save")}</ThemedText>
         </Pressable>
       </ThemedView>
     </ThemedView>
