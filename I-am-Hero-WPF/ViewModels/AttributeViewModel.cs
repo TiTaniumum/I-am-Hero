@@ -154,10 +154,10 @@ public class AttributeViewModel : ViewModelBase
                 OpenEditModal((long)intId);
             }
         });
-        OpenAddModalCommand = new RelayCommand<long>(_ => OpenAddModal());
+        OpenAddModalCommand = new RelayCommand<long>(_ => { AddModalVisibility = Visibility.Visible; });
         SaveEditCommand = new RelayCommand(async _ => await EditAttribute());
-        CloseEditModalCommand = new RelayCommand(_ => CloseEditModal());
-        CloseAddModalCommand = new RelayCommand(_ => CloseAddModal());
+        CloseEditModalCommand = new RelayCommand(_ => { EditModalVisibility = Visibility.Collapsed; });
+        CloseAddModalCommand = new RelayCommand(_ => { AddModalVisibility = Visibility.Collapsed; });
         ConfirmDeleteCommand = new RelayCommand<long>(param =>
         {
             if (param is long id)
@@ -247,18 +247,6 @@ public class AttributeViewModel : ViewModelBase
     {
         SelectedAttribute = FilteredAttributes.FirstOrDefault(a => a.Id == id);
         EditModalVisibility = Visibility.Visible;
-    }
-    private void CloseEditModal()
-    {
-        EditModalVisibility = Visibility.Collapsed;
-    }
-    private void OpenAddModal()
-    {
-        AddModalVisibility = Visibility.Visible;
-    }
-    private void CloseAddModal()
-    {
-        AddModalVisibility = Visibility.Collapsed;
     }
 
     private async Task AddAttribute()

@@ -27,7 +27,8 @@
             <!-- Кнопка "Создать" для создания героя -->
             <Button Content="{x:Static c:Resources.CreateHeroCreateBtn}" 
                     Command="{Binding CreateHeroCommand}" 
-                    Style="{StaticResource CustomButtonStyle}" />
+                    Background="Green"
+                    Style="{StaticResource RoundedButtonStyle}" />
         </StackPanel>
     </Grid>
 </Page>

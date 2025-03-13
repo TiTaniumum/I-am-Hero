@@ -8,19 +8,20 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using I_am_Hero_WPF.Models;
 using System.Windows;
+using System.Windows.Media.Effects;
 
-public class SkillViewModel : ViewModelBase
+internal class EffectViewModel : ViewModelBase
 {
     private readonly ApiService _apiService;
 
-    private HeroSkill _selectedSkill;
-    public HeroSkill SelectedSkill
+    private HeroStatusEffect _selectedEffect;
+    public HeroStatusEffect SelectedEffect
     {
-        get => _selectedSkill;
+        get => _selectedEffect;
         set
         {
-            _selectedSkill = value;
-            OnPropertyChanged(nameof(SelectedSkill));
+            _selectedEffect = value;
+            OnPropertyChanged(nameof(SelectedEffect));
         }
     }
     private Visibility _editModalVisibility = Visibility.Collapsed;
@@ -44,7 +45,7 @@ public class SkillViewModel : ViewModelBase
         }
     }
 
-    public List<string> SortOptions { get; } = new List<string> { "None", "Name", "Experience" };
+    public List<string> SortOptions { get; } = new List<string> { "None", "Name", "Value" };
 
     private string _searchText;
     public string SearchText
@@ -74,24 +75,24 @@ public class SkillViewModel : ViewModelBase
     }
 
 
-    private string _skillName;
-    private string _skillDescription;
-    private int _skillExperience;
+    private string _effectName;
+    private string _effectDescription;
+    private int _effectValue;
 
-    public string SkillName
+    public string EffectName
     {
-        get => _skillName;
-        set => SetProperty(ref _skillName, value);
+        get => _effectName;
+        set => SetProperty(ref _effectName, value);
     }
-    public string SkillDescription
+    public string EffectDescription
     {
-        get => _skillDescription;
-        set => SetProperty(ref _skillDescription, value);
+        get => _effectDescription;
+        set => SetProperty(ref _effectDescription, value);
     }
-    public int SkillExperience
+    public int EffectValue
     {
-        get => _skillExperience;
-        set => SetProperty(ref _skillExperience, value);
+        get => _effectValue;
+        set => SetProperty(ref _effectValue, value);
     }
 
     public RelayCommand ClearSearchCommand { get; }
@@ -99,37 +100,37 @@ public class SkillViewModel : ViewModelBase
     public RelayCommand CloseAddModalCommand { get; }
     public RelayCommand OpenEditModalCommand { get; }
     public RelayCommand CloseEditModalCommand { get; }
-    public RelayCommand AddSkillCommand { get; }
+    public RelayCommand AddEffectCommand { get; }
     public RelayCommand SaveEditCommand { get; }
     public RelayCommand ConfirmDeleteCommand { get; }
 
-    private ObservableCollection<HeroSkill> _skills = new ObservableCollection<HeroSkill>();
-    public ObservableCollection<HeroSkill> Skills
+    private ObservableCollection<HeroStatusEffect> _effects = new ObservableCollection<HeroStatusEffect>();
+    public ObservableCollection<HeroStatusEffect> Effects
     {
-        get => _skills;
+        get => _effects;
         set
         {
-            _skills = value;
+            _effects = value;
             OnPropertyChanged();
         }
     }
 
-    private ObservableCollection<HeroSkill> _filteredSkills = new ObservableCollection<HeroSkill>();
-    public ObservableCollection<HeroSkill> FilteredSkills
+    private ObservableCollection<HeroStatusEffect> _filteredEffects = new ObservableCollection<HeroStatusEffect>();
+    public ObservableCollection<HeroStatusEffect> FilteredEffects
     {
-        get => _filteredSkills;
+        get => _filteredEffects;
         set
         {
-            _filteredSkills = value;
+            _filteredEffects = value;
             OnPropertyChanged();
         }
     }
 
-    public SkillViewModel()
+    public EffectViewModel()
     {
         _apiService = new ApiService();
-        Skills = new ObservableCollection<HeroSkill>();
-        FilteredSkills = new ObservableCollection<HeroSkill>();
+        Effects = new ObservableCollection<HeroStatusEffect>();
+        FilteredEffects = new ObservableCollection<HeroStatusEffect>();
 
         OpenEditModalCommand = new RelayCommand<long>(param =>
         {
@@ -143,57 +144,56 @@ public class SkillViewModel : ViewModelBase
             }
         });
         OpenAddModalCommand = new RelayCommand<long>(_ => { AddModalVisibility = Visibility.Visible; });
-        SaveEditCommand = new RelayCommand(async _ => await EditSkill());
+        SaveEditCommand = new RelayCommand(async _ => await EditEffect());
         CloseEditModalCommand = new RelayCommand(_ => { EditModalVisibility = Visibility.Collapsed; });
         CloseAddModalCommand = new RelayCommand(_ => { AddModalVisibility = Visibility.Collapsed; });
         ConfirmDeleteCommand = new RelayCommand<long>(param =>
         {
             if (param is long id)
             {
-                _ = DeleteSkill(id);
+                _ = DeleteEffect(id);
             }
             else if (param is int intId)
             {
-                _ = DeleteSkill((long)intId);
+                _ = DeleteEffect((long)intId);
             }
         });
 
-        AddSkillCommand = new RelayCommand(async _ => await AddSkill());
+        AddEffectCommand = new RelayCommand(async _ => await AddEffect());
         ClearSearchCommand = new RelayCommand(_ => ClearSearch());
 
-        _ = LoadSkills();
+        _ = LoadEffects();
     }
 
-    private async Task LoadSkills()
+    private async Task LoadEffects()
     {
         try
         {
-            HttpResponseMessage response = await _apiService.GetHeroSkillsAsync();
+            HttpResponseMessage response = await _apiService.GetHeroEffectsAsync();
             if (response.IsSuccessStatusCode)
             {
                 string json = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonSerializer.Deserialize<HeroSkillsResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (responseObject?.HeroSkills != null)
+                var responseObject = JsonSerializer.Deserialize<HeroStatusEffectsResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (responseObject?.HeroStatusEffects != null)
                 {
-                    Skills = new ObservableCollection<HeroSkill>(responseObject.HeroSkills);
+                    Effects = new ObservableCollection<HeroStatusEffect>(responseObject.HeroStatusEffects);
                     ApplyFilters();
                 }
             }
             else
             {
-                MessageBox.Show("Не удалось загрузить навыки героя: " + response.StatusCode, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Не удалось загрузить статус эффекты героя: " + response.StatusCode, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Ошибка при загрузке навыков героя: " + ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show("Ошибка при загрузке статус эффектов героя: " + ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
     private void ApplyFilters()
     {
-        var filtered = Skills.ToList();
+        var filtered = Effects.ToList();
 
         if (!string.IsNullOrEmpty(SearchText))
         {
@@ -209,13 +209,13 @@ public class SkillViewModel : ViewModelBase
                 case "Name":
                     filtered = filtered.OrderBy(a => a.Name).ToList();
                     break;
-                case "Experience":
-                    filtered = filtered.OrderByDescending(a => a.Experience).ToList();
+                case "Value":
+                    filtered = filtered.OrderByDescending(a => a.Value).ToList();
                     break;
             }
         }
 
-        FilteredSkills = new ObservableCollection<HeroSkill>(filtered);
+        FilteredEffects = new ObservableCollection<HeroStatusEffect>(filtered);
     }
 
     private void ClearSearch()
@@ -227,31 +227,30 @@ public class SkillViewModel : ViewModelBase
 
     private void OpenEditModal(long id)
     {
-        SelectedSkill = FilteredSkills.FirstOrDefault(a => a.Id == id);
+        SelectedEffect = FilteredEffects.FirstOrDefault(a => a.Id == id);
         EditModalVisibility = Visibility.Visible;
     }
 
-    private async Task AddSkill()
+    private async Task AddEffect()
     {
-        if (string.IsNullOrWhiteSpace(SkillName))
+        if (string.IsNullOrWhiteSpace(EffectName))
         {
-            MessageBox.Show("Введите название умения.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show("Введите название статус эффекта.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
-        var newSkill = new HeroSkill
+        var newEffect = new HeroStatusEffect
         {
-            Name = SkillName,
-            Description = SkillDescription,
-            Experience = SkillExperience,
-            CLevelCalculationTypeId = 1
+            Name = EffectName,
+            Description = EffectDescription,
+            Value = EffectValue
         };
 
-        HttpResponseMessage response = await _apiService.CreateHeroSkillAsync(newSkill);
+        HttpResponseMessage response = await _apiService.CreateHeroEffectAsync(newEffect);
 
         if (response.IsSuccessStatusCode)
         {
-            _ = LoadSkills();
+            _ = LoadEffects();
             AddModalVisibility = Visibility.Collapsed;
         }
         else
@@ -260,15 +259,15 @@ public class SkillViewModel : ViewModelBase
         }
     }
 
-    private async Task EditSkill()
+    private async Task EditEffect()
     {
-        if (SelectedSkill == null) return;
+        if (SelectedEffect == null) return;
 
-        var response = await _apiService.EditHeroSkillAsync(SelectedSkill);
+        var response = await _apiService.EditHeroEffectAsync(SelectedEffect);
         if (response.IsSuccessStatusCode)
         {
-            Debug.WriteLine($"Умение {SelectedSkill.Id} обновлено!");
-            _ = LoadSkills();
+            Debug.WriteLine($"Статус эффект {SelectedEffect.Id} обновлено!");
+            _ = LoadEffects();
             EditModalVisibility = Visibility.Collapsed;
         }
         else
@@ -277,16 +276,18 @@ public class SkillViewModel : ViewModelBase
         }
     }
 
-    private async Task DeleteSkill(long id)
+    private async Task DeleteEffect(long id)
     {
-        var response = await _apiService.DeleteHeroSkillAsync(id);
+        var response = await _apiService.DeleteHeroEffectAsync(id);
         if (response.IsSuccessStatusCode)
         {
-            _ = LoadSkills();
+            _ = LoadEffects();
         }
         else
         {
-            Debug.WriteLine($"Ошибка удаления умения {id}: {response.ReasonPhrase}");
+            Debug.WriteLine($"Ошибка удаления статус эффекта {id}: {response.ReasonPhrase}");
         }
     }
 }
+
+

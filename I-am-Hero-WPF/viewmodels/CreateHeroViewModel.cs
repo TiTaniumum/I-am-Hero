@@ -37,8 +37,6 @@ public class CreateHeroViewModel : ViewModelBase
 
         if (!string.IsNullOrEmpty(result) && !result.StartsWith("Ошибка"))
         {
-            MessageBox.Show("Герой создан!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-
             Application.Current.MainWindow.Content = new MainPage();
         }
         else
