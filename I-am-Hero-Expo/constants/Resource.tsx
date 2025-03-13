@@ -81,7 +81,7 @@ const source: { [key: string]: { [loc: string]: string } } = {
   editbiography: { ru: "Изменение записи дневника", en: "Diary note edit" },
   habbits: { ru: "Привычки", en: "Habbits" },
   settings: { ru: "Настройки", en: "Settings" },
-    "language": { ru: "Язык", en: "Language" },
+  language: { ru: "Язык", en: "Language" },
   //   "": { ru: "", en: "" },
   //   "": { ru: "", en: "" },
   //   "": { ru: "", en: "" },
