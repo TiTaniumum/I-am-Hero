@@ -112,7 +112,7 @@ export default class ApiService {
         api.GetHero(user);
       })
       .catch(function (error) {
-        api.alert("error", error.response?.data?.message || error.message);
+        api.alert(Resource.get("error!"), Resource.get("somethingwrong"));
         console.log(error);
       });
   }

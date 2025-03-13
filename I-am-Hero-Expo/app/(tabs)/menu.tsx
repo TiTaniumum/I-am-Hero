@@ -18,13 +18,13 @@ import QuestIcon from "@/icons/QuestIcon";
 import { router } from "expo-router";
 import ProgressBar from "@/components/ProgressBar";
 import CreateHero from "@/components/CreateHero";
+import Resource from "@/constants/Resource";
 
 export default function MenuScreen() {
-  const { isToken, user, isHero } = useGlobalContext();
+  const { isToken, user, isHero, setAlpha } = useGlobalContext();
 
   const Wrapper = Platform.OS === "web" ? ThemedView : SafeAreaView;
   const [listType, setListType] = useState(false);
-  const [isHover, setIsHover] = useState(false);
   const colorScheme = useColorScheme();
   const color = Colors[colorScheme ?? "light"].tint;
   const background = Colors[colorScheme ?? "light"].background;
@@ -37,16 +37,10 @@ export default function MenuScreen() {
     <Wrapper style={[Styles.container, { gap: 0 }]}>
       <ThemedView style={Styles.header} tint={true}>
         <Pressable
-          onHoverIn={() => {
-            setIsHover(true);
-          }}
-          onHoverOut={() => {
-            setIsHover(false);
-          }}
-          style={({ pressed }) => [
+          style={({ pressed, hovered }) => [
             Styles.headerButtons,
-            isHover ? { backgroundColor: "rgba(255, 255, 255, 0.5)" } : {},
-            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed ? { backgroundColor: color } : Styles.pressableNotPressed,
           ]}
           onPress={() => {
             setListType(!listType);
@@ -59,9 +53,10 @@ export default function MenuScreen() {
           )}
         </Pressable>
         <Pressable
-          style={({ pressed }) => [
+          style={({ pressed, hovered }) => [
             Styles.headerButtons,
-            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed ? { backgroundColor: color } : Styles.pressableNotPressed,
           ]}
           onPress={() => {
             router.push("/settings");
@@ -74,12 +69,12 @@ export default function MenuScreen() {
         style={{ width: "100%", backgroundColor: background }}
         contentContainerStyle={listType ? styles.menulist : styles.menugrid}
       >
-        <ThemedView style={[styles.profile, {borderColor: color}]}>
+        <ThemedView style={[styles.profile, { borderColor: color }]}>
           <ThemedView style={styles.leftprofile}>
             <ThemedText style={{ fontSize: 25 }}>
-              I am {user.hero?.name}
+              {Resource.get("iam")} {user.hero?.name}
             </ThemedText>
-            <ThemedText>Level 10</ThemedText>
+            <ThemedText>{Resource.get("level")} 10</ThemedText>
             <ProgressBar
               minValue={0}
               curValue={70}
@@ -94,45 +89,49 @@ export default function MenuScreen() {
           </ThemedView>
         </ThemedView>
         <Pressable
-          style={({ pressed }) => [
+          style={({ pressed, hovered }) => [
             styles.button,
-            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed ? { backgroundColor: color } : Styles.pressableNotPressed,
           ]}
           onPress={() => {
             router.push("/biography");
           }}
         >
           <FontAwesome5 name="scroll" size={iconsize} color={color} />
-          {listType && <ThemedText>Biography</ThemedText>}
+          {listType && <ThemedText>{Resource.get("diary")}</ThemedText>}
         </Pressable>
         <Pressable
-          style={({ pressed }) => [
+          style={({ pressed, hovered }) => [
             styles.button,
-            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed ? { backgroundColor: color } : Styles.pressableNotPressed,
           ]}
           onPress={() => {
             router.push("/attributes");
           }}
         >
           <FontAwesome5 name="dna" size={iconsize} color={color} />
-          {listType && <ThemedText>Attributes</ThemedText>}
+          {listType && <ThemedText>{Resource.get("attributes")}</ThemedText>}
         </Pressable>
         <Pressable
-          style={({ pressed }) => [
+          style={({ pressed, hovered }) => [
             styles.button,
-            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed ? { backgroundColor: color } : Styles.pressableNotPressed,
           ]}
           onPress={() => {
             router.push("/skills");
           }}
         >
           <Entypo name="graduation-cap" size={iconsize} color={color} />
-          {listType && <ThemedText>Skills</ThemedText>}
+          {listType && <ThemedText>{Resource.get("skills")}</ThemedText>}
         </Pressable>
         <Pressable
-          style={({ pressed }) => [
+          style={({ pressed, hovered }) => [
             styles.button,
-            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed ? { backgroundColor: color } : Styles.pressableNotPressed,
           ]}
           onPress={() => {
             router.push("/habbits");
@@ -143,12 +142,13 @@ export default function MenuScreen() {
             size={iconsize}
             color={color}
           />
-          {listType && <ThemedText>Habits</ThemedText>}
+          {listType && <ThemedText>{Resource.get("habits")}</ThemedText>}
         </Pressable>
         <Pressable
-          style={({ pressed }) => [
+          style={({ pressed, hovered }) => [
             styles.button,
-            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed ? { backgroundColor: color } : Styles.pressableNotPressed,
           ]}
           onPress={() => {
             router.push("/statuseffects");
@@ -159,24 +159,26 @@ export default function MenuScreen() {
             size={iconsize}
             color={color}
           />
-          {listType && <ThemedText>Status effects</ThemedText>}
+          {listType && <ThemedText>{Resource.get("statuseffects")}</ThemedText>}
         </Pressable>
         <Pressable
-          style={({ pressed }) => [
+          style={({ pressed, hovered }) => [
             styles.button,
-            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed ? { backgroundColor: color } : Styles.pressableNotPressed,
           ]}
           onPress={() => {
             router.push("/achievements");
           }}
         >
           <MaterialCommunityIcons name="trophy" size={iconsize} color={color} />
-          {listType && <ThemedText>Achievements</ThemedText>}
+          {listType && <ThemedText>{Resource.get("achievements")}</ThemedText>}
         </Pressable>
         <Pressable
-          style={({ pressed }) => [
+          style={({ pressed, hovered }) => [
             styles.button,
-            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed ? { backgroundColor: color } : Styles.pressableNotPressed,
           ]}
           onPress={() => {
             router.push("/calendars");
@@ -187,31 +189,33 @@ export default function MenuScreen() {
             size={iconsize}
             color={color}
           />
-          {listType && <ThemedText>Daylies</ThemedText>}
+          {listType && <ThemedText>{Resource.get("daylies")}</ThemedText>}
         </Pressable>
         <Pressable
-          style={({ pressed }) => [
+          style={({ pressed, hovered }) => [
             styles.button,
-            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed ? { backgroundColor: color } : Styles.pressableNotPressed,
           ]}
           onPress={() => {
             router.push("/quests");
           }}
         >
           <QuestIcon size={iconsize} color={color} />
-          {listType && <ThemedText>Quests</ThemedText>}
+          {listType && <ThemedText>{Resource.get("quests")}</ThemedText>}
         </Pressable>
         <Pressable
-          style={({ pressed }) => [
+          style={({ pressed, hovered }) => [
             styles.button,
-            pressed ? Styles.pressablePressed : Styles.pressableNotPressed,
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed ? { backgroundColor: color } : Styles.pressableNotPressed,
           ]}
           onPress={() => {
             router.push("/social");
           }}
         >
           <AntDesign name="message1" size={iconsize} color={color} />
-          {listType && <ThemedText>Social</ThemedText>}
+          {listType && <ThemedText>{Resource.get("social")}</ThemedText>}
         </Pressable>
         <ThemedView style={styles.empty}></ThemedView>
       </ScrollView>

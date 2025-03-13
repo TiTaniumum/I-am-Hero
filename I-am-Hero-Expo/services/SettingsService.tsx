@@ -12,4 +12,7 @@ export default class SettingsService{
         if(_loc)
             Resource.loc = _loc;
     }
+    async GetCurrentLocalization(){
+        return await AsyncStorage.getItem("loc") ?? "en";
+    }
 }

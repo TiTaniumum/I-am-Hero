@@ -2,12 +2,13 @@ import { Pressable, StyleSheet } from "react-native";
 import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
 import { ThemedInput } from "./ThemedInput";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGlobalContext } from "./ContextProvider";
 import Styles from "@/constants/Styles";
 import Resource from "@/constants/Resource";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
 import { Colors } from "@/constants/Colors";
+import Select from "./Select";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -18,7 +19,18 @@ export default function Auth() {
   const colorScheme = useColorScheme();
   const color = Colors[colorScheme ?? "light"].tint;
 
-  const { api } = useGlobalContext();
+  const { api, settings, loc, setLoc, setAlpha } = useGlobalContext();
+
+  useEffect(() => {
+    settings.GetCurrentLocalization().then((currentLocalization) => {
+      setLoc(currentLocalization);
+    });
+  }, []);
+
+  function OnSelectLocalizationHandle(item: string) {
+    setLoc(item);
+    settings.UpdateLocalization(item);
+  }
 
   return (
     <ThemedView style={styles.container}>
@@ -41,18 +53,27 @@ export default function Auth() {
           />
           <Pressable
             onPress={() => api.Login(email, password)}
-            style={[Styles.pressable, {width: "70%", borderColor: color, borderWidth:2}]}
+            style={({ pressed, hovered }) => [
+              hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+              pressed
+                ? { backgroundColor: color }
+                : { transitionDuration: "0.2s" },
+              Styles.pressable,
+              { width: "70%", borderColor: color, borderWidth: 2 },
+            ]}
           >
             <ThemedText>{Resource.get("login")}</ThemedText>
           </Pressable>
           <ThemedView style={{ display: "flex", flexDirection: "row" }}>
-            <ThemedText>{Resource.get("noAccount")}{" "}</ThemedText>
+            <ThemedText>{Resource.get("noAccount")} </ThemedText>
             <Pressable
               onPress={() => {
                 setIsLogin(false);
               }}
             >
-              <ThemedText style={Styles.link}>{Resource.get("register")}</ThemedText>
+              <ThemedText style={Styles.link}>
+                {Resource.get("register")}
+              </ThemedText>
             </Pressable>
           </ThemedView>
         </>
@@ -85,12 +106,19 @@ export default function Auth() {
             onPress={() =>
               api.Register(email, password, passwordRepeat, setIsLogin)
             }
-            style={[Styles.pressable, {width: "70%", borderColor: color}]}
+            style={({ pressed, hovered }) => [
+              hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+              pressed
+                ? { backgroundColor: color }
+                : { transitionDuration: "0.2s" },
+              Styles.pressable,
+              { width: "70%", borderColor: color },
+            ]}
           >
             <ThemedText>{Resource.get("register")}</ThemedText>
           </Pressable>
           <ThemedView style={{ display: "flex", flexDirection: "row" }}>
-            <ThemedText>{Resource.get("alreadyAccount")}{" "}</ThemedText>
+            <ThemedText>{Resource.get("alreadyAccount")} </ThemedText>
             <Pressable
               onPress={() => {
                 setIsLogin(true);
@@ -105,6 +133,16 @@ export default function Auth() {
           </ThemedView>
         </>
       )}
+      <Select
+        selectedValue={loc}
+        data={Resource.localizations}
+        getTitle={(item) => `${Resource.get(item)}`}
+        displayTitle={(item) =>
+          `${Resource.get("language")}: ${Resource.get(item)}`
+        }
+        onSelect={OnSelectLocalizationHandle}
+        style={{ width: "70%" }}
+      />
     </ThemedView>
   );
 }

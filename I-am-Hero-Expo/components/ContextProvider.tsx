@@ -39,6 +39,10 @@ type GlobalContext = {
   setEditAttribute: (value: Attribute) => void;
   editAttributeRefresh: boolean;
   setEditAttributeRefresh: (value: boolean) => void;
+  settings: SettingsService;
+  loc: string;
+  setLoc: (value: string) => void;
+  setAlpha: (hex: string, alpha: number) => string;
 };
 
 const Context = createContext<GlobalContext>({} as GlobalContext);
@@ -53,6 +57,7 @@ export function ContextProvider({ children }: { children: ReactNode }) {
   const [editBioText, setEditBioText] = useState("");
   const [editAttribute, setEditAttribute] = useState<Attribute>();
   const [editAttributeRefresh, setEditAttributeRefresh] = useState(false);
+  const [loc, setLoc] = useState("en");
   function onAlertClose() {
     setIsAlertVisible(false);
   }
@@ -63,13 +68,22 @@ export function ContextProvider({ children }: { children: ReactNode }) {
   api.setIsToken = setIsToken;
   user.setIsHero = setIsHero;
   useEffect(() => {
-    settings.UpdateLocalization();
+    settings.UpdateLocalization().then(()=>{
+      settings.GetCurrentLocalization().then((currentLocalization)=>{
+        setLoc(currentLocalization);
+      })
+    })
     api.GetToken();
     api.alert = alert;
     user.Init().then(() => {
       if (!user.hero) api.GetHero(user);
     });
   }, []);
+
+  const setAlpha = (hex: string, alpha: number) => {
+    const alphaHex = Math.round(alpha * 255).toString(16).padStart(2, "0");
+    return hex + alphaHex;
+  };
 
   return (
     <Context.Provider
@@ -89,6 +103,10 @@ export function ContextProvider({ children }: { children: ReactNode }) {
         setEditAttribute,
         editAttributeRefresh,
         setEditAttributeRefresh,
+        settings,
+        loc,
+        setLoc,
+        setAlpha
       }}
     >
       <Provider>

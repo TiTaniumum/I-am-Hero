@@ -4,6 +4,7 @@ import ProgressBar from "@/components/ProgressBar";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
+import Resource from "@/constants/Resource";
 import Styles from "@/constants/Styles";
 import { Attribute, AttributeState } from "@/models/Attribute";
 import { AntDesign, Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -20,7 +21,7 @@ import {
 import Animated, { FadeIn, FlipInXUp, ZoomOut } from "react-native-reanimated";
 
 export default function AttributesScreen() {
-  const { user, api, alert, setEditAttribute } = useGlobalContext();
+  const { user, api, alert, setEditAttribute, setAlpha } = useGlobalContext();
   const [attributes, setAttributes] = useState<Attribute[]>([
     ...user.attributes,
   ]);
@@ -67,13 +68,13 @@ export default function AttributesScreen() {
           .catch((error) => {
             setLoading(false);
             setRefreshing(false);
-            alert("ERROR", "Something went wrong");
+            alert(Resource.get("error!"), Resource.get("somethingwrong"));
           });
       })
       .catch((error) => {
         setLoading(false);
         setRefreshing(false);
-        alert("ERROR", "Something went wrong");
+        alert(Resource.get("error!"), Resource.get("somethingwrong"));
       });
   }, []);
 
@@ -136,7 +137,9 @@ export default function AttributesScreen() {
         );
         api
           .DeleteAttribute(id)
-          .catch((error) => alert("ERROR", "Something went wrong ..."));
+          .catch((error) =>
+            alert(Resource.get("error!"), Resource.get("somethingwrong"))
+          );
       }
     }, 1000);
   }
@@ -153,10 +156,10 @@ export default function AttributesScreen() {
     (id: number) => {
       const item = itemsCountdown.find((item) => item.id === id);
       return item !== undefined && item.countdown > 0
-        ? `Cancel ${item.countdown}`
+        ? `${Resource.get("cancel")} ${item.countdown}`
         : item?.isDeleted
-        ? "Deleted!"
-        : "Delete";
+        ? Resource.get("deleted!")
+        : Resource.get("delete");
     },
     [itemsCountdown]
   );
@@ -164,7 +167,7 @@ export default function AttributesScreen() {
   return (
     <ThemedView style={Styles.container}>
       <Pressable
-        style={({ pressed }) => [
+        style={({ pressed, hovered }) => [
           {
             position: "absolute",
             bottom: 20,
@@ -172,9 +175,8 @@ export default function AttributesScreen() {
             borderRadius: "100%",
             zIndex: 1000,
           },
-          pressed
-            ? { backgroundColor: "white" }
-            : { transitionDuration: "0.2s" },
+          hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+          pressed ? { backgroundColor: color } : { transitionDuration: "0.2s" },
         ]}
         onPress={() => {
           router.push("/createattribute");
@@ -183,7 +185,7 @@ export default function AttributesScreen() {
         <AntDesign name="pluscircleo" size={50} color={color} />
       </Pressable>
       <Pressable
-        style={({ pressed }) => [
+        style={({ pressed, hovered }) => [
           {
             position: "absolute",
             bottom: 80,
@@ -191,9 +193,8 @@ export default function AttributesScreen() {
             borderRadius: "100%",
             zIndex: 1000,
           },
-          pressed
-            ? { backgroundColor: "white" }
-            : { transitionDuration: "0.2s" },
+          hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+          pressed ? { backgroundColor: color } : { transitionDuration: "0.2s" },
         ]}
         onPress={onRefresh}
       >
@@ -264,7 +265,7 @@ export default function AttributesScreen() {
                               ? {
                                   textDecorationLine: "line-through",
                                   color: "gray",
-                                  borderColor: "gray"
+                                  borderColor: "gray",
                                 }
                               : {},
                             ,
@@ -300,7 +301,13 @@ export default function AttributesScreen() {
                   </ThemedView>
                   <ThemedView style={styles.options}>
                     <Pressable
-                      style={[
+                      style={({ pressed, hovered }) => [
+                        hovered
+                          ? { backgroundColor: setAlpha(color, 0.5) }
+                          : {},
+                        pressed
+                          ? { backgroundColor: color }
+                          : { transitionDuration: "0.2s" },
                         Styles.pressable,
                         { borderColor: color },
                         styles.optionButton,
@@ -327,11 +334,17 @@ export default function AttributesScreen() {
                             : {}
                         }
                       >
-                        Edit
+                        {Resource.get("edit")}
                       </ThemedText>
                     </Pressable>
                     <Pressable
-                      style={[
+                      style={({ pressed, hovered }) => [
+                        hovered
+                          ? { backgroundColor: setAlpha(color, 0.5) }
+                          : {},
+                        pressed
+                          ? { backgroundColor: color }
+                          : { transitionDuration: "0.2s" },
                         Styles.pressable,
                         { borderColor: color },
                         styles.optionButton,
@@ -350,7 +363,7 @@ export default function AttributesScreen() {
           )}
           ListEmptyComponent={
             <ThemedView style={Styles.container}>
-              <ThemedText>You have no attributes yet</ThemedText>
+              <ThemedText>{Resource.get("noattributes")}</ThemedText>
             </ThemedView>
           }
         />

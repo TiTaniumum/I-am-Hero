@@ -3,6 +3,7 @@ import { ThemedInput } from "@/components/ThemedInput";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
+import Resource from "@/constants/Resource";
 import Styles from "@/constants/Styles";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
 import { useState } from "react";
@@ -10,31 +11,32 @@ import { Pressable, ScrollView, StyleSheet } from "react-native";
 
 export default function CreateBiographyScreen() {
   const [height, setHeight] = useState(40);
-  const {bioText, setBioText} =  useGlobalContext();
+  const { bioText, setBioText, setAlpha, alert, api } = useGlobalContext();
   const colorScheme = useColorScheme();
   const color = Colors[colorScheme ?? "light"].tint;
   const styles = createStyle(color);
-  const {alert, api} = useGlobalContext();
 
-  function handleClear(){
+  function handleClear() {
     setBioText("");
   }
 
-  function handleCreate(){
-    api.CreateBioPiece(bioText)
-    .then(()=>{
-      setBioText("");
-      alert("Created!", "");
-    }).catch((error)=>{
-      alert("ERROR","Something went wrong...");
-    })
+  function handleCreate() {
+    api
+      .CreateBioPiece(bioText)
+      .then(() => {
+        setBioText("");
+        alert(Resource.get("created!"), "");
+      })
+      .catch((error) => {
+        alert(Resource.get("error!"), Resource.get("somethingwrong"));
+      });
   }
 
   return (
     <ThemedView style={Styles.container}>
       <ScrollView style={styles.scroll}>
         <ThemedInput
-          placeholder="your biography goes here..."
+          placeholder={Resource.get("typehere")}
           placeholderTextColor="gray"
           style={[styles.input, { height }, { outline: "none" }]}
           multiline
@@ -46,15 +48,31 @@ export default function CreateBiographyScreen() {
         />
       </ScrollView>
       <ThemedView style={styles.control}>
-        <Pressable style={[Styles.pressable, styles.button]} onPress={handleClear}>
-          <ThemedView>
-            <ThemedText>Erase</ThemedText>
-          </ThemedView>
+        <Pressable
+          style={({ hovered, pressed }) => [
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed
+              ? { backgroundColor: color }
+              : { transitionDuration: "0.2s" },
+            Styles.pressable,
+            styles.button,
+          ]}
+          onPress={handleClear}
+        >
+          <ThemedText>{Resource.get("erase")}</ThemedText>
         </Pressable>
-        <Pressable style={[Styles.pressable, styles.button]} onPress={handleCreate}>
-          <ThemedView>
-            <ThemedText>Create</ThemedText>
-          </ThemedView>
+        <Pressable
+          style={({ pressed, hovered }) => [
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed
+              ? { backgroundColor: color }
+              : { transitionDuration: "0.2s" },
+            Styles.pressable,
+            styles.button,
+          ]}
+          onPress={handleCreate}
+        >
+          <ThemedText>{Resource.get("create")}</ThemedText>
         </Pressable>
       </ThemedView>
     </ThemedView>

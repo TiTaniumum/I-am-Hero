@@ -3,6 +3,7 @@ import { ThemedInput } from "@/components/ThemedInput";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
+import Resource from "@/constants/Resource";
 import Styles from "@/constants/Styles";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
 import { IAttributeDTO } from "@/models/Attribute";
@@ -17,7 +18,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 export default function CreateAttributeScreen() {
-  const { api, alert } = useGlobalContext();
+  const { api, alert, setAlpha } = useGlobalContext();
   const [name, setName] = useState("");
   const [description, setdescription] = useState("");
   const [attributeType, setAttributeType] = useState(0);
@@ -50,17 +51,17 @@ export default function CreateAttributeScreen() {
     let curValue: number = +cur;
     let maxValue: number = +max;
     if (minValue > maxValue) {
-      alert("Warning", "Minimum value cannot be bigger than maximum");
+      alert(Resource.get("warning!"), Resource.get("minbigmax"));
       setMin(max);
       return;
     }
     if (curValue > maxValue) {
-      alert("Warning", "Current value cannot be bigger than maximum");
+      alert(Resource.get("warning!"), Resource.get("curbigmax"));
       setCur(max);
       return;
     }
     if (curValue < minValue) {
-      alert("Warning", "Current value cannot be lesser than minimum");
+      alert(Resource.get("warning!"), Resource.get("curlesmin"));
       setCur(min);
       return;
     }
@@ -76,9 +77,9 @@ export default function CreateAttributeScreen() {
     api
       .CreateAttribute(attribute)
       .then((j) => {
-        if(states.length == 0) {
-            alert("Created!");
-            return;
+        if (states.length == 0) {
+          alert(Resource.get("created!"));
+          return;
         }
         const attributeStates = states.map((str) => {
           return { heroAttributeId: j.id, name: str };
@@ -86,12 +87,14 @@ export default function CreateAttributeScreen() {
         api
           .CreateAttributeStates(attributeStates)
           .then(() => {
-            alert("Created!");
+            alert(Resource.get("created!"));
           })
-          .catch((error) => alert("ERROR", "Something went wrong..."));
+          .catch((error) =>
+            alert(Resource.get("error!"), Resource.get("somethingwrong"))
+          );
       })
       .catch((error) => {
-        alert("ERROR", "Something went wrong...");
+        alert(Resource.get("error!"), Resource.get("somethingwrong"));
       });
   }
   return (
@@ -104,20 +107,24 @@ export default function CreateAttributeScreen() {
       <ThemedInput
         value={name}
         onChangeText={setName}
-        placeholder="Attribute name..."
+        placeholder={Resource.get("attributename")}
         placeholderTextColor="gray"
         style={styles.input}
       />
       <ThemedInput
         value={description}
         onChangeText={setdescription}
-        placeholder="Description ..."
+        placeholder={Resource.get("description")}
         placeholderTextColor="gray"
         style={styles.input}
       />
       <ThemedView style={styles.container}>
         <Pressable
-          style={[
+          style={({ pressed, hovered }) => [
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed
+              ? { backgroundColor: color }
+              : { transitionDuration: "0.2s" },
             Styles.pressable,
             styles.switchButton,
             { borderColor: attributeType == 1 ? color : "gray" },
@@ -127,11 +134,15 @@ export default function CreateAttributeScreen() {
           }}
         >
           <ThemedText style={{ color: attributeType == 1 ? color : "gray" }}>
-            Numeric
+            {Resource.get("numeric")}
           </ThemedText>
         </Pressable>
         <Pressable
-          style={[
+          style={({ pressed, hovered }) => [
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed
+              ? { backgroundColor: color }
+              : { transitionDuration: "0.2s" },
             Styles.pressable,
             styles.switchButton,
             { borderColor: attributeType == 2 ? color : "gray" },
@@ -141,7 +152,7 @@ export default function CreateAttributeScreen() {
           }}
         >
           <ThemedText style={{ color: attributeType == 2 ? color : "gray" }}>
-            State
+            {Resource.get("state")}
           </ThemedText>
         </Pressable>
       </ThemedView>
@@ -152,7 +163,7 @@ export default function CreateAttributeScreen() {
           style={styles.container}
         >
           <ThemedInput
-            placeholder="min"
+            placeholder={Resource.get("min")}
             placeholderTextColor="gray"
             keyboardType="numeric"
             style={styles.numericInput}
@@ -160,7 +171,7 @@ export default function CreateAttributeScreen() {
             onChangeText={setMin}
           />
           <ThemedInput
-            placeholder="cur"
+            placeholder={Resource.get("cur")}
             placeholderTextColor="gray"
             keyboardType="numeric"
             style={styles.numericInput}
@@ -168,7 +179,7 @@ export default function CreateAttributeScreen() {
             onChangeText={setCur}
           />
           <ThemedInput
-            placeholder="max"
+            placeholder={Resource.get("max")}
             placeholderTextColor="gray"
             keyboardType="numeric"
             style={styles.numericInput}
@@ -185,14 +196,18 @@ export default function CreateAttributeScreen() {
         >
           <ThemedView style={{ flexDirection: "row", width: "100%" }}>
             <ThemedInput
-              placeholder="state name"
+              placeholder={Resource.get("statename")}
               placeholderTextColor="gray"
               style={{ width: "80%" }}
               value={state}
               onChangeText={setState}
             />
             <Pressable
-              style={[
+              style={({ pressed, hovered }) => [
+                hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+                pressed
+                  ? { backgroundColor: color }
+                  : { transitionDuration: "0.2s" },
                 {
                   borderColor: color,
                   width: "20%",
@@ -217,7 +232,14 @@ export default function CreateAttributeScreen() {
                 >
                   <ThemedText style={{ width: "90%" }}>{item}</ThemedText>
                   <Pressable
-                    style={[Styles.pressable, { borderColor: color }]}
+                    style={({ pressed, hovered }) => [
+                      hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+                      pressed
+                        ? { backgroundColor: color }
+                        : { transitionDuration: "0.2s" },
+                      Styles.pressable,
+                      { borderColor: color },
+                    ]}
                     onPress={() => {
                       DeleteState(index);
                     }}
@@ -233,14 +255,18 @@ export default function CreateAttributeScreen() {
       )}
       {name != "" && attributeType != 0 && (
         <Pressable
-          style={[
+          style={({ pressed, hovered }) => [
+            hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+            pressed
+              ? { backgroundColor: color }
+              : { transitionDuration: "0.2s" },
             Styles.pressable,
             styles.switchButton,
             { borderColor: color },
           ]}
           onPress={Create}
         >
-          <ThemedText>Create</ThemedText>
+          <ThemedText>{Resource.get("create")}</ThemedText>
         </Pressable>
       )}
     </ThemedView>
