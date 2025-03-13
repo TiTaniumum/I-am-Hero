@@ -26,6 +26,7 @@ public class AttributeViewModel : ViewModelBase
     }
     private Visibility _editModalVisibility = Visibility.Collapsed;
     private Visibility _addModalVisibility = Visibility.Collapsed;
+    private Visibility _deleteModalVisibility = Visibility.Collapsed;
     public Visibility EditModalVisibility
     {
         get => _editModalVisibility;
@@ -42,6 +43,15 @@ public class AttributeViewModel : ViewModelBase
         {
             _addModalVisibility = value;
             OnPropertyChanged(nameof(AddModalVisibility));
+        }
+    }
+    public Visibility DeleteModalVisibility
+    {
+        get => _deleteModalVisibility;
+        set
+        {
+            _deleteModalVisibility = value;
+            OnPropertyChanged(nameof(DeleteModalVisibility));
         }
     }
 
@@ -111,6 +121,8 @@ public class AttributeViewModel : ViewModelBase
     public RelayCommand CloseAddModalCommand { get; }
     public RelayCommand OpenEditModalCommand { get; }
     public RelayCommand CloseEditModalCommand { get; }
+    public RelayCommand OpenDeleteModalCommand { get; }
+    public RelayCommand CloseDeleteModalCommand { get; }
     public RelayCommand AddAttributeCommand { get; }
     public RelayCommand SaveEditCommand { get; }
     public RelayCommand ConfirmDeleteCommand { get; }
@@ -142,6 +154,7 @@ public class AttributeViewModel : ViewModelBase
         _apiService = new ApiService();
         Attributes = new ObservableCollection<HeroAttribute>();
         FilteredAttributes = new ObservableCollection<HeroAttribute>();
+        SelectedSortOption = SortOptions.FirstOrDefault();
 
         OpenEditModalCommand = new RelayCommand<long>(param =>
         {
@@ -154,21 +167,23 @@ public class AttributeViewModel : ViewModelBase
                 OpenEditModal((long)intId);
             }
         });
-        OpenAddModalCommand = new RelayCommand<long>(_ => { AddModalVisibility = Visibility.Visible; });
-        SaveEditCommand = new RelayCommand(async _ => await EditAttribute());
-        CloseEditModalCommand = new RelayCommand(_ => { EditModalVisibility = Visibility.Collapsed; });
-        CloseAddModalCommand = new RelayCommand(_ => { AddModalVisibility = Visibility.Collapsed; });
-        ConfirmDeleteCommand = new RelayCommand<long>(param =>
+        OpenDeleteModalCommand = new RelayCommand<long>(param =>
         {
             if (param is long id)
             {
-                _ = DeleteAttribute(id);
+                OpenDeleteModal(id);
             }
             else if (param is int intId)
             {
-                _ = DeleteAttribute((long)intId);
+                OpenDeleteModal((long)intId);
             }
         });
+        OpenAddModalCommand = new RelayCommand<long>(_ => { AddModalVisibility = Visibility.Visible; });
+        SaveEditCommand = new RelayCommand(async _ => await EditAttribute());
+        CloseEditModalCommand = new RelayCommand(_ => { EditModalVisibility = Visibility.Collapsed; });
+        CloseDeleteModalCommand = new RelayCommand(_ => { DeleteModalVisibility = Visibility.Collapsed; });
+        CloseAddModalCommand = new RelayCommand(_ => { AddModalVisibility = Visibility.Collapsed; });
+        ConfirmDeleteCommand = new RelayCommand<long>(async _ => await DeleteAttribute());
 
         AddAttributeCommand = new RelayCommand(async _ => await AddAttribute());
         ClearSearchCommand = new RelayCommand(_ => ClearSearch());
@@ -248,6 +263,11 @@ public class AttributeViewModel : ViewModelBase
         SelectedAttribute = FilteredAttributes.FirstOrDefault(a => a.Id == id);
         EditModalVisibility = Visibility.Visible;
     }
+    private void OpenDeleteModal(long id)
+    {
+        SelectedAttribute = FilteredAttributes.FirstOrDefault(a => a.Id == id);
+        DeleteModalVisibility = Visibility.Visible;
+    }
 
     private async Task AddAttribute()
     {
@@ -297,26 +317,19 @@ public class AttributeViewModel : ViewModelBase
         }
     }
 
-    private async Task DeleteAttribute(long id)
+    private async Task DeleteAttribute()
     {
-        var response = await _apiService.DeleteHeroAttributeAsync(id);
+        if (SelectedAttribute == null) return;
+
+        var response = await _apiService.DeleteHeroAttributeAsync(SelectedAttribute.Id);
         if (response.IsSuccessStatusCode)
         {
-            // Если не хотим делать запрос на сервер, а просто удалить атрибут из коллекции
-            //var attributeToRemove = FilteredAttributes.FirstOrDefault(a => a.Id == id);
-
-            //if (attributeToRemove != null)
-            //{
-            //    FilteredAttributes.Remove(attributeToRemove);
-            //}
-
             _ = LoadAttributes();
+            DeleteModalVisibility = Visibility.Collapsed;
         }
         else
         {
-            Debug.WriteLine($"Ошибка удаления атрибута {id}: {response.ReasonPhrase}");
+            Debug.WriteLine($"Ошибка удаления атрибута {SelectedAttribute.Id}: {response.ReasonPhrase}");
         }
     }
-
 }
-

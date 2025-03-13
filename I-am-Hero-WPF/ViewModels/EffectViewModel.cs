@@ -26,6 +26,7 @@ internal class EffectViewModel : ViewModelBase
     }
     private Visibility _editModalVisibility = Visibility.Collapsed;
     private Visibility _addModalVisibility = Visibility.Collapsed;
+    private Visibility _deleteModalVisibility = Visibility.Collapsed;
     public Visibility EditModalVisibility
     {
         get => _editModalVisibility;
@@ -42,6 +43,15 @@ internal class EffectViewModel : ViewModelBase
         {
             _addModalVisibility = value;
             OnPropertyChanged(nameof(AddModalVisibility));
+        }
+    }
+    public Visibility DeleteModalVisibility
+    {
+        get => _deleteModalVisibility;
+        set
+        {
+            _deleteModalVisibility = value;
+            OnPropertyChanged(nameof(DeleteModalVisibility));
         }
     }
 
@@ -100,6 +110,8 @@ internal class EffectViewModel : ViewModelBase
     public RelayCommand CloseAddModalCommand { get; }
     public RelayCommand OpenEditModalCommand { get; }
     public RelayCommand CloseEditModalCommand { get; }
+    public RelayCommand OpenDeleteModalCommand { get; }
+    public RelayCommand CloseDeleteModalCommand { get; }
     public RelayCommand AddEffectCommand { get; }
     public RelayCommand SaveEditCommand { get; }
     public RelayCommand ConfirmDeleteCommand { get; }
@@ -131,6 +143,7 @@ internal class EffectViewModel : ViewModelBase
         _apiService = new ApiService();
         Effects = new ObservableCollection<HeroStatusEffect>();
         FilteredEffects = new ObservableCollection<HeroStatusEffect>();
+        SelectedSortOption = SortOptions.FirstOrDefault();
 
         OpenEditModalCommand = new RelayCommand<long>(param =>
         {
@@ -143,21 +156,23 @@ internal class EffectViewModel : ViewModelBase
                 OpenEditModal((long)intId);
             }
         });
-        OpenAddModalCommand = new RelayCommand<long>(_ => { AddModalVisibility = Visibility.Visible; });
-        SaveEditCommand = new RelayCommand(async _ => await EditEffect());
-        CloseEditModalCommand = new RelayCommand(_ => { EditModalVisibility = Visibility.Collapsed; });
-        CloseAddModalCommand = new RelayCommand(_ => { AddModalVisibility = Visibility.Collapsed; });
-        ConfirmDeleteCommand = new RelayCommand<long>(param =>
+        OpenDeleteModalCommand = new RelayCommand<long>(param =>
         {
             if (param is long id)
             {
-                _ = DeleteEffect(id);
+                OpenDeleteModal(id);
             }
             else if (param is int intId)
             {
-                _ = DeleteEffect((long)intId);
+                OpenDeleteModal((long)intId);
             }
         });
+        OpenAddModalCommand = new RelayCommand<long>(_ => { AddModalVisibility = Visibility.Visible; });
+        SaveEditCommand = new RelayCommand(async _ => await EditEffect());
+        CloseEditModalCommand = new RelayCommand(_ => { EditModalVisibility = Visibility.Collapsed; });
+        CloseDeleteModalCommand = new RelayCommand(_ => { DeleteModalVisibility = Visibility.Collapsed; });
+        CloseAddModalCommand = new RelayCommand(_ => { AddModalVisibility = Visibility.Collapsed; });
+        ConfirmDeleteCommand = new RelayCommand<long>(async _ => await DeleteEffect());
 
         AddEffectCommand = new RelayCommand(async _ => await AddEffect());
         ClearSearchCommand = new RelayCommand(_ => ClearSearch());
@@ -230,6 +245,11 @@ internal class EffectViewModel : ViewModelBase
         SelectedEffect = FilteredEffects.FirstOrDefault(a => a.Id == id);
         EditModalVisibility = Visibility.Visible;
     }
+    private void OpenDeleteModal(long id)
+    {
+        SelectedEffect = FilteredEffects.FirstOrDefault(a => a.Id == id);
+        DeleteModalVisibility = Visibility.Visible;
+    }
 
     private async Task AddEffect()
     {
@@ -276,16 +296,19 @@ internal class EffectViewModel : ViewModelBase
         }
     }
 
-    private async Task DeleteEffect(long id)
+    private async Task DeleteEffect()
     {
-        var response = await _apiService.DeleteHeroEffectAsync(id);
+        if (SelectedEffect == null) return;
+
+        var response = await _apiService.DeleteHeroEffectAsync(SelectedEffect.Id);
         if (response.IsSuccessStatusCode)
         {
             _ = LoadEffects();
+            DeleteModalVisibility = Visibility.Collapsed;
         }
         else
         {
-            Debug.WriteLine($"Ошибка удаления статус эффекта {id}: {response.ReasonPhrase}");
+            Debug.WriteLine($"Ошибка удаления статус эффекта {SelectedEffect.Id}: {response.ReasonPhrase}");
         }
     }
 }
