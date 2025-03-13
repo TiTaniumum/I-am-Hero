@@ -3,9 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:c="clr-namespace:I_am_Hero_WPF.Properties" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
+
     <Grid>
         <!-- Динамический Dashboard -->
         <Canvas Grid.Row="1" Grid.Column="1" Background="#f2f2f2" Name="MainCanvas" Loaded="MainCanvas_Loaded" SizeChanged="MainCanvas_SizeChanged">
+            <Grid x:Name="EditModeBlock" Canvas.ZIndex="3" Canvas.Right="10" Canvas.Top="10">
+                <Button Content="✎"
+                    Command="{Binding ToggleEditModeCommand}"
+                    Click="OnEditModeButtonClick"
+                    Style="{StaticResource MaterialDesignFloatingActionButton}"
+                    HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                    Width="25" Height="25"/>
+            </Grid>
+
             <!-- Profile -->
             <Grid x:Name="ProfileBlock" Canvas.Left="10" Canvas.Top="10" Canvas.ZIndex="2" Margin="5"
                     Width="250" Height="210" Background="White"
@@ -15,19 +28,21 @@
                 <Grid.Clip>
                     <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,250,150"/>
                 </Grid.Clip>
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                     <materialDesign:PackIcon Kind="AccountCircle" Width="48" Height="48" Padding="10" Margin="10"
                                  Foreground="{DynamicResource PrimaryHueMidBrush}" />
                     <StackPanel Orientation="Vertical" Margin="10">
                         <TextBlock Text="{Binding HeroName}" FontSize="20" FontWeight="Bold"/>
-                        <ProgressBar Minimum="0" Maximum="100" Value="{Binding HeroExperience}" Height="20" Width="100"/>
-                        <TextBlock Text="{Binding HeroExperience, StringFormat='{}{0}/100 exp'}" FontSize="12" Foreground="Gray"/>
+                        <StackPanel Orientation="Horizontal">
+                            <ProgressBar Minimum="0" Maximum="100" Value="{Binding HeroExperience}" Height="20" Width="100"/>
+                            <TextBlock Text="{Binding HeroExperience, StringFormat='{}{0}/100 exp'}" FontSize="12" Foreground="Gray" Margin="-60, 0, 0, 0"/>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
 
                 <Thumb Width="10" Height="10" Background="Gray" Margin="10"
                         HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                        DragDelta="Thumb_DragDelta"/>
+                        DragDelta="Thumb_DragDelta" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </Grid>
 
             <!-- Skills -->
@@ -40,10 +55,19 @@
                     <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,250,150"/>
                 </Grid.Clip>
                 <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="10">
-                        <TextBlock Text="Навыки" FontSize="16" FontWeight="Bold"/>
-                        <Button Content="+" Command="{Binding OpenSkillModalCommand}" Width="20" Height="20" Margin="5,0,0,0"/>
-                    </StackPanel>
+                    <Grid Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="Навыки" FontSize="16" FontWeight="Bold" Grid.Column="0" VerticalAlignment="Center"/>
+
+                        <Button Content="+" Command="{Binding OpenSkillModalCommand}"
+                                Width="20" Height="20" Margin="5,0,0,0"
+                                Grid.Column="1"/>
+                    </Grid>
+
 
                     <ListView ItemsSource="{Binding Skills}" HorizontalContentAlignment="Stretch" Margin="5">
                         <ListView.ItemTemplate>
@@ -75,7 +99,7 @@
 
                 <Thumb Width="10" Height="10" Background="Gray" Margin="10"
                         HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                        DragDelta="Thumb_DragDelta"/>
+                        DragDelta="Thumb_DragDelta" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </Grid>
 
             <!-- Calendar -->
@@ -87,6 +111,7 @@
                 <Grid.Clip>
                     <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,250,150"/>
                 </Grid.Clip>
+
                 <StackPanel Margin="10">
                     <TextBlock Text="Календарь" FontSize="16" FontWeight="Bold"/>
                     <Calendar DisplayMode="Month" IsTodayHighlighted="True"/>
@@ -94,7 +119,7 @@
 
                 <Thumb Width="10" Height="10" Background="Gray" Margin="10"
                         HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                        DragDelta="Thumb_DragDelta"/>
+                        DragDelta="Thumb_DragDelta" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </Grid>
 
             <!-- Quests -->
@@ -106,11 +131,17 @@
                 <Grid.Clip>
                     <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,250,150"/>
                 </Grid.Clip>
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="10">
+                <StackPanel Margin="10">
+                    <Grid Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
                         <TextBlock Text="Квесты" FontSize="16" FontWeight="Bold"/>
-                        <Button Content="+" Command="{Binding OpenQuestModalCommand}" Width="20" Height="20" Margin="5,0,0,0"/>
-                    </StackPanel>
+                        <Button Content="+" Command="{Binding OpenQuestModalCommand}" Width="20" Height="20" Margin="5,0,0,0" Grid.Column="1"/>
+                    </Grid>
+                    
                     <ListView ItemsSource="{Binding Quests}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
@@ -125,23 +156,28 @@
 
                 <Thumb Width="10" Height="10" Background="Gray" Margin="10"
                         HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                        DragDelta="Thumb_DragDelta"/>
+                        DragDelta="Thumb_DragDelta" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </Grid>
 
             <!-- Attributes -->
             <Grid x:Name="AttributesBlock" Canvas.Left="500" Canvas.Top="10" Canvas.ZIndex="2" Margin="5"
-            Width="250" Height="210" Background="White"
-            MouseLeftButtonDown="Block_MouseLeftButtonDown"
-            MouseMove="Block_MouseMove"
-            MouseLeftButtonUp="Block_MouseLeftButtonUp">
+                  Width="250" Height="210" Background="White"
+                  MouseLeftButtonDown="Block_MouseLeftButtonDown"
+                  MouseMove="Block_MouseMove"
+                  MouseLeftButtonUp="Block_MouseLeftButtonUp">
                 <Grid.Clip>
                     <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,250,150"/>
                 </Grid.Clip>
                 <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="10">
+                    <Grid Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
                         <TextBlock Text="Аттрибуты" FontSize="16" FontWeight="Bold"/>
-                        <Button Content="+" Command="{Binding OpenAttributeModalCommand}" Width="20" Height="20" Margin="5,0,0,0"/>
-                    </StackPanel>
+                        <Button Content="+" Command="{Binding OpenAttributeModalCommand}" Width="20" Height="20" Margin="5,0,0,0" Grid.Column="1"/>
+                    </Grid>
                     <ListView ItemsSource="{Binding Attributes}" HorizontalContentAlignment="Stretch" Margin="5">
                         <ListView.ItemTemplate>
                             <DataTemplate>
@@ -160,7 +196,6 @@
 
                                     <TextBlock Text="{Binding Description}" Grid.Row="0" Grid.Column="1" Foreground="Gray" Margin="10,0,0,0"/>
 
-
                                     <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Minimum="{Binding MinValue}"
                                                  Value="{Binding Value}" Maximum="{Binding MaxValue}" 
                                                  Height="10" Margin="0,5,0,0" HorizontalAlignment="Stretch"/>
@@ -172,117 +207,268 @@
 
                 <Thumb Width="10" Height="10" Background="Gray" Margin="10"
                 HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                DragDelta="Thumb_DragDelta"/>
+                DragDelta="Thumb_DragDelta" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </Grid>
         </Canvas>
 
-        <!-- Затемняющий фон -->
-        <Border Background="#80000000" Visibility="{Binding IsModalOpen, Converter={StaticResource BooleanToVisibilityConverter}}"
-                Grid.RowSpan="2" Grid.ColumnSpan="2"/>
-
-        <!-- Модальное окно AddSkill -->
-        <Grid Width="350" Height="300" Background="White" 
-              Visibility="{Binding IsSkillModalOpen, Converter={StaticResource BooleanToVisibilityConverter}}"
-              HorizontalAlignment="Center" VerticalAlignment="Center">
-
+        <!-- AddSkill Modal -->
+        <Grid x:Name="AddSkillModal" 
+              Background="#80000000" 
+              Visibility="{Binding AddSkillVisibility}" 
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch"
+              Width="Auto"
+              Height="Auto"
+              Grid.RowSpan="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Заголовок -->
-            <TextBlock Text="Добавить навык" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="10"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-            <!-- Форма ввода -->
-            <StackPanel Grid.Row="1" Margin="10">
-                <TextBlock Text="Название навыка:"/>
-                <TextBox Text="{Binding SkillName, UpdateSourceTrigger=PropertyChanged}" Width="300"/>
+            <!-- Модальное окно -->
+            <Border Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Background="White" Padding="20" CornerRadius="12"
+                    Width="400" Effect="{DynamicResource MaterialDesignElevationShadow}">
 
-                <TextBlock Text="Описание:" Margin="0,10,0,0"/>
-                <TextBox Text="{Binding SkillDescription, UpdateSourceTrigger=PropertyChanged}" Width="300" Height="60" TextWrapping="Wrap"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                <TextBlock Text="Опыт (exp):" Margin="0,10,0,0"/>
-                <TextBox Text="{Binding SkillExperience, UpdateSourceTrigger=PropertyChanged}" Width="300"/>
-            </StackPanel>
+                    <!-- Заголовок -->
+                    <TextBlock Text="Добавить навык" 
+                       FontSize="18" FontWeight="Bold"
+                       Margin="0,0,0,15" HorizontalAlignment="Center"/>
 
-            <!-- Кнопки -->
-            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                <Button Content="Добавить" Command="{Binding AddSkillCommand}" Width="100" Margin="5"/>
-                <Button Content="Отмена" Command="{Binding CloseSkillModalCommand}" Width="100" Margin="5"/>
-            </StackPanel>
+                    <!-- Контент -->
+                    <StackPanel Grid.Row="1" Width="300" 
+                        Background="{DynamicResource MaterialDesignPaper}"
+                        HorizontalAlignment="Center">
+
+                        <StackPanel Margin="0,0,0,10">
+                            <Label Content="Название" FontWeight="Bold"/>
+                            <TextBox Text="{Binding SkillName, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource CustomTextBoxStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,10">
+                            <Label Content="Описание" FontWeight="Bold"/>
+                            <TextBox Text="{Binding SkillDescription, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource CustomTextBoxStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,10">
+                            <Label Content="Текущий опыт (exp)" FontWeight="Bold"/>
+                            <TextBox Text="{Binding SkillExperience, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource CustomTextBoxStyle}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Кнопки -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal"
+                        HorizontalAlignment="Right" Margin="0,10,0,0">
+                        <Button Content="Отмена" Command="{Binding CloseSkillModalCommand}"
+                        Background="Gray" Foreground="White"
+                        Width="90" Height="35"
+                        Style="{StaticResource RoundedButtonStyle}"
+                        Margin="0,0,10,0"/>
+
+                        <Button Content="Сохранить" Command="{Binding AddSkillCommand}"
+                        Background="Green" Foreground="White"
+                        Width="90" Height="35"
+                        Style="{StaticResource RoundedButtonStyle}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
         </Grid>
 
-        <!-- Модальное окно AddQuest -->
-        <Grid Width="350" Height="300" Background="White" 
-              Visibility="{Binding IsQuestModalOpen, Converter={StaticResource BooleanToVisibilityConverter}}"
-              HorizontalAlignment="Center" VerticalAlignment="Center">
-
+        <!-- AddQuest Modal -->
+        <Grid x:Name="AddQuestModal" 
+              Background="#80000000" 
+              Visibility="{Binding AddQuestVisibility}" 
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch"
+              Width="Auto"
+              Height="Auto"
+              Grid.RowSpan="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Заголовок -->
-            <TextBlock Text="Добавить квест" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="10"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-            <!-- Форма ввода -->
-            <StackPanel Grid.Row="1" Margin="10">
-                <TextBlock Text="Название квеста:"/>
-                <TextBox Text="{Binding QuestTitle, UpdateSourceTrigger=PropertyChanged}" Width="300"/>
+            <!-- Модальное окно -->
+            <Border Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Background="White" Padding="20" CornerRadius="12"
+                    Width="400" Effect="{DynamicResource MaterialDesignElevationShadow}">
 
-                <TextBlock Text="Описание:" Margin="0,10,0,0"/>
-                <TextBox Text="{Binding QuestDescription, UpdateSourceTrigger=PropertyChanged}" Width="300" Height="60" TextWrapping="Wrap"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                <TextBlock Text="Опыт (exp):" Margin="0,10,0,0"/>
-                <TextBox Text="{Binding QuestExperience, UpdateSourceTrigger=PropertyChanged}" Width="300"/>
-            </StackPanel>
+                    <!-- Заголовок -->
+                    <TextBlock Text="Добавить квест" 
+                               FontSize="18" FontWeight="Bold"
+                               Margin="0,0,0,15" HorizontalAlignment="Center"/>
 
-            <!-- Кнопки -->
-            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                <Button Content="Добавить" Command="{Binding AddQuestCommand}" Width="100" Margin="5"/>
-                <Button Content="Отмена" Command="{Binding CloseQuestModalCommand}" Width="100" Margin="5"/>
-            </StackPanel>
+                    <!-- Контент -->
+                    <StackPanel Grid.Row="1" Width="300" 
+                                Background="{DynamicResource MaterialDesignPaper}"
+                                HorizontalAlignment="Center">
+
+                        <StackPanel Margin="0,0,0,10">
+                            <Label Content="Название" FontWeight="Bold"/>
+                            <TextBox Text="{Binding QuestName, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource CustomTextBoxStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,10">
+                            <Label Content="Описание" FontWeight="Bold"/>
+                            <TextBox Text="{Binding QuestDescription, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource CustomTextBoxStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,10">
+                            <Label Content="Текущий опыт (exp)" FontWeight="Bold"/>
+                            <TextBox Text="{Binding QuestExperience, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource CustomTextBoxStyle}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Кнопки -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal"
+                                HorizontalAlignment="Right" Margin="0,10,0,0">
+                        <Button Content="Отмена" Command="{Binding CloseQuestModalCommand}"
+                                Background="Gray" Foreground="White"
+                                Width="90" Height="35"
+                                Style="{StaticResource RoundedButtonStyle}"
+                                Margin="0,0,10,0"/>
+
+                        <Button Content="Сохранить" Command="{Binding AddQuestCommand}"
+                                Background="Green" Foreground="White"
+                                Width="90" Height="35"
+                                Style="{StaticResource RoundedButtonStyle}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
         </Grid>
-
-        <!-- Модальное окно AddAttribute -->
-        <Grid Width="350" Height="Auto" Background="White" 
-              Visibility="{Binding IsAttributeModalOpen, Converter={StaticResource BooleanToVisibilityConverter}}"
-              HorizontalAlignment="Center" VerticalAlignment="Center">
-
+        
+        <!-- AddAttribute Modal -->
+        <Grid x:Name="AddAttributeModal" 
+                Background="#80000000" 
+                Visibility="{Binding AddAttributeVisibility}" 
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Width="Auto"
+                Height="Auto"
+                Grid.RowSpan="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Заголовок -->
-            <TextBlock Text="Добавить аттрибут" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="10"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-            <!-- Форма ввода -->
-            <StackPanel Grid.Row="1" Margin="10">
-                <TextBlock Text="Название аттрибута:"/>
-                <TextBox Text="{Binding AttributeName, UpdateSourceTrigger=PropertyChanged}" Width="300"/>
+            <!-- Модальное окно -->
+            <Border Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Background="White" Padding="20" CornerRadius="12"
+                    Width="400" Effect="{DynamicResource MaterialDesignElevationShadow}">
 
-                <TextBlock Text="Описание:" Margin="0,10,0,0"/>
-                <TextBox Text="{Binding AttributeDescription, UpdateSourceTrigger=PropertyChanged}" Width="300" Height="60" TextWrapping="Wrap"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                <TextBlock Text="Минимальное значение:" Margin="0,10,0,0"/>
-                <TextBox Text="{Binding AttributeMinValue, UpdateSourceTrigger=PropertyChanged}" Width="300"/>
+                    <!-- Заголовок -->
+                    <TextBlock Text="Добавить аттрибут" 
+                               FontSize="18" FontWeight="Bold"
+                               Margin="0,0,0,15" HorizontalAlignment="Center"/>
 
-                <TextBlock Text="Максимальное значение:" Margin="0,10,0,0"/>
-                <TextBox Text="{Binding AttributeMaxValue, UpdateSourceTrigger=PropertyChanged}" Width="300"/>
+                    <!-- Контент -->
+                    <StackPanel Grid.Row="1" Width="300" 
+                                Background="{DynamicResource MaterialDesignPaper}"
+                                HorizontalAlignment="Center">
 
-                <TextBlock Text="Текущее значение:" Margin="0,10,0,0"/>
-                <TextBox Text="{Binding AttributeValue, UpdateSourceTrigger=PropertyChanged}" Width="300"/>
-            </StackPanel>
+                        <StackPanel Margin="0,0,0,10">
+                            <Label Content="Название" FontWeight="Bold"/>
+                            <TextBox Text="{Binding AttributeName, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource CustomTextBoxStyle}"/>
+                        </StackPanel>
 
-            <!-- Кнопки -->
-            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                <Button Content="Добавить" Command="{Binding AddAttributeCommand}" Width="100" Margin="5"/>
-                <Button Content="Отмена" Command="{Binding CloseAttributeModalCommand}" Width="100" Margin="5"/>
-            </StackPanel>
+                        <StackPanel Margin="0,0,0,10">
+                            <Label Content="Описание" FontWeight="Bold"/>
+                            <TextBox Text="{Binding AttributeDescription, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource CustomTextBoxStyle}"/>
+                        </StackPanel>
+
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <Label Content="Мин. значение" FontWeight="Bold"/>
+                                <TextBox Text="{Binding AttributeMinValue, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource CustomTextBoxStyle}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                <Label Content="Макс. значение" FontWeight="Bold"/>
+                                <TextBox Text="{Binding AttributeMaxValue, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource CustomTextBoxStyle}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <StackPanel Margin="0,0,0,10">
+                            <Label Content="Текущее значение" FontWeight="Bold"/>
+                            <TextBox Text="{Binding AttributeValue, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource CustomTextBoxStyle}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Кнопки -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal"
+                                HorizontalAlignment="Right" Margin="0,10,0,0">
+                        <Button Content="Отмена" Command="{Binding CloseAttributeModalCommand}"
+                                Background="Gray" Foreground="White"
+                                Width="90" Height="35"
+                                Style="{StaticResource RoundedButtonStyle}"
+                                Margin="0,0,10,0"/>
+
+                        <Button Content="Сохранить" Command="{Binding AddAttributeCommand}"
+                                Background="Green" Foreground="White"
+                                Width="90" Height="35"
+                                Style="{StaticResource RoundedButtonStyle}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
         </Grid>
+
     </Grid>
 </UserControl>

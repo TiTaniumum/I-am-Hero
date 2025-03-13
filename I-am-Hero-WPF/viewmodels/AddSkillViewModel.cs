@@ -59,7 +59,7 @@ public class AddSkillViewModel : ViewModelBase
             Experience = Experience
         };
 
-        HttpResponseMessage response = await _apiService.CreateSkillAsync(newSkill);
+        HttpResponseMessage response = await _apiService.CreateHeroSkillAsync(newSkill);
 
         if (response.IsSuccessStatusCode)
         {

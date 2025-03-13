@@ -218,8 +218,6 @@
                             Visibility="{Binding SidebarExpanded, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     </StackPanel>
                 </Button>
-
-                <!-- TODO: Другие пункты меню -->
             </StackPanel>
 
             <!-- Кнопка сворачивания внизу -->

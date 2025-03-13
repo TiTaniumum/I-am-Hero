@@ -40,7 +40,7 @@
                  Style="{StaticResource CustomPasswordBoxStyle}" />
 
             <Button Content="{x:Static c:Resources.AuthPageSignUp}" Command="{Binding RegisterCommand}" 
-            Style="{StaticResource CustomButtonStyle}" Margin="0,10,0,0"/>
+            Style="{StaticResource RoundedButtonStyle}" Background="CadetBlue" Margin="0,10,0,0" Width="Auto"/>
         </StackPanel>
     </Grid>
 </Page>

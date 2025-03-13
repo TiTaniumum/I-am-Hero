@@ -121,7 +121,7 @@ public class MainViewModel : ViewModelBase
     private void ToggleSidebar()
     {
         SidebarExpanded = !SidebarExpanded;
-        SidebarWidth = SidebarExpanded ? _sidebarFoldedWidth : _sidebarUnfoldedWidth;
+        SidebarWidth = SidebarExpanded ? _sidebarUnfoldedWidth : _sidebarFoldedWidth;
         SidebarArrowIcon = SidebarExpanded ? "ChevronLeft" : "ChevronRight";
     }
 }

@@ -68,7 +68,7 @@ public class AddQuestViewModel : ViewModelBase
 
         try
         {
-            var success = await _apiService.CreateQuestAsync(newQuest);
+            var success = await _apiService.CreateHeroQuestAsync(newQuest);
             if (success.IsSuccessStatusCode)
             {
                 MessageBox.Show("Квест успешно добавлен", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
