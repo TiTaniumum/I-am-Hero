@@ -2,6 +2,7 @@ import Resource from "@/constants/Resource";
 import { Attribute, AttributeState, IAttributeDTO } from "@/models/Attribute";
 import { BioPiece } from "@/models/BioPiece";
 import { Hero } from "@/models/Hero";
+import { Skill } from "@/models/Skill";
 import User from "@/models/User";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosInstance, AxiosResponse } from "axios";
@@ -242,7 +243,6 @@ export default class ApiService {
       .then((response) => {
         const j = api.handleToken(response);
         user.attributes = Attribute.AcceptArr(j.heroAttributes);
-        //api.PullAttributeStates();
       });
   }
 
@@ -299,6 +299,21 @@ export default class ApiService {
         },
       })
       .then(api.handleToken);
+  }
+
+  GetSkills() {
+    const api = this;
+    const user = this.user;
+    return axios
+      .get(this.uri("Hero/get/HeroSkills"), {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      .then((response) => {
+        const j = api.handleToken(response);
+        user.skills = Skill.AcceptArr(j.heroSkills);
+      });
   }
 
   private handleToken(response: AxiosResponse<any, any>) {
