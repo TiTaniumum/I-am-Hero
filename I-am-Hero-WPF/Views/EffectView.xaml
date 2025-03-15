@@ -358,8 +358,7 @@
             </Border>
         </Grid>
 
-
-        <!-- Кнопка добавления умения -->
+        <!-- Кнопка добавления эффекта -->
         <Grid Grid.RowSpan="2">
             <Button Command="{Binding OpenAddModalCommand}" 
                     Width="35" Height="35"

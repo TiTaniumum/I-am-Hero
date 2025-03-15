@@ -146,7 +146,7 @@
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Title}" FontWeight="Bold"/>
                                     <TextBlock Text="{Binding Description}" FontStyle="Italic"/>
                                 </StackPanel>
                             </DataTemplate>
@@ -336,7 +336,7 @@
 
                         <StackPanel Margin="0,0,0,10">
                             <Label Content="Название" FontWeight="Bold"/>
-                            <TextBox Text="{Binding QuestName, UpdateSourceTrigger=PropertyChanged}"
+                            <TextBox Text="{Binding QuestTitle, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource CustomTextBoxStyle}"/>
                         </StackPanel>
 

@@ -156,4 +156,70 @@
   <data name="CreateHeroCreateBtn" xml:space="preserve">
     <value>Create</value>
   </data>
+  <data name="MainPageSettingsLanguage" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="MainPageMenuProfile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="MainPageMenuDashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="MainPageMenuSkills" xml:space="preserve">
+    <value>Skills</value>
+  </data>
+  <data name="MainPageMenuAttributes" xml:space="preserve">
+    <value>Attributes</value>
+  </data>
+  <data name="MainPageMenuEffects" xml:space="preserve">
+    <value>Effects</value>
+  </data>
+  <data name="MainPageMenuDailies" xml:space="preserve">
+    <value>Dailies</value>
+  </data>
+  <data name="MainPageMenuQuests" xml:space="preserve">
+    <value>Quests</value>
+  </data>
+  <data name="MainPageMenuQuestLines" xml:space="preserve">
+    <value>Quest Lines</value>
+  </data>
+  <data name="MainPageMenuQuestHabbits" xml:space="preserve">
+    <value>Habbits</value>
+  </data>
+  <data name="MainPageMenuAchievements" xml:space="preserve">
+    <value>Achievements</value>
+  </data>
+  <data name="MainPageMenuCollapse" xml:space="preserve">
+    <value>Collapse</value>
+  </data>
+  <data name="MainPageSettingsModalClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="MainPageSettingsModalTitle" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="MainPageSettingsCalculationType" xml:space="preserve">
+    <value>Level calculation type</value>
+  </data>
+  <data name="MainPageSettingsNotifications" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="MainPageSettingsAbout" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="MainPageSettingsSupport" xml:space="preserve">
+    <value>Support developers</value>
+  </data>
+  <data name="MainPageSettingsLogout" xml:space="preserve">
+    <value>Log Out</value>
+  </data>
+  <data name="MainPageSettingsLogoutTitle" xml:space="preserve">
+    <value>Are you sure you want to log out?</value>
+  </data>
+  <data name="MainPageSettingsLogoutCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="MainPageSettingsLogoutConfirm" xml:space="preserve">
+    <value>Log out</value>
+  </data>
 </root>

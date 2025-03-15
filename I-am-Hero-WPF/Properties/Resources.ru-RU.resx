@@ -156,4 +156,70 @@
   <data name="CreateHeroCreateBtn" xml:space="preserve">
     <value>Создать</value>
   </data>
+  <data name="MainPageSettingsLanguage" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="MainPageMenuProfile" xml:space="preserve">
+    <value>Профиль</value>
+  </data>
+  <data name="MainPageMenuDashboard" xml:space="preserve">
+    <value>Главная</value>
+  </data>
+  <data name="MainPageMenuSkills" xml:space="preserve">
+    <value>Навыки</value>
+  </data>
+  <data name="MainPageMenuAttributes" xml:space="preserve">
+    <value>Аттрибуты</value>
+  </data>
+  <data name="MainPageMenuEffects" xml:space="preserve">
+    <value>Эффекты</value>
+  </data>
+  <data name="MainPageMenuDailies" xml:space="preserve">
+    <value>Дейлики</value>
+  </data>
+  <data name="MainPageMenuQuests" xml:space="preserve">
+    <value>Квесты</value>
+  </data>
+  <data name="MainPageMenuQuestLines" xml:space="preserve">
+    <value>Квестовые Линии</value>
+  </data>
+  <data name="MainPageMenuQuestHabbits" xml:space="preserve">
+    <value>Привычки</value>
+  </data>
+  <data name="MainPageMenuAchievements" xml:space="preserve">
+    <value>Достижения</value>
+  </data>
+  <data name="MainPageMenuCollapse" xml:space="preserve">
+    <value>Свернуть</value>
+  </data>
+  <data name="MainPageSettingsModalClose" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="MainPageSettingsModalTitle" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="MainPageSettingsCalculationType" xml:space="preserve">
+    <value>Тип расчета уровня</value>
+  </data>
+  <data name="MainPageSettingsNotifications" xml:space="preserve">
+    <value>Уведомления</value>
+  </data>
+  <data name="MainPageSettingsAbout" xml:space="preserve">
+    <value>О приложении</value>
+  </data>
+  <data name="MainPageSettingsSupport" xml:space="preserve">
+    <value>Поддержать разработчиков</value>
+  </data>
+  <data name="MainPageSettingsLogout" xml:space="preserve">
+    <value>Выйти из аккаунта</value>
+  </data>
+  <data name="MainPageSettingsLogoutTitle" xml:space="preserve">
+    <value>Вы уверены что хотите выйти?</value>
+  </data>
+  <data name="MainPageSettingsLogoutCancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="MainPageSettingsLogoutConfirm" xml:space="preserve">
+    <value>Выйти</value>
+  </data>
 </root>
