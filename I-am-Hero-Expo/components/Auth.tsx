@@ -44,6 +44,7 @@ export default function Auth() {
             style={styles.input}
             placeholder="Qwerty12345..."
             placeholderTextColor="gray"
+            keyboardType="visible-password"
           />
           <Pressable
             onPress={() => api.Login(email, password)}
@@ -88,6 +89,7 @@ export default function Auth() {
             style={styles.input}
             placeholder="Qwerty12345..."
             placeholderTextColor="gray"
+            keyboardType="visible-password"
           />
           <ThemedInput
             value={passwordRepeat}
@@ -95,6 +97,7 @@ export default function Auth() {
             style={styles.input}
             placeholder="Qwerty12345..."
             placeholderTextColor="gray"
+            keyboardType="visible-password"
           />
           <Pressable
             onPress={() =>
@@ -136,6 +139,7 @@ export default function Auth() {
         }
         onSelect={OnSelectLocalizationHandle}
         style={{ width: "70%" }}
+        
       />
     </ThemedView>
   );

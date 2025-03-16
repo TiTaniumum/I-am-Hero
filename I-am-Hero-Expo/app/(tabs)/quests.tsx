@@ -23,6 +23,7 @@ import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  Platform,
   Pressable,
   RefreshControl,
   StyleSheet,
@@ -30,6 +31,7 @@ import {
   View,
 } from "react-native";
 import Animated, { FadeIn, FlipInXUp, ZoomOut } from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function QuestsScreen() {
   const { isToken, isHero } = useGlobalContext();
@@ -58,6 +60,8 @@ export default function QuestsScreen() {
       };
     })
   );
+
+  const Wrapper = Platform.OS === "web" ? ThemedView : SafeAreaView;
 
   const onRefresh = useCallback(() => {
     if (isToken) {
@@ -210,7 +214,7 @@ export default function QuestsScreen() {
   if (!isHero) return <CreateHero />;
 
   return (
-    <ThemedView style={Styles.container}>
+    <Wrapper style={[Styles.container, {height: '100%', overflow: 'scroll'}]}>
       <Pressable
         style={({ pressed, hovered }) => [
           hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
@@ -455,7 +459,7 @@ export default function QuestsScreen() {
           }
         />
       )}
-    </ThemedView>
+    </Wrapper>
   );
 }
 

@@ -12,7 +12,7 @@ import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { Platform } from "react-native";
 
 export default class ApiService {
-  private baseUrl: string = "http://192.168.1.68:8080/api/";
+  private baseUrl: string = "http://192.168.56.82:8080/api/";
   private applicationID: number;
   token: string | null = null;
   alert: (title: string, message: string) => void = (

@@ -52,11 +52,11 @@ export default function Select({
           Styles.pressable,
           { borderColor: basecolor },
           displayStyle,
-          {borderColor: color}
+          color != undefined ? {borderColor: color} : {}
         ]}
         onPress={() => {if(isActive || isActive == undefined) setModalVisible(true)}}
       >
-        <ThemedText style={{color}}>
+        <ThemedText style={color != undefined ? {color: color} : {}}>
           {selected === undefined || selected === null
             ? "..."
             : displayTitle(selected)}
