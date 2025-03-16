@@ -7,8 +7,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Animation;
-using System.Windows.Media;
 using I_am_Hero_WPF.Models;
 using I_am_Hero_WPF.Views;
 using System.Threading;
@@ -166,10 +164,7 @@ public class MainViewModel : ViewModelBase
         OpenLogoutModalCommand = new RelayCommand<long>(_ => { LogoutModalVisibility = Visibility.Visible; });
         CloseSettingsModalCommand = new RelayCommand<long>(_ => { SettingsModalVisibility = Visibility.Collapsed; });
         CloseLogoutModalCommand = new RelayCommand<long>(_ => { LogoutModalVisibility = Visibility.Collapsed; });
-        ToggleSidebarCommand = new RelayCommand(_ =>
-        {
-            ToggleSidebar();
-        });
+        ToggleSidebarCommand = new RelayCommand(_ => ToggleSidebar());
         NavigateToProfileCommand = new RelayCommand(_ =>
         {
             CurrentContent = new ProfileView();

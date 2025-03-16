@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -20,15 +21,16 @@ namespace I_am_Hero_WPF.Views
         private Grid _draggedElement;
         private readonly Dictionary<Grid, (Point, Point)> _relativePositions = new Dictionary<Grid, (Point, Point)>();
         private readonly Dictionary<Grid, Point> _originalPositions = new Dictionary<Grid, Point>();
-        private readonly int _columns = 9;
-        private readonly int _rows = 6;
+
+        private int _rows = 6;
+        private int _columns = 9;
         private readonly double _thumbMargin = 10;
         private DashboardViewModel ViewModel => DataContext as DashboardViewModel;
 
         public DashboardView()
         {
             InitializeComponent();
-            DataContext = new DashboardViewModel();
+            DataContext = new DashboardViewModel(this);
         }
 
         private void Block_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -145,14 +147,14 @@ namespace I_am_Hero_WPF.Views
 
         private void MainCanvas_Loaded(object sender, RoutedEventArgs e)
         {
-            DrawGridLines();
+            DrawGridLinesAdaptive();
             AlignBlocksToGrid();
             SaveRelativePositions();
         }
 
         private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            DrawGridLines();
+            DrawGridLinesAdaptive();
             RestorePositions();
             AlignBlocksToGrid();
         }
@@ -161,26 +163,61 @@ namespace I_am_Hero_WPF.Views
         {
             Dispatcher.InvokeAsync(() =>
             {
-                DrawGridLines();
+                DrawGridLinesAdaptive();
             }, System.Windows.Threading.DispatcherPriority.Background);
         }
 
-        private void DrawGridLines()
+        //private void DrawGridLines()
+        //{
+        //    if (MainCanvas == null) return;
+        //    var savedGrids = MainCanvas.Children.OfType<Grid>().ToList();
+        //    MainCanvas.Children.Clear();
+        //    double width = MainCanvas.ActualWidth, height = MainCanvas.ActualHeight;
+        //    if (ViewModel?.IsEditMode == true)
+        //    {
+        //        for (int i = 1; i < _columns; i++) AddGridLine(i * width / _columns, 0, i * width / _columns, height);
+        //        for (int i = 1; i < _rows; i++) AddGridLine(0, i * height / _rows, width, i * height / _rows);
+        //    }
+        //    savedGrids.ForEach(grid => MainCanvas.Children.Add(grid));
+
+        //    MainCanvas.UpdateLayout();
+        //    Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
+        //}
+        private void DrawGridLinesAdaptive()
         {
-            if (MainCanvas == null) return;
+            if (MainCanvas == null || ScrollViewerContainer == null) return;
+
             var savedGrids = MainCanvas.Children.OfType<Grid>().ToList();
             MainCanvas.Children.Clear();
-            double width = MainCanvas.ActualWidth, height = MainCanvas.ActualHeight;
+
+            double width = MainCanvas.ActualWidth;
+            double scrollViewerHeight = ScrollViewerContainer.ActualHeight;
+            double minRowHeight = 50;
+            double requiredHeight = _rows * minRowHeight;
+
+            MainCanvas.Height = Math.Max(scrollViewerHeight, requiredHeight);
+
             if (ViewModel?.IsEditMode == true)
             {
-                for (int i = 1; i < _columns; i++) AddGridLine(i * width / _columns, 0, i * width / _columns, height);
-                for (int i = 1; i < _rows; i++) AddGridLine(0, i * height / _rows, width, i * height / _rows);
-            }
-            savedGrids.ForEach(grid => MainCanvas.Children.Add(grid));
+                for (int i = 1; i < _columns; i++)
+                {
+                    double x = i * width / _columns;
+                    AddGridLine(x, 0, x, MainCanvas.Height);
+                }
 
+                for (int i = 1; i < _rows; i++)
+                {
+                    double height = Math.Max(minRowHeight, scrollViewerHeight / _rows);
+                    double y = i * height;
+                    AddGridLine(0, y, width, y);
+                }
+            }
+
+            savedGrids.ForEach(grid => MainCanvas.Children.Add(grid));
             MainCanvas.UpdateLayout();
             Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
         }
+
 
         private void AddGridLine(double x1, double y1, double x2, double y2)
         {
@@ -248,6 +285,34 @@ namespace I_am_Hero_WPF.Views
                 Canvas.SetTop(grid, newTopLeft.Y);
                 grid.Clip = new RectangleGeometry(new Rect(0, 0, grid.Width, grid.Height), 10, 10);
             }
+        }
+
+        public int GetRows() => _rows;
+        public int GetColumns() => _columns;
+
+        public void SetRows(int value)
+        {
+            _rows = value;
+            DrawGridLinesAdaptive();
+            RestorePositions();
+            AlignBlocksToGrid();
+        }
+        public void SetColumns(int value){
+            _columns = value;
+            DrawGridLinesAdaptive();
+            RestorePositions();
+            AlignBlocksToGrid();
+        }
+
+        private void NumericTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !Regex.IsMatch(e.Text, "^[0-9]$");
+        }
+
+        private void NumericTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+                e.Handled = true;
         }
     }
 }

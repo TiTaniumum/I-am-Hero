@@ -140,6 +140,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Command\RelayCommand.cs" />
+    <Compile Include="Converters\BoolToWidthConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Models\ExperienceCalculationMethod.cs" />
     <Compile Include="Models\ExperienceCalculationMethodsResponse.cs" />

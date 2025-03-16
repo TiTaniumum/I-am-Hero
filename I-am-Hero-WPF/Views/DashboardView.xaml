@@ -8,208 +8,320 @@
     </UserControl.Resources>
 
     <Grid>
-        <!-- Динамический Dashboard -->
-        <Canvas Grid.Row="1" Grid.Column="1" Background="#f2f2f2" Name="MainCanvas" Loaded="MainCanvas_Loaded" SizeChanged="MainCanvas_SizeChanged">
-            <Grid x:Name="EditModeBlock" Canvas.ZIndex="3" Canvas.Right="10" Canvas.Top="10">
-                <Button Content="✎"
-                    Command="{Binding ToggleEditModeCommand}"
-                    Click="OnEditModeButtonClick"
-                    Style="{StaticResource MaterialDesignFloatingActionButton}"
-                    HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                    Width="25" Height="25"/>
-            </Grid>
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-            <!-- Profile -->
-            <Grid x:Name="ProfileBlock" Canvas.Left="10" Canvas.Top="10" Canvas.ZIndex="2" Margin="5"
+            <!-- Динамический Dashboard -->
+            <ScrollViewer Grid.Column="0" Name="ScrollViewerContainer"
+              VerticalScrollBarVisibility="Hidden"
+              HorizontalScrollBarVisibility="Disabled"
+              CanContentScroll="True"
+              PanningMode="VerticalOnly">
+                <Canvas Grid.Column="0" Background="#f2f2f2" Name="MainCanvas" Loaded="MainCanvas_Loaded" SizeChanged="MainCanvas_SizeChanged">
+                    <!-- Profile -->
+                    <Grid x:Name="ProfileBlock" Canvas.Left="10" Canvas.Top="10" Canvas.ZIndex="2" Margin="5"
                     Width="250" Height="210" Background="White"
                     MouseLeftButtonDown="Block_MouseLeftButtonDown"
                     MouseMove="Block_MouseMove"
                     MouseLeftButtonUp="Block_MouseLeftButtonUp">
-                <Grid.Clip>
-                    <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,250,150"/>
-                </Grid.Clip>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                    <materialDesign:PackIcon Kind="AccountCircle" Width="48" Height="48" Padding="10" Margin="10"
+                        <Grid.Clip>
+                            <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,250,150"/>
+                        </Grid.Clip>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <materialDesign:PackIcon Kind="AccountCircle" Width="48" Height="48" Padding="10" Margin="10"
                                  Foreground="{DynamicResource PrimaryHueMidBrush}" />
-                    <StackPanel Orientation="Vertical" Margin="10">
-                        <TextBlock Text="{Binding HeroName}" FontSize="20" FontWeight="Bold"/>
-                        <StackPanel Orientation="Horizontal">
-                            <ProgressBar Minimum="0" Maximum="100" Value="{Binding HeroExperience}" Height="20" Width="100"/>
-                            <TextBlock Text="{Binding HeroExperience, StringFormat='{}{0}/100 exp'}" FontSize="12" Foreground="Gray" Margin="-60, 0, 0, 0"/>
+                            <StackPanel Orientation="Vertical" Margin="10">
+                                <TextBlock Text="{Binding HeroName}" FontSize="20" FontWeight="Bold"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <ProgressBar Minimum="0" Maximum="100" Value="{Binding HeroExperience}" Height="20" Width="100"/>
+                                    <TextBlock Text="{Binding HeroExperience, StringFormat='{}{0}/100 exp'}" FontSize="12" Foreground="Gray" Margin="-60, 0, 0, 0"/>
+                                </StackPanel>
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
-                </StackPanel>
 
-                <Thumb Width="10" Height="10" Background="Gray" Margin="10"
+                        <Thumb Width="10" Height="10" Background="Gray" Margin="10"
                         HorizontalAlignment="Right" VerticalAlignment="Bottom"
                         DragDelta="Thumb_DragDelta" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            </Grid>
+                    </Grid>
 
-            <!-- Skills -->
-            <Grid x:Name="SkillsBlock" Canvas.Left="250" Canvas.Top="10" Canvas.ZIndex="2" Margin="5"
+                    <!-- Skills -->
+                    <Grid x:Name="SkillsBlock" Canvas.Left="250" Canvas.Top="10" Canvas.ZIndex="2" Margin="5"
                     Width="250" Height="210" Background="White"
                     MouseLeftButtonDown="Block_MouseLeftButtonDown"
                     MouseMove="Block_MouseMove"
                     MouseLeftButtonUp="Block_MouseLeftButtonUp">
-                <Grid.Clip>
-                    <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,250,150"/>
-                </Grid.Clip>
-                <StackPanel>
-                    <Grid Margin="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+                        <Grid.Clip>
+                            <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,250,150"/>
+                        </Grid.Clip>
+                        <StackPanel>
+                            <Grid Margin="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="Навыки" FontSize="16" FontWeight="Bold" Grid.Column="0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Навыки" FontSize="16" FontWeight="Bold" Grid.Column="0" VerticalAlignment="Center"/>
 
-                        <Button Content="+" Command="{Binding OpenSkillModalCommand}"
+                                <Button Content="+" Command="{Binding OpenSkillModalCommand}"
                                 Width="20" Height="20" Margin="5,0,0,0"
                                 Grid.Column="1"/>
-                    </Grid>
+                            </Grid>
 
 
-                    <ListView ItemsSource="{Binding Skills}" HorizontalContentAlignment="Stretch" Margin="5">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Margin="5" HorizontalAlignment="Stretch">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
+                            <ListView ItemsSource="{Binding Skills}" HorizontalContentAlignment="Stretch" Margin="5, 0, 5, 5">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="5" HorizontalAlignment="Stretch">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
 
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
 
-                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" Grid.Row="0" Grid.Column="0" />
+                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" Grid.Row="0" Grid.Column="0" />
 
-                                    <TextBlock Text="Level" Grid.Row="0" Grid.Column="1" Foreground="Gray" Margin="10,0,0,0"/>
+                                            <TextBlock Text="Level" Grid.Row="0" Grid.Column="1" Foreground="Gray" Margin="10,0,0,0"/>
 
 
-                                    <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" 
+                                            <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" 
                                                  Value="{Binding Experience}" Maximum="100" 
                                                  Height="10" Margin="0,5,0,0" HorizontalAlignment="Stretch"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
 
-                <Thumb Width="10" Height="10" Background="Gray" Margin="10"
+                        <Thumb Width="10" Height="10" Background="Gray" Margin="10"
                         HorizontalAlignment="Right" VerticalAlignment="Bottom"
                         DragDelta="Thumb_DragDelta" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            </Grid>
-
-            <!-- Calendar -->
-            <Grid x:Name="CalendarBlock" Canvas.Left="10" Canvas.Top="180" Canvas.ZIndex="2" Margin="5"
-                    Width="250" Height="210" Background="White"
-                    MouseLeftButtonDown="Block_MouseLeftButtonDown"
-                    MouseMove="Block_MouseMove"
-                    MouseLeftButtonUp="Block_MouseLeftButtonUp">
-                <Grid.Clip>
-                    <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,250,150"/>
-                </Grid.Clip>
-
-                <StackPanel Margin="10">
-                    <TextBlock Text="Календарь" FontSize="16" FontWeight="Bold"/>
-                    <Calendar DisplayMode="Month" IsTodayHighlighted="True"/>
-                </StackPanel>
-
-                <Thumb Width="10" Height="10" Background="Gray" Margin="10"
-                        HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                        DragDelta="Thumb_DragDelta" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            </Grid>
-
-            <!-- Quests -->
-            <Grid x:Name="QuestsBlock" Canvas.Left="250" Canvas.Top="180" Canvas.ZIndex="2" Margin="5"
-                    Width="250" Height="210" Background="White"
-                    MouseLeftButtonDown="Block_MouseLeftButtonDown"
-                    MouseMove="Block_MouseMove"
-                    MouseLeftButtonUp="Block_MouseLeftButtonUp">
-                <Grid.Clip>
-                    <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,250,150"/>
-                </Grid.Clip>
-                <StackPanel Margin="10">
-                    <Grid Margin="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Text="Квесты" FontSize="16" FontWeight="Bold"/>
-                        <Button Content="+" Command="{Binding OpenQuestModalCommand}" Width="20" Height="20" Margin="5,0,0,0" Grid.Column="1"/>
                     </Grid>
-                    
-                    <ListView ItemsSource="{Binding Quests}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Title}" FontWeight="Bold"/>
-                                    <TextBlock Text="{Binding Description}" FontStyle="Italic"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </StackPanel>
 
-                <Thumb Width="10" Height="10" Background="Gray" Margin="10"
+                    <!-- Calendar -->
+                    <Grid x:Name="CalendarBlock" Canvas.Left="10" Canvas.Top="180" Canvas.ZIndex="2" Margin="5"
+                    Width="250" Height="210" Background="White"
+                    MouseLeftButtonDown="Block_MouseLeftButtonDown"
+                    MouseMove="Block_MouseMove"
+                    MouseLeftButtonUp="Block_MouseLeftButtonUp">
+                        <Grid.Clip>
+                            <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,250,150"/>
+                        </Grid.Clip>
+
+                        <StackPanel Margin="10">
+                            <TextBlock Text="Календарь" FontSize="16" FontWeight="Bold"/>
+                            <Calendar DisplayMode="Month" IsTodayHighlighted="True" Margin="5"/>
+                        </StackPanel>
+
+                        <Thumb Width="10" Height="10" Background="Gray" Margin="10"
                         HorizontalAlignment="Right" VerticalAlignment="Bottom"
                         DragDelta="Thumb_DragDelta" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            </Grid>
+                    </Grid>
 
-            <!-- Attributes -->
-            <Grid x:Name="AttributesBlock" Canvas.Left="500" Canvas.Top="10" Canvas.ZIndex="2" Margin="5"
-                  Width="250" Height="210" Background="White"
+                    <!-- Quests -->
+                    <Grid x:Name="QuestsBlock" Canvas.Left="250" Canvas.Top="180" Canvas.ZIndex="2" Margin="5"
+                    Width="250" Height="210" Background="White"
+                    MouseLeftButtonDown="Block_MouseLeftButtonDown"
+                    MouseMove="Block_MouseMove"
+                    MouseLeftButtonUp="Block_MouseLeftButtonUp">
+                        <Grid.Clip>
+                            <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,250,150"/>
+                        </Grid.Clip>
+                        <StackPanel>
+                            <Grid Margin="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="Квесты" FontSize="16" FontWeight="Bold"/>
+                                <Button Content="+" Command="{Binding OpenQuestModalCommand}" Width="20" Height="20" Margin="5,0,0,0" Grid.Column="1"/>
+                            </Grid>
+
+                            <ListView ItemsSource="{Binding Quests}" HorizontalContentAlignment="Stretch" Margin="5, 0, 5, 5">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Title}" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Description}" FontStyle="Italic"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+
+                        <Thumb Width="10" Height="10" Background="Gray" Margin="10"
+                        HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                        DragDelta="Thumb_DragDelta" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </Grid>
+
+                    <!-- Attributes -->
+                    <Grid x:Name="AttributesBlock" Canvas.Left="500" Canvas.Top="10" Canvas.ZIndex="2" Margin="5"
+                  Width="230" Height="210" Background="White"
                   MouseLeftButtonDown="Block_MouseLeftButtonDown"
                   MouseMove="Block_MouseMove"
                   MouseLeftButtonUp="Block_MouseLeftButtonUp">
-                <Grid.Clip>
-                    <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,250,150"/>
-                </Grid.Clip>
-                <StackPanel>
-                    <Grid Margin="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+                        <Grid.Clip>
+                            <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,250,150"/>
+                        </Grid.Clip>
+                        <StackPanel>
+                            <Grid Margin="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="Аттрибуты" FontSize="16" FontWeight="Bold"/>
-                        <Button Content="+" Command="{Binding OpenAttributeModalCommand}" Width="20" Height="20" Margin="5,0,0,0" Grid.Column="1"/>
-                    </Grid>
-                    <ListView ItemsSource="{Binding Attributes}" HorizontalContentAlignment="Stretch" Margin="5">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Margin="5" HorizontalAlignment="Stretch">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
+                                <TextBlock Text="Аттрибуты" FontSize="16" FontWeight="Bold"/>
+                                <Button Content="+" Command="{Binding OpenAttributeModalCommand}" Width="20" Height="20" Margin="5,0,0,0" Grid.Column="1"/>
+                            </Grid>
+                            <ListView ItemsSource="{Binding Attributes}" HorizontalContentAlignment="Stretch" Margin="5, 0, 5, 5">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="5" HorizontalAlignment="Stretch">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
 
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
 
-                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" Grid.Row="0" Grid.Column="0" />
+                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" Grid.Row="0" Grid.Column="0" />
 
-                                    <TextBlock Text="{Binding Description}" Grid.Row="0" Grid.Column="1" Foreground="Gray" Margin="10,0,0,0"/>
+                                            <TextBlock Text="{Binding Description}" Grid.Row="0" Grid.Column="1" Foreground="Gray" Margin="10,0,0,0"/>
 
-                                    <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Minimum="{Binding MinValue}"
+                                            <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Minimum="{Binding MinValue}"
                                                  Value="{Binding Value}" Maximum="{Binding MaxValue}" 
                                                  Height="10" Margin="0,5,0,0" HorizontalAlignment="Stretch"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
 
-                <Thumb Width="10" Height="10" Background="Gray" Margin="10"
+                        <Thumb Width="10" Height="10" Background="Gray" Margin="10"
                 HorizontalAlignment="Right" VerticalAlignment="Bottom"
                 DragDelta="Thumb_DragDelta" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </Grid>
+                </Canvas>
+            </ScrollViewer>
+
+            <!-- Меню кастомизации Dashboard -->
+            <Grid Grid.Row="1" Grid.Column="1"
+                  Background="LightGray"
+                  Width="{Binding SidebarExpanded, Converter={StaticResource BoolToWidthConverter}, ConverterParameter='20,200'}">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="ToggleMenuButton" Grid.Column="0"
+                        Width="20" Height="Auto"
+                        HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                        Command="{Binding ToggleMenuCommand}"
+                        Style="{StaticResource MaterialDesignFlatButton}"  
+                        Background="Gray"
+                        Padding="0">
+                    <materialDesign:PackIcon Kind="{Binding SidebarArrowIcon}" 
+                             Width="20" Height="20"
+                             HorizontalAlignment="Center" 
+                             VerticalAlignment="Center"/>
+                </Button>
+
+
+                <Grid x:Name="MenuContent"
+                      Visibility="{Binding SidebarExpanded, Converter={StaticResource BooleanToVisibilityConverter}}"
+                      Margin="10" Grid.Column="1">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Заголовок -->
+                    <TextBlock Text="Настройки" FontSize="16" FontWeight="Bold"
+                               Margin="0,0,0,10" HorizontalAlignment="Center" Grid.Row="0"/>
+
+                    <!-- Rows -->
+                    <Grid Margin="0,5" Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Rows" FontSize="14" Grid.Column="0" HorizontalAlignment="Left"/>
+                        <TextBox Text="{Binding Rows, Mode=TwoWay}" Width="60"
+                                 Style="{StaticResource CustomTextBoxStyle}"
+                                 PreviewTextInput="NumericTextBox_PreviewTextInput"
+                                 PreviewKeyDown="NumericTextBox_PreviewKeyDown"
+                                 Grid.Column="1" HorizontalAlignment="Right"/>
+                    </Grid>
+
+                    <!-- Columns -->
+                    <Grid Margin="0,5" Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Columns" FontSize="14" Grid.Column="0" HorizontalAlignment="Left"/>
+                        <TextBox Text="{Binding Columns, Mode=TwoWay}" Width="60"
+                                 Style="{StaticResource CustomTextBoxStyle}"
+                                 PreviewTextInput="NumericTextBox_PreviewTextInput"
+                                 PreviewKeyDown="NumericTextBox_PreviewKeyDown"
+                                 Grid.Column="1" HorizontalAlignment="Right"/>
+                    </Grid>
+
+                    <!-- Блоки -->
+                    <StackPanel Margin="0,10" Grid.Row="3">
+                        <CheckBox Content="Профиль" IsChecked="True" IsEnabled="False"/>
+                        <CheckBox Content="Навыки" IsChecked="True" IsEnabled="False"/>
+                        <CheckBox Content="Атрибуты" IsChecked="True" IsEnabled="False"/>
+                        <CheckBox Content="Эффекты" IsChecked="False" IsEnabled="False"/>
+                        <CheckBox Content="Квесты" IsChecked="True" IsEnabled="False"/>
+                        <CheckBox Content="Достижения" IsChecked="{Binding AchievementsPanel, Mode=TwoWay}" IsEnabled="True"/>
+                    </StackPanel>
+
+                    <!-- Пустое пространство -->
+                    <Grid Grid.Row="4"/>
+
+                    <Button Command="{Binding ResetCommand}"
+                            Style="{StaticResource OutlinedAnimatedButtonStyle}"
+                            BorderBrush="PaleVioletRed"
+                            Width="120" Margin="0,5"
+                            Grid.Row="5">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="Restore" Width="20" Height="20" Margin="0,0,5,0"/>
+                            <TextBlock Text="Сбросить"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Command="{Binding ApplyChangesCommand}"
+                            Style="{StaticResource OutlinedAnimatedButtonStyle}"
+                            BorderBrush="Green"
+                            Width="120" Margin="0,5"
+                            Grid.Row="6">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="CheckCircle" Width="20" Height="20" Margin="0,0,5,0"/>
+                            <TextBlock Text="Применить"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+
             </Grid>
-        </Canvas>
+        </Grid>
 
         <!-- AddSkill Modal -->
         <Grid x:Name="AddSkillModal" 
@@ -370,7 +482,7 @@
                 </Grid>
             </Border>
         </Grid>
-        
+
         <!-- AddAttribute Modal -->
         <Grid x:Name="AddAttributeModal" 
                 Background="#80000000" 
