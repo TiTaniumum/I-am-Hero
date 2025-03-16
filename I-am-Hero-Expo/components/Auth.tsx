@@ -21,12 +21,6 @@ export default function Auth() {
 
   const { api, settings, loc, setLoc, setAlpha } = useGlobalContext();
 
-  useEffect(() => {
-    settings.GetCurrentLocalization().then((currentLocalization) => {
-      setLoc(currentLocalization);
-    });
-  }, []);
-
   function OnSelectLocalizationHandle(item: string) {
     setLoc(item);
     settings.UpdateLocalization(item);

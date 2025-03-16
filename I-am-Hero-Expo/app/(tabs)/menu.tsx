@@ -15,13 +15,14 @@ import { useState } from "react";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
 import { Colors } from "@/constants/Colors";
 import QuestIcon from "@/icons/QuestIcon";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import ProgressBar from "@/components/ProgressBar";
 import CreateHero from "@/components/CreateHero";
 import Resource from "@/constants/Resource";
+import User from "@/models/User";
 
 export default function MenuScreen() {
-  const { isToken, user, isHero, setAlpha } = useGlobalContext();
+  const { isToken, user, isHero, setAlpha, api } = useGlobalContext();
 
   const Wrapper = Platform.OS === "web" ? ThemedView : SafeAreaView;
   const [listType, setListType] = useState(false);
@@ -30,9 +31,20 @@ export default function MenuScreen() {
   const background = Colors[colorScheme ?? "light"].background;
   const iconsize = 24 * (listType ? 1 : 2);
   const styles = getStyles(listType, color, background, iconsize);
+  const [exp, setExp] = useState(0);
+  const [calcType, setCalcType] = useState(1);
+  useFocusEffect(()=>{
+    api.GetHero(user).then(()=>{
+      if(user.hero){
+        setExp(user.hero.experience);
+        setCalcType(user.hero.cLevelCalculationTypeId);
+      }
+    });
+  })
 
   if (!isToken) return <Auth />;
   if (!isHero) return <CreateHero />;
+
   return (
     <Wrapper style={[Styles.container, { gap: 0 }]}>
       <ThemedView style={Styles.header} tint={true}>
@@ -74,14 +86,15 @@ export default function MenuScreen() {
             <ThemedText style={{ fontSize: 25 }}>
               {Resource.get("iam")} {user.hero?.name}
             </ThemedText>
-            <ThemedText>{Resource.get("level")} 10</ThemedText>
             <ProgressBar
               minValue={0}
-              curValue={70}
-              maxValue={100}
+              curValue={User.GetExpPerLevel(exp, calcType).curXp}
+              maxValue={User.GetExpPerLevel(exp, calcType).xpToNextLvl}
               width={"70%"}
               height={30}
               color={color}
+              type="xp"
+              level={User.GetLevel(exp,calcType)}
             />
           </ThemedView>
           <ThemedView style={styles.leftprofile}>

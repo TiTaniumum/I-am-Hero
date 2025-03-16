@@ -13,9 +13,13 @@ import SettingsService from "@/services/SettingsService";
 import User from "@/models/User";
 import { Attribute } from "@/models/Attribute";
 import { Portal, Provider } from "react-native-paper";
+import { Skill } from "@/models/Skill";
+import { Quest } from "@/models/Quest";
+import Common from "@/models/Common";
 
 const user = new User();
-const api = new ApiService(user);
+const common = new Common();
+const api = new ApiService(user, common);
 const settings = new SettingsService();
 
 export interface iAlert {
@@ -37,12 +41,15 @@ type GlobalContext = {
   setEditBioText: (value: string) => void;
   editAttribute: Attribute | undefined;
   setEditAttribute: (value: Attribute) => void;
-  editAttributeRefresh: boolean;
-  setEditAttributeRefresh: (value: boolean) => void;
   settings: SettingsService;
   loc: string;
   setLoc: (value: string) => void;
   setAlpha: (hex: string, alpha: number) => string;
+  editSkill: Skill | undefined;
+  setEditSkill: (value: Skill) => void;
+  editQuest: Quest | undefined;
+  setEditQuest: (value: Quest) => void;
+  common: Common;
 };
 
 const Context = createContext<GlobalContext>({} as GlobalContext);
@@ -56,8 +63,9 @@ export function ContextProvider({ children }: { children: ReactNode }) {
   const [editBioID, setEditBioID] = useState<number>(0);
   const [editBioText, setEditBioText] = useState("");
   const [editAttribute, setEditAttribute] = useState<Attribute>();
-  const [editAttributeRefresh, setEditAttributeRefresh] = useState(false);
   const [loc, setLoc] = useState("en");
+  const [editSkill, setEditSkill] = useState<Skill>()
+  const [editQuest, setEditQuest] = useState<Quest>()
   function onAlertClose() {
     setIsAlertVisible(false);
   }
@@ -78,6 +86,7 @@ export function ContextProvider({ children }: { children: ReactNode }) {
     user.Init().then(() => {
       if (!user.hero) api.GetHero(user);
     });
+    api.GetcQuestStatuses();
   }, []);
 
   const setAlpha = (hex: string, alpha: number) => {
@@ -101,12 +110,15 @@ export function ContextProvider({ children }: { children: ReactNode }) {
         setEditBioText,
         editAttribute,
         setEditAttribute,
-        editAttributeRefresh,
-        setEditAttributeRefresh,
         settings,
         loc,
         setLoc,
-        setAlpha
+        setAlpha,
+        editSkill, 
+        setEditSkill,
+        editQuest,
+        setEditQuest,
+        common,
       }}
     >
       <Provider>
