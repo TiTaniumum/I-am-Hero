@@ -2,9 +2,9 @@
 
 namespace I_am_Hero_WPF.Models
 {
-    public class HeroAttributesResponse
+    public class HeroStatusEffectsResponse
     {
-        public List<HeroAttribute> HeroAttributes { get; set; }
+        public List<HeroStatusEffect> HeroStatusEffects { get; set; }
         public string Token { get; set; }
     }
 }

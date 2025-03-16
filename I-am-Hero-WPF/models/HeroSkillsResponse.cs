@@ -5,5 +5,6 @@ namespace I_am_Hero_WPF.Models
     public class HeroSkillsResponse
     {
         public List<HeroSkill> HeroSkills { get; set; }
+        public string Token { get; set; }
     }
 }

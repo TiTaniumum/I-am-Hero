@@ -6,22 +6,22 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Web.UI.WebControls;
-using System.Windows;
 using I_am_Hero_WPF.Models;
+using System.Windows;
+using System.Windows.Media.Effects;
 
-public class AttributeViewModel : ViewModelBase
+internal class EffectViewModel : ViewModelBase
 {
     private readonly ApiService _apiService;
 
-    private HeroAttribute _selectedAttribute;
-    public HeroAttribute SelectedAttribute
+    private HeroStatusEffect _selectedEffect;
+    public HeroStatusEffect SelectedEffect
     {
-        get => _selectedAttribute;
+        get => _selectedEffect;
         set
         {
-            _selectedAttribute = value;
-            OnPropertyChanged(nameof(SelectedAttribute));
+            _selectedEffect = value;
+            OnPropertyChanged(nameof(SelectedEffect));
         }
     }
     private Visibility _editModalVisibility = Visibility.Collapsed;
@@ -55,7 +55,7 @@ public class AttributeViewModel : ViewModelBase
         }
     }
 
-    public List<string> SortOptions { get; } = new List<string> { "None", "Name", "Value", "MinValue", "MaxValue" };
+    public List<string> SortOptions { get; } = new List<string> { "None", "Name", "Value" };
 
     private string _searchText;
     public string SearchText
@@ -85,35 +85,24 @@ public class AttributeViewModel : ViewModelBase
     }
 
 
-    private string _attributeName;
-    private string _attributeDescription;
-    private int _attributeMinValue;
-    private int _attributeMaxValue;
-    private int _attributeValue;
-    public string AttributeName
+    private string _effectName;
+    private string _effectDescription;
+    private int _effectValue;
+
+    public string EffectName
     {
-        get => _attributeName;
-        set => SetProperty(ref _attributeName, value);
+        get => _effectName;
+        set => SetProperty(ref _effectName, value);
     }
-    public string AttributeDescription
+    public string EffectDescription
     {
-        get => _attributeDescription;
-        set => SetProperty(ref _attributeDescription, value);
+        get => _effectDescription;
+        set => SetProperty(ref _effectDescription, value);
     }
-    public int AttributeMinValue
+    public int EffectValue
     {
-        get => _attributeMinValue;
-        set => SetProperty(ref _attributeMinValue, value);
-    }
-    public int AttributeMaxValue
-    {
-        get => _attributeMaxValue;
-        set => SetProperty(ref _attributeMaxValue, value);
-    }
-    public int AttributeValue
-    {
-        get => _attributeValue;
-        set => SetProperty(ref _attributeValue, value);
+        get => _effectValue;
+        set => SetProperty(ref _effectValue, value);
     }
 
     public RelayCommand ClearSearchCommand { get; }
@@ -123,37 +112,37 @@ public class AttributeViewModel : ViewModelBase
     public RelayCommand CloseEditModalCommand { get; }
     public RelayCommand OpenDeleteModalCommand { get; }
     public RelayCommand CloseDeleteModalCommand { get; }
-    public RelayCommand AddAttributeCommand { get; }
+    public RelayCommand AddEffectCommand { get; }
     public RelayCommand SaveEditCommand { get; }
     public RelayCommand ConfirmDeleteCommand { get; }
 
-    private ObservableCollection<HeroAttribute> _attributes = new ObservableCollection<HeroAttribute>();
-    public ObservableCollection<HeroAttribute> Attributes
+    private ObservableCollection<HeroStatusEffect> _effects = new ObservableCollection<HeroStatusEffect>();
+    public ObservableCollection<HeroStatusEffect> Effects
     {
-        get => _attributes;
+        get => _effects;
         set
         {
-            _attributes = value;
+            _effects = value;
             OnPropertyChanged();
         }
     }
 
-    private ObservableCollection<HeroAttribute> _filteredAttributes = new ObservableCollection<HeroAttribute>();
-    public ObservableCollection<HeroAttribute> FilteredAttributes
+    private ObservableCollection<HeroStatusEffect> _filteredEffects = new ObservableCollection<HeroStatusEffect>();
+    public ObservableCollection<HeroStatusEffect> FilteredEffects
     {
-        get => _filteredAttributes;
+        get => _filteredEffects;
         set
         {
-            _filteredAttributes = value;
+            _filteredEffects = value;
             OnPropertyChanged();
         }
     }
 
-    public AttributeViewModel()
+    public EffectViewModel()
     {
         _apiService = new ApiService();
-        Attributes = new ObservableCollection<HeroAttribute>();
-        FilteredAttributes = new ObservableCollection<HeroAttribute>();
+        Effects = new ObservableCollection<HeroStatusEffect>();
+        FilteredEffects = new ObservableCollection<HeroStatusEffect>();
         SelectedSortOption = SortOptions.FirstOrDefault();
 
         OpenEditModalCommand = new RelayCommand<long>(param =>
@@ -179,48 +168,47 @@ public class AttributeViewModel : ViewModelBase
             }
         });
         OpenAddModalCommand = new RelayCommand<long>(_ => { AddModalVisibility = Visibility.Visible; });
-        SaveEditCommand = new RelayCommand(async _ => await EditAttribute());
+        SaveEditCommand = new RelayCommand(async _ => await EditEffect());
         CloseEditModalCommand = new RelayCommand(_ => { EditModalVisibility = Visibility.Collapsed; });
         CloseDeleteModalCommand = new RelayCommand(_ => { DeleteModalVisibility = Visibility.Collapsed; });
         CloseAddModalCommand = new RelayCommand(_ => { AddModalVisibility = Visibility.Collapsed; });
-        ConfirmDeleteCommand = new RelayCommand<long>(async _ => await DeleteAttribute());
+        ConfirmDeleteCommand = new RelayCommand<long>(async _ => await DeleteEffect());
 
-        AddAttributeCommand = new RelayCommand(async _ => await AddAttribute());
+        AddEffectCommand = new RelayCommand(async _ => await AddEffect());
         ClearSearchCommand = new RelayCommand(_ => ClearSearch());
 
-        _ = LoadAttributes();
+        _ = LoadEffects();
     }
 
-    private async Task LoadAttributes()
+    private async Task LoadEffects()
     {
         try
         {
-            HttpResponseMessage response = await _apiService.GetHeroAttributesAsync();
+            HttpResponseMessage response = await _apiService.GetHeroEffectsAsync();
             if (response.IsSuccessStatusCode)
             {
                 string json = await response.Content.ReadAsStringAsync();
-                var responseObject = JsonSerializer.Deserialize<HeroAttributesResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (responseObject?.HeroAttributes != null)
+                var responseObject = JsonSerializer.Deserialize<HeroStatusEffectsResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (responseObject?.HeroStatusEffects != null)
                 {
-                    Attributes = new ObservableCollection<HeroAttribute>(responseObject.HeroAttributes);
+                    Effects = new ObservableCollection<HeroStatusEffect>(responseObject.HeroStatusEffects);
                     ApplyFilters();
                 }
             }
             else
             {
-                MessageBox.Show($"Не удалось загрузить атрибуты героя: {response.StatusCode}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Не удалось загрузить статус эффекты героя: " + response.StatusCode, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Ошибка при загрузке атрибутов героя: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show("Ошибка при загрузке статус эффектов героя: " + ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
     private void ApplyFilters()
     {
-        var filtered = Attributes.ToList();
+        var filtered = Effects.ToList();
 
         if (!string.IsNullOrEmpty(SearchText))
         {
@@ -239,16 +227,10 @@ public class AttributeViewModel : ViewModelBase
                 case "Value":
                     filtered = filtered.OrderByDescending(a => a.Value).ToList();
                     break;
-                case "MinValue":
-                    filtered = filtered.OrderBy(a => a.MinValue).ToList();
-                    break;
-                case "MaxValue":
-                    filtered = filtered.OrderBy(a => a.MaxValue).ToList();
-                    break;
             }
         }
 
-        FilteredAttributes = new ObservableCollection<HeroAttribute>(filtered);
+        FilteredEffects = new ObservableCollection<HeroStatusEffect>(filtered);
     }
 
     private void ClearSearch()
@@ -260,38 +242,35 @@ public class AttributeViewModel : ViewModelBase
 
     private void OpenEditModal(long id)
     {
-        SelectedAttribute = FilteredAttributes.FirstOrDefault(a => a.Id == id);
+        SelectedEffect = FilteredEffects.FirstOrDefault(a => a.Id == id);
         EditModalVisibility = Visibility.Visible;
     }
     private void OpenDeleteModal(long id)
     {
-        SelectedAttribute = FilteredAttributes.FirstOrDefault(a => a.Id == id);
+        SelectedEffect = FilteredEffects.FirstOrDefault(a => a.Id == id);
         DeleteModalVisibility = Visibility.Visible;
     }
 
-    private async Task AddAttribute()
+    private async Task AddEffect()
     {
-        if (string.IsNullOrWhiteSpace(AttributeName))
+        if (string.IsNullOrWhiteSpace(EffectName))
         {
-            MessageBox.Show("Введите название аттрибута.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show("Введите название статус эффекта.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
-        var newAttribute = new HeroAttribute
+        var newEffect = new HeroStatusEffect
         {
-            Name = AttributeName,
-            Description = AttributeDescription,
-            MinValue = AttributeMinValue,
-            MaxValue = AttributeMaxValue,
-            Value = AttributeValue,
-            CAttributeTypeId = 1
+            Name = EffectName,
+            Description = EffectDescription,
+            Value = EffectValue
         };
 
-        HttpResponseMessage response = await _apiService.CreateHeroAttributeAsync(newAttribute);
+        HttpResponseMessage response = await _apiService.CreateHeroEffectAsync(newEffect);
 
         if (response.IsSuccessStatusCode)
         {
-            _ = LoadAttributes();
+            _ = LoadEffects();
             AddModalVisibility = Visibility.Collapsed;
         }
         else
@@ -300,15 +279,15 @@ public class AttributeViewModel : ViewModelBase
         }
     }
 
-    private async Task EditAttribute()
+    private async Task EditEffect()
     {
-        if (SelectedAttribute == null) return;
+        if (SelectedEffect == null) return;
 
-        var response = await _apiService.EditHeroAttributeAsync(SelectedAttribute);
+        var response = await _apiService.EditHeroEffectAsync(SelectedEffect);
         if (response.IsSuccessStatusCode)
         {
-            Debug.WriteLine($"Атрибут {SelectedAttribute.Id} обновлён!");
-            _ = LoadAttributes();
+            Debug.WriteLine($"Статус эффект {SelectedEffect.Id} обновлено!");
+            _ = LoadEffects();
             EditModalVisibility = Visibility.Collapsed;
         }
         else
@@ -317,19 +296,21 @@ public class AttributeViewModel : ViewModelBase
         }
     }
 
-    private async Task DeleteAttribute()
+    private async Task DeleteEffect()
     {
-        if (SelectedAttribute == null) return;
+        if (SelectedEffect == null) return;
 
-        var response = await _apiService.DeleteHeroAttributeAsync(SelectedAttribute.Id);
+        var response = await _apiService.DeleteHeroEffectAsync(SelectedEffect.Id);
         if (response.IsSuccessStatusCode)
         {
-            _ = LoadAttributes();
+            _ = LoadEffects();
             DeleteModalVisibility = Visibility.Collapsed;
         }
         else
         {
-            Debug.WriteLine($"Ошибка удаления атрибута {SelectedAttribute.Id}: {response.ReasonPhrase}");
+            Debug.WriteLine($"Ошибка удаления статус эффекта {SelectedEffect.Id}: {response.ReasonPhrase}");
         }
     }
 }
+
+

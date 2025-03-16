@@ -4,6 +4,374 @@
              xmlns:c="clr-namespace:I_am_Hero_WPF.Properties" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
     <Grid>
-        <TextBlock>Effects</TextBlock>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="0"
+                     Margin="0 0 10 0"
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                     materialDesign:HintAssist.Hint="Поиск по названию..."
+                     Style="{StaticResource CustomTextBoxStyle}"
+                     HorizontalAlignment="Stretch"
+                     FontSize="16"
+                     VerticalContentAlignment="Center"/>
+
+            <ComboBox Grid.Column="1"
+                      Style="{StaticResource CustomComboBoxStyle}"
+                      Width="120"
+                      Margin="0 0 10 0"
+                      ItemsSource="{Binding SortOptions}"
+                      SelectedItem="{Binding SelectedSortOption}"
+                      materialDesign:HintAssist.Hint="Сортировать по"
+                      VerticalContentAlignment="Center"
+                      FontSize="16"/>
+
+            <Button Grid.Column="2"
+                    Content="Очистить"
+                    Command="{Binding ClearSearchCommand}"
+                    Style="{DynamicResource MaterialDesignOutlinedButton}"/>
+        </Grid>
+
+        <!-- Карточки умений -->
+        <ScrollViewer Grid.Row="1">
+            <ItemsControl ItemsSource="{Binding FilteredEffects}" VirtualizingStackPanel.IsVirtualizing="False">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel IsItemsHost="True" HorizontalAlignment="Center" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{DynamicResource MaterialDesignPaper}"
+                                Padding="10"
+                                CornerRadius="10"
+                                Margin="10"
+                                Width="335"
+                                BorderBrush="Black"
+                                BorderThickness="2"
+                                Effect="{DynamicResource MaterialDesignElevationShadow}">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button Command="{Binding ToggleExpandCommand}"
+                                            Style="{StaticResource MaterialDesignFloatingActionButton}"
+                                            Width="25" Height="25"
+                                            Grid.Column="0">
+                                        <ContentControl>
+                                            <ContentControl.Style>
+                                                <Style TargetType="ContentControl">
+                                                    <Setter Property="Content" Value="▼"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                                                            <Setter Property="Content" Value="▲"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ContentControl.Style>
+                                        </ContentControl>
+                                    </Button>
+
+                                    <StackPanel Orientation="Horizontal" Grid.Column="1" Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <Button Command="{Binding DataContext.OpenEditModalCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding Id}"
+                                                Style="{StaticResource MaterialDesignFloatingActionButton}"
+                                                Width="25" Height="25"
+                                                Margin="0,0,5,0">
+                                            <ContentControl Content="✎"/>
+                                        </Button>
+                                        <Button Command="{Binding DataContext.OpenDeleteModalCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding Id}"
+                                                Style="{StaticResource MaterialDesignFloatingActionButton}"
+                                                Width="25" Height="25">
+                                            <ContentControl Content="🗑"/>
+                                        </Button>
+                                    </StackPanel>
+
+                                    <TextBlock Text="{Binding Name}" 
+                                               FontSize="16" 
+                                               FontWeight="Bold"
+                                               Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Bottom"
+                                               Margin="0,0,10,0"
+                                               Grid.Column="2"/>
+
+                                    <TextBlock Text="{Binding Value}" 
+                                               FontSize="22" 
+                                               FontWeight="Bold"
+                                               Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,10,0"
+                                               Grid.Column="3"/>
+                                </Grid>
+
+                                <TextBlock Text="{Binding Description}" 
+                                           FontSize="14"
+                                           TextWrapping="Wrap"
+                                           Foreground="Gray" 
+                                           Margin="0,5,0,5"
+                                           Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <Grid x:Name="EditModal" 
+              Background="#80000000" 
+              Visibility="{Binding EditModalVisibility}" 
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch"
+              Width="Auto"
+              Height="Auto"
+              Grid.RowSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Модальное окно -->
+            <Border Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Background="White" Padding="20" CornerRadius="12"
+                    Width="400" Effect="{DynamicResource MaterialDesignElevationShadow}">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Заголовок -->
+                    <TextBlock Text="Редактирование статус эффекта" 
+                               FontSize="18" FontWeight="Bold"
+                               Margin="0,0,0,15" HorizontalAlignment="Center"/>
+
+                    <!-- Контент -->
+                    <StackPanel Grid.Row="1" Width="300" Background="{DynamicResource MaterialDesignPaper}"
+                                HorizontalAlignment="Center">
+
+                        <StackPanel Margin="0,0,0,10">
+                            <Label Content="Название" FontWeight="Bold"/>
+                            <TextBox Text="{Binding SelectedEffect.Name, Mode=TwoWay}"
+                             Style="{StaticResource CustomTextBoxStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,10">
+                            <Label Content="Описание" FontWeight="Bold"/>
+                            <TextBox Text="{Binding SelectedEffect.Description, Mode=TwoWay}"
+                             Style="{StaticResource CustomTextBoxStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,10">
+                            <Label Content="Текущее значение" FontWeight="Bold"/>
+                            <TextBox Text="{Binding SelectedEffect.Value, Mode=TwoWay}"
+                             Style="{StaticResource CustomTextBoxStyle}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Кнопки -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal"
+                                HorizontalAlignment="Right" Margin="0,10,0,0">
+                        <Button Content="Отмена" Command="{Binding CloseEditModalCommand}"
+                        Background="Gray" Foreground="White"
+                        Width="90" Height="35"
+                        Style="{StaticResource RoundedButtonStyle}"
+                        Margin="0,0,10,0"/>
+
+                        <Button Content="Сохранить" Command="{Binding SaveEditCommand}"
+                        Background="Green" Foreground="White"
+                        Width="90" Height="35"
+                        Style="{StaticResource RoundedButtonStyle}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Grid x:Name="AddModal" 
+              Background="#80000000" 
+              Visibility="{Binding AddModalVisibility}" 
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch"
+              Width="Auto"
+              Height="Auto"
+              Grid.RowSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Модальное окно -->
+            <Border Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Background="White" Padding="20" CornerRadius="12"
+                    Width="400" Effect="{DynamicResource MaterialDesignElevationShadow}">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Заголовок -->
+                    <TextBlock Text="Добавить статус эффект" 
+                               FontSize="18" FontWeight="Bold"
+                               Margin="0,0,0,15" HorizontalAlignment="Center"/>
+
+                    <!-- Контент -->
+                    <StackPanel Grid.Row="1" Width="300" Background="{DynamicResource MaterialDesignPaper}"
+                        HorizontalAlignment="Center">
+
+                        <StackPanel Margin="0,0,0,10">
+                            <Label Content="Название" FontWeight="Bold"/>
+                            <TextBox Text="{Binding EffectName, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource CustomTextBoxStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,10">
+                            <Label Content="Описание" FontWeight="Bold"/>
+                            <TextBox Text="{Binding EffectDescription, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource CustomTextBoxStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,10">
+                            <Label Content="Текущее значение" FontWeight="Bold"/>
+                            <TextBox Text="{Binding EffectValue, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource CustomTextBoxStyle}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Кнопки -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal"
+                                HorizontalAlignment="Right" Margin="0,10,0,0">
+                        <Button Content="Отмена" Command="{Binding CloseAddModalCommand}"
+                                Background="Gray" Foreground="White"
+                                Width="90" Height="35"
+                                Style="{StaticResource RoundedButtonStyle}"
+                                Margin="0,0,10,0"/>
+
+                        <Button Content="Сохранить" Command="{Binding AddEffectCommand}"
+                                Background="Green" Foreground="White"
+                                Width="90" Height="35"
+                                Style="{StaticResource RoundedButtonStyle}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Grid x:Name="DeleteModal" 
+              Background="#80000000" 
+              Visibility="{Binding DeleteModalVisibility}" 
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch"
+              Width="Auto"
+              Height="Auto"
+              Grid.RowSpan="2">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Модальное окно -->
+            <Border Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Background="White" Padding="20" CornerRadius="12"
+                    Width="400" Effect="{DynamicResource MaterialDesignElevationShadow}">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Заголовок -->
+                    <TextBlock FontSize="18" FontWeight="Bold"
+                               Margin="0,0,0,15" HorizontalAlignment="Center">
+                        <Run Text="Удаление статус эффекта: "/>
+                        <Run Text="{Binding SelectedEffect.Name}" FontWeight="Bold" Foreground="Red"/>
+                    </TextBlock>
+
+                    <!-- Контент -->
+                    <StackPanel Grid.Row="1" Width="300" Background="{DynamicResource MaterialDesignPaper}"
+                                HorizontalAlignment="Center">
+                        <TextBlock Text="Вы действительно хотите удалить статус эффект? Это действие нельзя отменить."
+                                   TextWrapping="Wrap"
+                                   FontSize="14"
+                                   Foreground="Black"
+                                   HorizontalAlignment="Center"
+                                   TextAlignment="Center"
+                                   Margin="0,0,0,10"/>
+                    </StackPanel>
+
+                    <!-- Кнопки -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal"
+                                HorizontalAlignment="Center" Margin="0,10,0,0">
+                        <Button Content="Отмена" Command="{Binding CloseDeleteModalCommand}"
+                                Background="Gray" Foreground="White"
+                                Width="90" Height="35"
+                                Style="{StaticResource RoundedButtonStyle}"
+                                Margin="0,0,10,0"/>
+
+                        <Button Content="Удалить" Command="{Binding ConfirmDeleteCommand}"
+                                Background="Red" Foreground="White"
+                                Width="90" Height="35"
+                                Style="{StaticResource RoundedButtonStyle}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+
+        <!-- Кнопка добавления умения -->
+        <Grid Grid.RowSpan="2">
+            <Button Command="{Binding OpenAddModalCommand}" 
+                    Width="35" Height="35"
+                    Background="Green"
+                    Foreground="White"
+                    Style="{StaticResource MaterialDesignFloatingActionButton}"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Margin="30"
+                    Panel.ZIndex="10">
+                <materialDesign:PackIcon Kind="Plus" Width="32" Height="32"/>
+            </Button>
+        </Grid>
     </Grid>
 </UserControl>

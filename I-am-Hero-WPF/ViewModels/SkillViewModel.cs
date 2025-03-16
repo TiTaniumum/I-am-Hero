@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using I_am_Hero_WPF.Models;
@@ -26,6 +25,7 @@ public class SkillViewModel : ViewModelBase
     }
     private Visibility _editModalVisibility = Visibility.Collapsed;
     private Visibility _addModalVisibility = Visibility.Collapsed;
+    private Visibility _deleteModalVisibility = Visibility.Collapsed;
     public Visibility EditModalVisibility
     {
         get => _editModalVisibility;
@@ -42,6 +42,15 @@ public class SkillViewModel : ViewModelBase
         {
             _addModalVisibility = value;
             OnPropertyChanged(nameof(AddModalVisibility));
+        }
+    }
+    public Visibility DeleteModalVisibility
+    {
+        get => _deleteModalVisibility;
+        set
+        {
+            _deleteModalVisibility = value;
+            OnPropertyChanged(nameof(DeleteModalVisibility));
         }
     }
 
@@ -100,6 +109,8 @@ public class SkillViewModel : ViewModelBase
     public RelayCommand CloseAddModalCommand { get; }
     public RelayCommand OpenEditModalCommand { get; }
     public RelayCommand CloseEditModalCommand { get; }
+    public RelayCommand OpenDeleteModalCommand { get; }
+    public RelayCommand CloseDeleteModalCommand { get; }
     public RelayCommand AddSkillCommand { get; }
     public RelayCommand SaveEditCommand { get; }
     public RelayCommand ConfirmDeleteCommand { get; }
@@ -131,6 +142,7 @@ public class SkillViewModel : ViewModelBase
         _apiService = new ApiService();
         Skills = new ObservableCollection<HeroSkill>();
         FilteredSkills = new ObservableCollection<HeroSkill>();
+        SelectedSortOption = SortOptions.FirstOrDefault();
 
         OpenEditModalCommand = new RelayCommand<long>(param =>
         {
@@ -143,21 +155,23 @@ public class SkillViewModel : ViewModelBase
                 OpenEditModal((long)intId);
             }
         });
-        OpenAddModalCommand = new RelayCommand<long>(_ => { AddModalVisibility = Visibility.Visible; });
-        SaveEditCommand = new RelayCommand(async _ => await EditSkill());
-        CloseEditModalCommand = new RelayCommand(_ => { EditModalVisibility = Visibility.Collapsed; });
-        CloseAddModalCommand = new RelayCommand(_ => { AddModalVisibility = Visibility.Collapsed; });
-        ConfirmDeleteCommand = new RelayCommand<long>(param =>
+        OpenDeleteModalCommand = new RelayCommand<long>(param =>
         {
             if (param is long id)
             {
-                _ = DeleteSkill(id);
+                OpenDeleteModal(id);
             }
             else if (param is int intId)
             {
-                _ = DeleteSkill((long)intId);
+                OpenDeleteModal((long)intId);
             }
         });
+        OpenAddModalCommand = new RelayCommand<long>(_ => { AddModalVisibility = Visibility.Visible; });
+        SaveEditCommand = new RelayCommand(async _ => await EditSkill());
+        CloseEditModalCommand = new RelayCommand(_ => { EditModalVisibility = Visibility.Collapsed; });
+        CloseDeleteModalCommand = new RelayCommand(_ => { DeleteModalVisibility = Visibility.Collapsed; });
+        CloseAddModalCommand = new RelayCommand(_ => { AddModalVisibility = Visibility.Collapsed; });
+        ConfirmDeleteCommand = new RelayCommand<long>(async _ => await DeleteSkill());
 
         AddSkillCommand = new RelayCommand(async _ => await AddSkill());
         ClearSearchCommand = new RelayCommand(_ => ClearSearch());
@@ -231,17 +245,10 @@ public class SkillViewModel : ViewModelBase
         SelectedSkill = FilteredSkills.FirstOrDefault(a => a.Id == id);
         EditModalVisibility = Visibility.Visible;
     }
-    private void CloseEditModal()
+    private void OpenDeleteModal(long id)
     {
-        EditModalVisibility = Visibility.Collapsed;
-    }
-    private void OpenAddModal()
-    {
-        AddModalVisibility = Visibility.Visible;
-    }
-    private void CloseAddModal()
-    {
-        AddModalVisibility = Visibility.Collapsed;
+        SelectedSkill = FilteredSkills.FirstOrDefault(a => a.Id == id);
+        DeleteModalVisibility = Visibility.Visible;
     }
 
     private async Task AddSkill()
@@ -290,16 +297,19 @@ public class SkillViewModel : ViewModelBase
         }
     }
 
-    private async Task DeleteSkill(long id)
+    private async Task DeleteSkill()
     {
-        var response = await _apiService.DeleteHeroSkillAsync(id);
+        if (SelectedSkill == null) return;
+
+        var response = await _apiService.DeleteHeroSkillAsync(SelectedSkill.Id);
         if (response.IsSuccessStatusCode)
         {
             _ = LoadSkills();
+            DeleteModalVisibility = Visibility.Collapsed;
         }
         else
         {
-            Debug.WriteLine($"Ошибка удаления умения {id}: {response.ReasonPhrase}");
+            Debug.WriteLine($"Ошибка удаления умения {SelectedSkill.Id}: {response.ReasonPhrase}");
         }
     }
 }

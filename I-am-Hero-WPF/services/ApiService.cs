@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -96,6 +95,12 @@ public class ApiService
     public async Task<HttpResponseMessage> GetHeroSkillsAsync()
     {
         HttpResponseMessage response = await _httpClient.GetAsync("api/Hero/get/HeroSkills");
+        string json = await response.Content.ReadAsStringAsync();
+        var responseObject = JsonSerializer.Deserialize<HeroSkillsResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        if (responseObject?.Token != null)
+        {
+            TokenStorage.SaveToken(responseObject.Token);
+        }
         return response;
     }
     public async Task<HttpResponseMessage> CreateHeroSkillAsync(HeroSkill skill)
@@ -133,6 +138,12 @@ public class ApiService
     public async Task<HttpResponseMessage> GetHeroAttributesAsync()
     {
         HttpResponseMessage response = await _httpClient.GetAsync("api/Hero/get/HeroAttributes");
+        string json = await response.Content.ReadAsStringAsync();
+        var responseObject = JsonSerializer.Deserialize<HeroAttributesResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        if (responseObject?.Token != null)
+        {
+            TokenStorage.SaveToken(responseObject.Token);
+        }
         return response;
     }
     public async Task<HttpResponseMessage> CreateHeroAttributeAsync(HeroAttribute attribute)
@@ -149,7 +160,7 @@ public class ApiService
     public async Task<HttpResponseMessage> DeleteHeroAttributeAsync(long id)
     {
         if (id <= 0)
-            throw new ArgumentException("Invalid skill ID", nameof(id));
+            throw new ArgumentException("Invalid attribute ID", nameof(id));
 
         return await _httpClient.DeleteAsync($"api/Hero/delete/HeroAttribute?id={id}");
     }
@@ -172,6 +183,12 @@ public class ApiService
     public async Task<HttpResponseMessage> GetHeroQuestsAsync()
     {
         HttpResponseMessage response = await _httpClient.GetAsync("api/Hero/get/Quests");
+        //string json = await response.Content.ReadAsStringAsync();
+        //var responseObject = JsonSerializer.Deserialize<HeroQuestsResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        //if (responseObject?.Token != null)
+        //{
+        //    TokenStorage.SaveToken(responseObject.Token);
+        //}
         return response;
     }
     public async Task<HttpResponseMessage> CreateHeroQuestAsync(Quest quest)
@@ -186,4 +203,48 @@ public class ApiService
         return response;
     }
 
+
+
+    //Hero Status Effects
+    public async Task<HttpResponseMessage> GetHeroEffectsAsync()
+    {
+        HttpResponseMessage response = await _httpClient.GetAsync("api/Hero/get/HeroStatusEffects");
+        string json = await response.Content.ReadAsStringAsync();
+        var responseObject = JsonSerializer.Deserialize<HeroStatusEffectsResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        if (responseObject?.Token != null)
+        {
+            TokenStorage.SaveToken(responseObject.Token);
+        }
+        return response;
+    }
+    public async Task<HttpResponseMessage> CreateHeroEffectAsync(HeroStatusEffect effect)
+    {
+        if (effect == null)
+            throw new ArgumentNullException(nameof(effect));
+
+        string json = JsonSerializer.Serialize(effect);
+        HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        HttpResponseMessage response = await _httpClient.PostAsync("api/Hero/create/HeroStatusEffect", content);
+        return response;
+    }
+    public async Task<HttpResponseMessage> DeleteHeroEffectAsync(long id)
+    {
+        if (id <= 0)
+            throw new ArgumentException("Invalid effect ID", nameof(id));
+
+        return await _httpClient.DeleteAsync($"api/Hero/delete/HeroStatusEffect?id={id}");
+    }
+
+    public async Task<HttpResponseMessage> EditHeroEffectAsync(HeroStatusEffect effect)
+    {
+        if (effect == null)
+            throw new ArgumentNullException(nameof(effect));
+
+        string json = JsonSerializer.Serialize(effect);
+        HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        HttpResponseMessage response = await _httpClient.PutAsync("api/Hero/edit/HeroStatusEffect", content);
+        return response;
+    }
 }
