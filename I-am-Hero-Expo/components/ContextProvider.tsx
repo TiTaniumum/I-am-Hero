@@ -14,9 +14,12 @@ import User from "@/models/User";
 import { Attribute } from "@/models/Attribute";
 import { Portal, Provider } from "react-native-paper";
 import { Skill } from "@/models/Skill";
+import { Quest } from "@/models/Quest";
+import Common from "@/models/Common";
 
 const user = new User();
-const api = new ApiService(user);
+const common = new Common();
+const api = new ApiService(user, common);
 const settings = new SettingsService();
 
 export interface iAlert {
@@ -42,8 +45,11 @@ type GlobalContext = {
   loc: string;
   setLoc: (value: string) => void;
   setAlpha: (hex: string, alpha: number) => string;
-  eidtSkill: Skill | undefined;
+  editSkill: Skill | undefined;
   setEditSkill: (value: Skill) => void;
+  editQuest: Quest | undefined;
+  setEditQuest: (value: Quest) => void;
+  common: Common;
 };
 
 const Context = createContext<GlobalContext>({} as GlobalContext);
@@ -58,7 +64,8 @@ export function ContextProvider({ children }: { children: ReactNode }) {
   const [editBioText, setEditBioText] = useState("");
   const [editAttribute, setEditAttribute] = useState<Attribute>();
   const [loc, setLoc] = useState("en");
-  const [eidtSkill, setEditSkill] = useState<Skill>()
+  const [editSkill, setEditSkill] = useState<Skill>()
+  const [editQuest, setEditQuest] = useState<Quest>()
   function onAlertClose() {
     setIsAlertVisible(false);
   }
@@ -79,6 +86,7 @@ export function ContextProvider({ children }: { children: ReactNode }) {
     user.Init().then(() => {
       if (!user.hero) api.GetHero(user);
     });
+    api.GetcQuestStatuses();
   }, []);
 
   const setAlpha = (hex: string, alpha: number) => {
@@ -106,8 +114,11 @@ export function ContextProvider({ children }: { children: ReactNode }) {
         loc,
         setLoc,
         setAlpha,
-        eidtSkill, 
+        editSkill, 
         setEditSkill,
+        editQuest,
+        setEditQuest,
+        common,
       }}
     >
       <Provider>

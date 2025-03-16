@@ -1,8 +1,11 @@
 import Resource from "@/constants/Resource";
 import { Attribute, AttributeState, IAttributeDTO } from "@/models/Attribute";
 import { BioPiece } from "@/models/BioPiece";
+import Common from "@/models/Common";
 import { Hero } from "@/models/Hero";
-import { Skill } from "@/models/Skill";
+import { IQuestDto, Quest } from "@/models/Quest";
+import QuestStatus from "@/models/QuestStatus";
+import { ISkillDTO, Skill } from "@/models/Skill";
 import User from "@/models/User";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosInstance, AxiosResponse } from "axios";
@@ -18,8 +21,10 @@ export default class ApiService {
   ) => {};
   setIsToken: any = (value: any) => {};
   user: User;
-  constructor(user: User) {
+  common: Common;
+  constructor(user: User, common: Common) {
     this.user = user;
+    this.common = common;
     switch (Platform.OS) {
       case "android":
         this.applicationID = 3;
@@ -44,7 +49,7 @@ export default class ApiService {
 
   Login(email: string, password: string) {
     const api = this;
-    axios
+    return axios
       .post(this.uri("Auth/login"), {
         Email: email,
         Password: password,
@@ -117,22 +122,40 @@ export default class ApiService {
         console.log(error);
       });
   }
+
   GetHero(user: User) {
-    if (this.token == null) return;
     const api = this;
-    axios
+    return axios
       .get(this.uri("Hero/get"), {
         headers: {
           Authorization: `Bearer ${this.token}`,
         },
       })
-      .then(function (response) {
+      .then((response)=>{
         const j = api.handleToken(response);
         user.hero = new Hero(j);
         AsyncStorage.setItem("Hero", JSON.stringify(user.hero));
         user.setIsHero(true);
-      })
-      .catch((error) => console.log(error));
+      });
+  }
+
+  EditHeroExp(xp: number){
+    const api = this;
+    const user = this.user;
+    return axios
+    .put(
+      this.uri("Hero/edit-heroExperience"),
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+        params: {
+          exp: xp
+        }
+      }
+    )
+    .then(api.handleToken);
   }
 
   GetBioPieces() {
@@ -203,8 +226,8 @@ export default class ApiService {
       .then(api.handleToken);
   }
 
-  EditAttribute(attribute: IAttributeDTO){
-    const api= this;
+  EditAttribute(attribute: IAttributeDTO) {
+    const api = this;
     return axios
       .put(this.uri("Hero/edit/HeroAttribute"), attribute, {
         headers: {
@@ -248,7 +271,7 @@ export default class ApiService {
 
   DeleteAttributeStates(ids: number[]) {
     const api = this;
-    ids.forEach(id=>{
+    ids.forEach((id) => {
       axios
         .delete(this.uri("Hero/delete/HeroAttributeState"), {
           params: { id: id },
@@ -256,8 +279,9 @@ export default class ApiService {
             Authorization: `Bearer ${this.token}`,
           },
         })
-        .then(api.handleToken).catch(error=>api.alert("ERROR","Something went wrong!"));
-    })
+        .then(api.handleToken)
+        .catch((error) => api.alert("ERROR", "Something went wrong!"));
+    });
   }
 
   PullAttributeStates() {
@@ -266,27 +290,36 @@ export default class ApiService {
       // 2 - тип состояние; 1 - численный
       if (attribute.cAttributeTypeId == 1) return;
       const response = await axios.get(
-        this.uri(`Hero/get/HeroAttributeStates?heroAttributeId=${attribute.id}`),{
+        this.uri(
+          `Hero/get/HeroAttributeStates?heroAttributeId=${attribute.id}`
+        ),
+        {
           headers: {
             Authorization: `Bearer ${this.token}`,
           },
         }
       );
-      attribute.states = AttributeState.AcceptArr(response.data.heroAttributeStates);
+      attribute.states = AttributeState.AcceptArr(
+        response.data.heroAttributeStates
+      );
     });
   }
 
-  GetAttributeStates(){
+  GetAttributeStates() {
     const api = this;
     const user = this.user;
-    return axios.get(this.uri("Hero/get/HeroAttributeStates"),{
-      headers: {
-        Authorization: `Bearer ${this.token}`,
-      },
-    }).then(response=>{
-      const j = api.handleToken(response);
-      user.attributeStates = AttributeState.AcceptArr(response.data.heroAttributeStates);
-    });
+    return axios
+      .get(this.uri("Hero/get/HeroAttributeStates"), {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      .then((response) => {
+        const j = api.handleToken(response);
+        user.attributeStates = AttributeState.AcceptArr(
+          response.data.heroAttributeStates
+        );
+      });
   }
 
   DeleteAttribute(id: number) {
@@ -316,9 +349,100 @@ export default class ApiService {
       });
   }
 
+  CreateSkill(skill: ISkillDTO) {
+    const api = this;
+    return axios
+      .post(this.uri("Hero/create/HeroSkill"), skill, {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      .then(api.handleToken);
+  }
+
+  EditSkill(skill: ISkillDTO) {
+    const api = this;
+    return axios
+      .put(this.uri("Hero/edit/HeroSkill"), skill, {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      .then(api.handleToken);
+  }
+
+  DeleteSkill(id: number) {
+    const api = this;
+    return axios
+      .delete(this.uri("Hero/delete/HeroSkill"), {
+        params: { id: id },
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      .then(api.handleToken);
+  }
+
+  GetQuests() {
+    const api = this;
+    const user = this.user;
+    return axios
+      .get(this.uri("Hero/get/Quests"), {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      .then((response) => {
+        const j = api.handleToken(response);
+        user.quests = Quest.AcceptArr(j.quests);
+      });
+  }
+
+  CreateQuest(quest: IQuestDto) {
+    const api = this;
+    return axios
+      .post(this.uri("Hero/create/Quest"), quest, {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      .then(api.handleToken);
+  }
+
+  EditQuest(quest: IQuestDto) {
+    const api = this;
+    return axios
+      .put(this.uri("Hero/edit/Quest"), quest, {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      .then(api.handleToken);
+  }
+
+  DeleteQuest(id: number){
+    const api = this;
+    return axios.delete(this.uri("Hero/delete/Quest"), {
+      params: { id: id },
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+    })
+    .then(api.handleToken);
+  }
+
+  GetcQuestStatuses() {
+    const api = this;
+    const common = this.common;
+    return axios.get(this.uri("Common/all-cQuestStatus")).then((response) => {
+      const j = api.handleToken(response);
+      common.questStatuses = QuestStatus.AcceptArr(j);
+    });
+  }
+
   private handleToken(response: AxiosResponse<any, any>) {
     const j = response.data;
-    if (j.token != "" && j.token != null) {
+    if (j.token != "" && j.token != null && j.token != undefined) {
       this.SetNewToken(j.token);
     }
     return j;

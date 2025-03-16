@@ -20,6 +20,9 @@ export type SelectProps = {
   onSelect: (item: any) => void;
   style?: ViewStyle;
   displayTitle: (item: any) => string;
+  displayStyle?: ViewStyle;
+  color?: string;
+  isActive?: boolean;
 };
 
 export default function Select({
@@ -29,26 +32,31 @@ export default function Select({
   onSelect,
   style,
   displayTitle,
+  displayStyle,
+  color,
+  isActive
 }: SelectProps) {
   const [selected, setSelected] = useState(selectedValue);
   const [modalVisible, setModalVisible] = useState(false);
   const [options, setOptions] = useState(data);
   const { setAlpha } = useGlobalContext();
   const colorScheme = useColorScheme();
-  const color = Colors[colorScheme ?? "light"].tint;
+  const basecolor = Colors[colorScheme ?? "light"].tint;
 
   return (
     <ThemedView style={[style]}>
       <Pressable
         style={({ pressed, hovered }) => [
-          hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
-          pressed ? { backgroundColor: color } : { transitionDuration: "0.2s" },
+          hovered ? { backgroundColor: setAlpha(basecolor, 0.5) } : {},
+          pressed ? { backgroundColor: basecolor } : { transitionDuration: "0.2s" },
           Styles.pressable,
-          { borderColor: color },
+          { borderColor: basecolor },
+          displayStyle,
+          {borderColor: color}
         ]}
-        onPress={() => setModalVisible(true)}
+        onPress={() => {if(isActive || isActive == undefined) setModalVisible(true)}}
       >
-        <ThemedText>
+        <ThemedText style={{color}}>
           {selected === undefined || selected === null
             ? "..."
             : displayTitle(selected)}
@@ -75,9 +83,9 @@ export default function Select({
                 <Pressable
                   key={index}
                   style={({ pressed, hovered }) => [
-                    hovered ? { backgroundColor: setAlpha(color, 0.5) } : {},
+                    hovered ? { backgroundColor: setAlpha(basecolor, 0.5) } : {},
                     pressed
-                      ? { backgroundColor: color }
+                      ? { backgroundColor: basecolor }
                       : { transitionDuration: "0.2s" },
                     styles.option,
                   ]}

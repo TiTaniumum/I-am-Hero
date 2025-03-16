@@ -1,5 +1,6 @@
 import { Collapsible } from "@/components/Collapsible";
 import { useGlobalContext } from "@/components/ContextProvider";
+import ProgressBar from "@/components/ProgressBar";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
@@ -7,6 +8,7 @@ import Resource from "@/constants/Resource";
 import Styles from "@/constants/Styles";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
 import { Skill } from "@/models/Skill";
+import User from "@/models/User";
 import { AntDesign, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
@@ -112,7 +114,7 @@ export default function SkillsScreen() {
           )
         );
         api
-          .DeleteBioPiece(id)
+          .DeleteSkill(id)
           .catch((error) =>
             alert(Resource.get("error!"), Resource.get("somethingwrong"))
           );
@@ -153,7 +155,7 @@ export default function SkillsScreen() {
           pressed ? { backgroundColor: color } : { transitionDuration: "0.2s" },
         ]}
         onPress={() => {
-          router.push("/createbiography");
+          router.push("/createskill");
         }}
       >
         <AntDesign name="pluscircleo" size={50} color={color} />
@@ -189,8 +191,63 @@ export default function SkillsScreen() {
                 key={item.id}
                 style={[styles.item, { borderColor: color }]}
               >
-                <Collapsible title={<ThemedView></ThemedView>}>
+                <Collapsible
+                  title={
+                    <ThemedView style={{ width: "100%", alignItems: "center" }}>
+                      <ThemedText
+                        style={[
+                          styles.itemName,
+                          isDeleted(item.id)
+                            ? {
+                                textDecorationLine: "line-through",
+                                color: "gray",
+                              }
+                            : {},
+                        ]}
+                      >
+                        {item.name}
+                      </ThemedText>
+                      <ProgressBar
+                        minValue={0}
+                        curValue={
+                          User.GetExpPerLevel(
+                            item.experience,
+                            item.cLevelCalculationTypeId
+                          ).curXp
+                        }
+                        maxValue={
+                          User.GetExpPerLevel(
+                            item.experience,
+                            item.cLevelCalculationTypeId
+                          ).xpToNextLvl
+                        }
+                        level={User.GetLevel(
+                          item.experience,
+                          item.cLevelCalculationTypeId
+                        )}
+                        numbersVisible
+                        color={isDeleted(item.id) ? "gray" : color}
+                        height={15}
+                        type="xp"
+                        width={"100%"}
+                      />
+                    </ThemedView>
+                  }
+                >
                   <Animated.View entering={FadeIn}>
+                    <ThemedText
+                      style={[
+                        styles.text,
+                        isDeleted(item.id)
+                          ? {
+                              textDecorationLine: "line-through",
+                              color: "gray",
+                            }
+                          : {},
+                      ]}
+                    >
+                      {item.description}
+                    </ThemedText>
                     <View style={styles.options}>
                       <Pressable
                         style={({ pressed, hovered }) => [
@@ -208,7 +265,7 @@ export default function SkillsScreen() {
                         onPress={() => {
                           if (isDeleted(item.id)) return;
                           setEditSkill(item);
-                          router.push("/editbiography");
+                          router.push("/editskill");
                         }}
                       >
                         <MaterialIcons
@@ -251,22 +308,12 @@ export default function SkillsScreen() {
                     </View>
                   </Animated.View>
                 </Collapsible>
-                <ThemedText
-                  style={[
-                    styles.text,
-                    isDeleted(item.id)
-                      ? { textDecorationLine: "line-through", color: "gray" }
-                      : {},
-                  ]}
-                >
-                  {item.description}
-                </ThemedText>
               </ThemedView>
             </Animated.View>
           )}
           ListEmptyComponent={
             <ThemedView style={Styles.container}>
-              <ThemedText>You didn't create skills yet</ThemedText>
+              <ThemedText>{Resource.get("noskillsyet")}</ThemedText>
             </ThemedView>
           }
         />
@@ -280,15 +327,18 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   item: {
-    padding: 20,
+    padding: 10,
     width: "100%",
-    borderBottomWidth: 1,
-    borderBottomColor: "white",
+    borderBottomWidth: 0,
+  },
+  itemName: {
+    fontWeight: "700",
   },
   date: {
     color: "gray",
   },
   text: {
+    paddingTop: 20,
     paddingHorizontal: 20,
   },
   options: {

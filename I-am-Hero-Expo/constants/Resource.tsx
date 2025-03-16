@@ -82,8 +82,25 @@ const source: { [key: string]: { [loc: string]: string } } = {
   habbits: { ru: "Привычки", en: "Habbits" },
   settings: { ru: "Настройки", en: "Settings" },
   language: { ru: "Язык", en: "Language" },
-  //   "": { ru: "", en: "" },
-  //   "": { ru: "", en: "" },
+  createskill: { ru: "Создание скила", en: "Skill creation" },
+  skillname: { ru: "Назавние скила...", en: "Skill name..." },
+  expamount: {
+    ru: "Количество опыта для скила",
+    en: "Amount of experience for the skill...",
+  },
+  xp: { ru: "опыт", en: "xp" },
+  noskillsyet: {
+    ru: "Вы пока что не создавали скилы",
+    en: "You didn't create skills yet",
+  },
+  editskill: { ru: "Изменение скила", en: "Skill edit" },
+  title: { ru: "Заголовок...", en: "Title..." },
+  xpquest: { ru: "Опыт за выполнение...", en: "Experience for completion..." },
+  experience: { ru: "Опыт", en: "Experience" },
+  simple: { ru: "Простой", en: "Simple" },
+  detailed: { ru: "Детальный", en: "Detailed" },
+  editquest: { ru: "Изменение квеста", en: "Quest edit" },
+  createquest: { ru: "Создание квеста", en: "Quest creation" },
   //   "": { ru: "", en: "" },
 };
 
@@ -92,5 +109,9 @@ export default class Resource {
   static loc: string = "ru";
   static get(key: string) {
     return source[key][Resource.loc];
+  }
+  static extract(item: { nameEn: string; nameRu: string }): string {
+    if (Resource.loc == "en") return item.nameEn;
+    else return item.nameRu;
   }
 }

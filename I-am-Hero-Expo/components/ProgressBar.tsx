@@ -9,6 +9,7 @@ import { ThemedView } from "./ThemedView";
 import { ThemedText } from "./ThemedText";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
 import { Colors } from "@/constants/Colors";
+import Resource from "@/constants/Resource";
 
 export type ProgressBarProps = ViewProps & {
   minValue: number;
@@ -20,6 +21,8 @@ export type ProgressBarProps = ViewProps & {
   height?: DimensionValue;
   numbersVisible?: boolean;
   colorfull?: boolean;
+  type?: "attr" | "xp";
+  level?: number;
 };
 
 export default function ProgressBar({
@@ -32,6 +35,8 @@ export default function ProgressBar({
   height,
   numbersVisible,
   colorfull,
+  type,
+  level,
 }: ProgressBarProps) {
   if (curValue > maxValue) curValue = maxValue;
   if (curValue < minValue) curValue = minValue;
@@ -46,9 +51,31 @@ export default function ProgressBar({
     return colorScheme == "light" ? "#52C41A" : "#4ADE80"; // Green
   };
   return (
-    <ThemedView style={{width}}>
+    <ThemedView style={{ width }}>
+      {type === "xp" && (
+        <ThemedView style={styles.numericData}>
+          <ThemedText style={{color: color}}>
+            {Resource.get("level")}: {level}
+          </ThemedText>
+          {numbersVisible && (
+            <ThemedView
+              style={[styles.numericData, { justifyContent: "flex-end" }]}
+            >
+              <ThemedText style={{ color: color }}>{curValue}</ThemedText>
+              <ThemedText style={{ color: color }}> / </ThemedText>
+              <ThemedText style={{ color: color }}>
+                {maxValue} {Resource.get("xp")}
+              </ThemedText>
+            </ThemedView>
+          )}
+        </ThemedView>
+      )}
       <ThemedView
-        style={[styles.outer, style, { borderColor: color, width: '100%', height }]}
+        style={[
+          styles.outer,
+          style,
+          { borderColor: color, width: "100%", height },
+        ]}
       >
         <ThemedView
           style={[
@@ -56,22 +83,49 @@ export default function ProgressBar({
             style,
             {
               width: calculatedWidth,
-              backgroundColor: colorfull ? getProgressColor(progress) : color ?? themeColor,
+              backgroundColor: colorfull
+                ? getProgressColor(progress)
+                : color ?? themeColor,
             },
           ]}
         ></ThemedView>
       </ThemedView>
-      {numbersVisible && (
+      {numbersVisible && (type === undefined || type === "attr") && (
         <ThemedView style={styles.numericData}>
-          <ThemedText style={{color: color}}>{minValue}</ThemedText>
-          <ThemedText style={{color: color}}>{curValue}</ThemedText>
-          <ThemedText style={{color: color}}>{maxValue}</ThemedText>
+          <ThemedText style={{ color: color }}>{minValue}</ThemedText>
+          <ThemedText style={{ color: color }}>{curValue}</ThemedText>
+          <ThemedText style={{ color: color }}>{maxValue}</ThemedText>
         </ThemedView>
       )}
     </ThemedView>
   );
 }
 
+// function getStyles(color: string){
+//   const styles = StyleSheet.create({
+//     outer: {
+//       borderWidth: 2,
+//       borderRadius: 30,
+//       padding: 3,
+//       height: 10,
+//       width: "100%",
+//     },
+//     inner: {
+//       height: "100%",
+//       borderRadius: 50,
+//     },
+//     numericData: {
+//       flexDirection: "row",
+//       justifyContent: "space-between",
+//     },
+//     xpNumericData: {
+//       flexDirection: "row",
+//       justifyContent: "flex-end",
+//     },
+//     text: {color: color}
+//   });
+//   return styles;
+// }
 const styles = StyleSheet.create({
   outer: {
     borderWidth: 2,
