@@ -312,8 +312,9 @@ public class QuestViewModel : ViewModelBase
                     break;
             }
         }
+        var uncompletedQuests = filtered.Where(quest => quest.CQuestStatusId != 3).ToList();
 
-        FilteredQuests = new ObservableCollection<Quest>(filtered);
+        FilteredQuests = new ObservableCollection<Quest>(uncompletedQuests);
     }
 
     private void ClearSearch()

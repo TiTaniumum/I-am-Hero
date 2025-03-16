@@ -20,13 +20,13 @@
               HorizontalScrollBarVisibility="Disabled"
               CanContentScroll="True"
               PanningMode="VerticalOnly">
-                <Canvas Grid.Column="0" Background="#f2f2f2" Name="MainCanvas" Loaded="MainCanvas_Loaded" SizeChanged="MainCanvas_SizeChanged">
+                <Canvas Grid.Column="0" Background="#f2f2f2" x:Name="MainCanvas" Loaded="MainCanvas_Loaded" SizeChanged="MainCanvas_SizeChanged">
                     <!-- Profile -->
                     <Grid x:Name="ProfileBlock" Canvas.Left="10" Canvas.Top="10" Canvas.ZIndex="2" Margin="5"
-                    Width="250" Height="210" Background="White"
-                    MouseLeftButtonDown="Block_MouseLeftButtonDown"
-                    MouseMove="Block_MouseMove"
-                    MouseLeftButtonUp="Block_MouseLeftButtonUp">
+                          Width="250" Height="210" Background="White"
+                          MouseLeftButtonDown="Block_MouseLeftButtonDown"
+                          MouseMove="Block_MouseMove"
+                          MouseLeftButtonUp="Block_MouseLeftButtonUp">
                         <Grid.Clip>
                             <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,250,150"/>
                         </Grid.Clip>
@@ -35,10 +35,10 @@
                                  Foreground="{DynamicResource PrimaryHueMidBrush}" />
                             <StackPanel Orientation="Vertical" Margin="10">
                                 <TextBlock Text="{Binding HeroName}" FontSize="20" FontWeight="Bold"/>
-                                <StackPanel Orientation="Horizontal">
+                                <StackPanel Orientation="Horizontal" Margin="0, 5, 0, 0">
                                     <ProgressBar Minimum="0" Maximum="100" Value="{Binding HeroExperience}" Height="20" Width="100"/>
-                                    <TextBlock Text="{Binding HeroExperience, StringFormat='{}{0}/100 exp'}" FontSize="12" Foreground="Gray" Margin="-60, 0, 0, 0"/>
                                 </StackPanel>
+                                <TextBlock Text="{Binding HeroExperience, StringFormat='{}{0}/100 exp'}" FontSize="12" Foreground="Gray" Margin="0"/>
                             </StackPanel>
                         </StackPanel>
 
@@ -265,6 +265,7 @@
                         <Label Content="Rows" FontSize="14" Grid.Column="0" HorizontalAlignment="Left"/>
                         <TextBox Text="{Binding Rows, Mode=TwoWay}" Width="60"
                                  Style="{StaticResource CustomTextBoxStyle}"
+                                 Tag="{Binding MinRows}"
                                  PreviewTextInput="NumericTextBox_PreviewTextInput"
                                  PreviewKeyDown="NumericTextBox_PreviewKeyDown"
                                  Grid.Column="1" HorizontalAlignment="Right"/>
@@ -279,6 +280,7 @@
                         <Label Content="Columns" FontSize="14" Grid.Column="0" HorizontalAlignment="Left"/>
                         <TextBox Text="{Binding Columns, Mode=TwoWay}" Width="60"
                                  Style="{StaticResource CustomTextBoxStyle}"
+                                 Tag="{Binding MinColumns}"
                                  PreviewTextInput="NumericTextBox_PreviewTextInput"
                                  PreviewKeyDown="NumericTextBox_PreviewKeyDown"
                                  Grid.Column="1" HorizontalAlignment="Right"/>
@@ -291,7 +293,7 @@
                         <CheckBox Content="Атрибуты" IsChecked="True" IsEnabled="False"/>
                         <CheckBox Content="Эффекты" IsChecked="False" IsEnabled="False"/>
                         <CheckBox Content="Квесты" IsChecked="True" IsEnabled="False"/>
-                        <CheckBox Content="Достижения" IsChecked="{Binding AchievementsPanel, Mode=TwoWay}" IsEnabled="True"/>
+                        <CheckBox Content="Достижения" IsChecked="False" IsEnabled="False"/>
                     </StackPanel>
 
                     <!-- Пустое пространство -->

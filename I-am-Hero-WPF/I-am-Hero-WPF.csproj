@@ -168,6 +168,7 @@
     <Compile Include="Converters\ProgressConverter.cs" />
     <Compile Include="Services\ApiService.cs" />
     <Compile Include="Services\AuthManager.cs" />
+    <Compile Include="Services\LayoutManager.cs" />
     <Compile Include="Services\TokenStorage.cs" />
     <Compile Include="ViewModels\AddQuestViewModel.cs" />
     <Compile Include="ViewModels\AddSkillViewModel.cs" />

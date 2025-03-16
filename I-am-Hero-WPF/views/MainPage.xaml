@@ -32,7 +32,7 @@
         <DockPanel Grid.Row="1" Width="{Binding SidebarWidth}" LastChildFill="True" Background="LightGray">
             <!-- Верхние кнопки -->
             <StackPanel DockPanel.Dock="Top">
-                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                <Button Style="{StaticResource MaterialDesignFlatButton}" IsEnabled="False"
                         Command="{Binding NavigateToProfileCommand}"
                 ToolTip="{x:Static c:Resources.MainPageMenuProfile}"
                 HorizontalAlignment="Stretch"
@@ -126,7 +126,7 @@
 
                 <Separator Height="1" Background="Gray" Margin="10,5"/>
 
-                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                <Button Style="{StaticResource MaterialDesignFlatButton}" IsEnabled="False"
                         Command="{Binding NavigateToDailyCommand}"
                 ToolTip="{x:Static c:Resources.MainPageMenuDailies}"
                 HorizontalAlignment="Stretch"
@@ -162,7 +162,7 @@
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                <Button Style="{StaticResource MaterialDesignFlatButton}" IsEnabled="False"
                         Command="{Binding NavigateToQuestLineCommand}"
                 ToolTip="{x:Static c:Resources.MainPageMenuQuestLines}"
                 HorizontalAlignment="Stretch"
@@ -180,7 +180,7 @@
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                <Button Style="{StaticResource MaterialDesignFlatButton}" IsEnabled="False"
                         Command="{Binding NavigateToHabbitCommand}"
                 ToolTip="{x:Static c:Resources.MainPageMenuQuestHabbits}"
                 HorizontalAlignment="Stretch"
@@ -200,7 +200,7 @@
 
                 <Separator Height="1" Background="Gray" Margin="10,5"/>
 
-                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                <Button Style="{StaticResource MaterialDesignFlatButton}" IsEnabled="False"
                         Command="{Binding NavigateToAchievementCommand}"
                 ToolTip="{x:Static c:Resources.MainPageMenuAchievements}"
                 HorizontalAlignment="Stretch"

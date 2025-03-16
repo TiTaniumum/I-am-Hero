@@ -24,6 +24,10 @@ namespace I_am_Hero_WPF.Views
 
         private int _rows = 6;
         private int _columns = 9;
+        private readonly int MinRows = 6;
+        private readonly int MinColumns = 9;
+        private const double MinGridWidth = 180;
+        private const double MinGridHeight = 120;
         private readonly double _thumbMargin = 10;
         private DashboardViewModel ViewModel => DataContext as DashboardViewModel;
 
@@ -95,6 +99,7 @@ namespace I_am_Hero_WPF.Views
                 Canvas.SetTop(_draggedElement, originalPos.Y);
             }
             _draggedElement = null;
+            LayoutManager.SaveLayout(MainCanvas);
         }
 
         private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
@@ -121,6 +126,7 @@ namespace I_am_Hero_WPF.Views
                     double canvasHeight = MainCanvas.ActualHeight;
                     _relativePositions[grid] = (new Point(left / canvasWidth, top / canvasHeight),
                                                 new Point(nearestBottomRight.X / canvasWidth, nearestBottomRight.Y / canvasHeight));
+                    LayoutManager.SaveLayout(MainCanvas);
                 }
             }
         }
@@ -131,7 +137,6 @@ namespace I_am_Hero_WPF.Views
 
             foreach (var grid in MainCanvas.Children.OfType<Grid>())
             {
-                if (grid.Name == "EditModeBlock") continue;
                 if (grid == element) continue;
                 double gridLeft = Canvas.GetLeft(grid);
                 double gridTop = Canvas.GetTop(grid);
@@ -147,9 +152,55 @@ namespace I_am_Hero_WPF.Views
 
         private void MainCanvas_Loaded(object sender, RoutedEventArgs e)
         {
-            DrawGridLinesAdaptive();
+            double blockWidth = MainCanvas.ActualWidth * 0.33;
+            double blockHeight = MainCanvas.ActualHeight * 0.5;
+
+            Canvas.SetLeft(ProfileBlock, 10);
+            Canvas.SetTop(ProfileBlock, 10);
+
+            Canvas.SetLeft(SkillsBlock, MainCanvas.ActualWidth * 0.33);
+            Canvas.SetTop(SkillsBlock, 10);
+
+            Canvas.SetLeft(AttributesBlock, MainCanvas.ActualWidth * 0.66);
+            Canvas.SetTop(AttributesBlock, 10);
+
+            Canvas.SetLeft(CalendarBlock, 10);
+            Canvas.SetTop(CalendarBlock, MainCanvas.ActualHeight * 0.5);
+
+            Canvas.SetLeft(QuestsBlock, MainCanvas.ActualWidth * 0.33);
+            Canvas.SetTop(QuestsBlock, MainCanvas.ActualHeight * 0.5);
+
+            ProfileBlock.Width = blockWidth;
+            ProfileBlock.Height = blockHeight;
+
+            SkillsBlock.Width = blockWidth;
+            SkillsBlock.Height = blockHeight;
+
+            AttributesBlock.Width = blockWidth;
+            AttributesBlock.Height = blockHeight;
+
+            CalendarBlock.Width = blockWidth;
+            CalendarBlock.Height = blockHeight;
+
+            QuestsBlock.Width = blockWidth;
+            QuestsBlock.Height = blockHeight;
+
             AlignBlocksToGrid();
+
+            LayoutManager.LoadLayout(MainCanvas); 
             SaveRelativePositions();
+            var scrollViewer = FindParent<ScrollViewer>(MainCanvas);
+            if (scrollViewer != null)
+            {
+                scrollViewer.SizeChanged += ScrollViewer_SizeChanged;
+            }            
+        }
+        private void ScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            DrawGridLinesAdaptive();
+            RestorePositions();
+            AlignBlocksToGrid();
+            LayoutManager.SaveLayout(MainCanvas);
         }
 
         private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -157,6 +208,7 @@ namespace I_am_Hero_WPF.Views
             DrawGridLinesAdaptive();
             RestorePositions();
             AlignBlocksToGrid();
+            LayoutManager.SaveLayout(MainCanvas);
         }
 
         private void OnEditModeButtonClick(object sender, RoutedEventArgs e)
@@ -244,7 +296,6 @@ namespace I_am_Hero_WPF.Views
         {
             foreach (var grid in MainCanvas.Children.OfType<Grid>())
             {
-                if (grid.Name == "EditModeBlock") continue;
                 double left = Canvas.GetLeft(grid);
                 double top = Canvas.GetTop(grid);
                 Point nearestTopLeft = GetNearestGridPoint(left, top);
@@ -264,7 +315,6 @@ namespace I_am_Hero_WPF.Views
             _relativePositions.Clear();
             foreach (var grid in MainCanvas.Children.OfType<Grid>())
             {
-                if (grid.Name == "EditModeBlock") continue;
                 _relativePositions[grid] = (new Point(Canvas.GetLeft(grid) / width, Canvas.GetTop(grid) / height),
                                             new Point((Canvas.GetLeft(grid) + grid.Width) / width, (Canvas.GetTop(grid) + grid.Height) / height));
             }
@@ -289,6 +339,8 @@ namespace I_am_Hero_WPF.Views
 
         public int GetRows() => _rows;
         public int GetColumns() => _columns;
+        public double GetMainCanvasWidth() => MainCanvas.ActualWidth;
+        public double GetMainCanvasHeight() => MainCanvas.ActualHeight;
 
         public void SetRows(int value)
         {
@@ -297,7 +349,8 @@ namespace I_am_Hero_WPF.Views
             RestorePositions();
             AlignBlocksToGrid();
         }
-        public void SetColumns(int value){
+        public void SetColumns(int value)
+        {
             _columns = value;
             DrawGridLinesAdaptive();
             RestorePositions();
@@ -306,13 +359,46 @@ namespace I_am_Hero_WPF.Views
 
         private void NumericTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = !Regex.IsMatch(e.Text, "^[0-9]$");
-        }
+            if (!int.TryParse(e.Text, out int newNumber))
+            {
+                e.Handled = true;
+                return;
+            }
 
+            var textBox = sender as TextBox;
+            string fullText = textBox.Text.Insert(textBox.SelectionStart, e.Text);
+
+            if (textBox.Tag is int minValue && int.TryParse(fullText, out int result) && result < minValue)
+            {
+                e.Handled = true;
+            }
+        }
         private void NumericTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Space)
-                e.Handled = true;
+            var textBox = sender as TextBox;
+
+            if (e.Key == Key.Back || e.Key == Key.Delete)
+            {
+                if (textBox.Text.Length == 1 ||
+                    (int.TryParse(textBox.Text, out int value) &&
+                     textBox.Tag is int minValue && value <= minValue))
+                {
+                    e.Handled = true;
+                }
+            }
         }
+
+        private static T FindParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            DependencyObject parent = VisualTreeHelper.GetParent(child);
+            while (parent != null)
+            {
+                if (parent is T correctlyTyped)
+                    return correctlyTyped;
+                parent = VisualTreeHelper.GetParent(parent);
+            }
+            return null;
+        }
+
     }
 }

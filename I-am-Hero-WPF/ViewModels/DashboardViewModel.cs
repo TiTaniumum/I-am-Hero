@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -11,6 +12,8 @@ using I_am_Hero_WPF.Views;
 public class DashboardViewModel : ViewModelBase
 {
     private readonly DashboardView _dashboardView;
+
+    // Commands
     public RelayCommand AddSkillCommand { get; }
     public RelayCommand AddAttributeCommand { get; }
     public RelayCommand AddQuestCommand { get; }
@@ -27,6 +30,7 @@ public class DashboardViewModel : ViewModelBase
 
     private readonly ApiService _apiService;
 
+    // Hero
     private string _heroName;
     private int _heroExperience;
     private int _cLevelCalculationTypeId;
@@ -64,6 +68,7 @@ public class DashboardViewModel : ViewModelBase
         set => SetProperty(ref _quests, value);
     }
 
+    // Skills
     private Visibility _addSkillVisibility = Visibility.Collapsed;
     private string _skillName;
     private string _skillDescription;
@@ -93,7 +98,7 @@ public class DashboardViewModel : ViewModelBase
         set => SetProperty(ref _skillExperience, value);
     }
 
-
+    // Attributes
     private Visibility _addAttributeVisibility = Visibility.Collapsed;
     private string _attributeName;
     private string _attributeDescription;
@@ -135,6 +140,7 @@ public class DashboardViewModel : ViewModelBase
         set => SetProperty(ref _attributeValue, value);
     }
 
+    // Quests
     private Visibility _addQuestVisibility = Visibility.Collapsed;
     private string _questTitle;
     private string _questDescription;
@@ -165,6 +171,7 @@ public class DashboardViewModel : ViewModelBase
         set => SetProperty(ref _questExperience, value);
     }
 
+    // Sidebar
     private bool _sidebarExpanded;
     private double _sidebarWidth;
     private string _sidebarArrowIcon;
@@ -174,6 +181,8 @@ public class DashboardViewModel : ViewModelBase
     private bool _isEditMode;
     private int _rows;
     private int _columns;
+    private int _minRows = 6;
+    private int _minColumns = 9;
 
     public bool SidebarExpanded
     {
@@ -202,6 +211,7 @@ public class DashboardViewModel : ViewModelBase
         {
             if (_rows != value)
             {
+                if (value < MinRows) value = MinRows;
                 _rows = value;
                 OnPropertyChanged(nameof(Rows));
             }
@@ -214,10 +224,50 @@ public class DashboardViewModel : ViewModelBase
         {
             if (_columns != value)
             {
+                if (value < MinColumns) value = MinColumns;
                 _columns = value;
                 OnPropertyChanged(nameof(Columns));
             }
         }
+    }
+    public int MinRows
+    {
+        get => _minRows;
+        set
+        {
+            if (_minRows != value)
+            {
+                _minRows = value;
+                OnPropertyChanged(nameof(MinRows));
+            }
+        }
+    }
+    public int MinColumns
+    {
+        get => _minColumns;
+        set
+        {
+            if (_minColumns != value)
+            {
+                _minColumns = value;
+                OnPropertyChanged(nameof(MinColumns));
+            }
+        }
+    }
+
+    //Blocks
+    private double _profileLeft;
+    public double ProfileLeft
+    {
+        get => _profileLeft;
+        set { _profileLeft = value; OnPropertyChanged(); }
+    }
+
+    private double _profileTop;
+    public double ProfileTop
+    {
+        get => _profileTop;
+        set { _profileTop = value; OnPropertyChanged(); }
     }
 
 
@@ -361,7 +411,12 @@ public class DashboardViewModel : ViewModelBase
 
                 if (responseObject?.Quests != null)
                 {
-                    Quests = new ObservableCollection<Quest>(responseObject.Quests);
+                    var filteredQuests = responseObject.Quests
+                    .Where(quest => quest.CQuestStatusId != 3)
+                    .ToList();
+
+                    Quests = new ObservableCollection<Quest>(filteredQuests);
+                    //Quests = new ObservableCollection<Quest>(responseObject.Quests);
                 }
                 else
                 {
@@ -459,5 +514,4 @@ public class DashboardViewModel : ViewModelBase
         _dashboardView.SetRows(Rows);
         _dashboardView.SetColumns(Columns);
     }
-
 }
