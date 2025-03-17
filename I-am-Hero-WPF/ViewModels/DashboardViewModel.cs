@@ -1,14 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using I_am_Hero_WPF;
 using I_am_Hero_WPF.Models;
+using I_am_Hero_WPF.Views;
 
 public class DashboardViewModel : ViewModelBase
 {
+    private readonly DashboardView _dashboardView;
+
+    // Commands
     public RelayCommand AddSkillCommand { get; }
     public RelayCommand AddAttributeCommand { get; }
     public RelayCommand AddQuestCommand { get; }
@@ -19,16 +24,13 @@ public class DashboardViewModel : ViewModelBase
     public RelayCommand OpenQuestModalCommand { get; }
     public RelayCommand CloseQuestModalCommand { get; }
     public RelayCommand ToggleEditModeCommand { get; }
+    public RelayCommand ToggleMenuCommand { get; }
+    public RelayCommand ResetCommand { get; }
+    public RelayCommand ApplyChangesCommand { get; }
 
     private readonly ApiService _apiService;
 
-    private bool _isEditMode;
-    public bool IsEditMode
-    {
-        get => _isEditMode;
-        set { _isEditMode = value; OnPropertyChanged(nameof(IsEditMode)); }
-    }
-
+    // Hero
     private string _heroName;
     private int _heroExperience;
     private int _cLevelCalculationTypeId;
@@ -66,6 +68,7 @@ public class DashboardViewModel : ViewModelBase
         set => SetProperty(ref _quests, value);
     }
 
+    // Skills
     private Visibility _addSkillVisibility = Visibility.Collapsed;
     private string _skillName;
     private string _skillDescription;
@@ -95,7 +98,7 @@ public class DashboardViewModel : ViewModelBase
         set => SetProperty(ref _skillExperience, value);
     }
 
-
+    // Attributes
     private Visibility _addAttributeVisibility = Visibility.Collapsed;
     private string _attributeName;
     private string _attributeDescription;
@@ -137,6 +140,7 @@ public class DashboardViewModel : ViewModelBase
         set => SetProperty(ref _attributeValue, value);
     }
 
+    // Quests
     private Visibility _addQuestVisibility = Visibility.Collapsed;
     private string _questTitle;
     private string _questDescription;
@@ -167,13 +171,121 @@ public class DashboardViewModel : ViewModelBase
         set => SetProperty(ref _questExperience, value);
     }
 
+    // Sidebar
+    private bool _sidebarExpanded;
+    private double _sidebarWidth;
+    private string _sidebarArrowIcon;
 
-    public DashboardViewModel()
+    private const double _sidebarUnfoldedWidth = 200;
+    private const double _sidebarFoldedWidth = 30;
+    private bool _isEditMode;
+    private int _rows;
+    private int _columns;
+    private int _minRows = 6;
+    private int _minColumns = 9;
+
+    public bool SidebarExpanded
     {
+        get => _sidebarExpanded;
+        set { _sidebarExpanded = value; OnPropertyChanged(); }
+    }
+    public double SidebarWidth
+    {
+        get => _sidebarWidth;
+        set { _sidebarWidth = value; OnPropertyChanged(); }
+    }
+    public string SidebarArrowIcon
+    {
+        get => _sidebarArrowIcon;
+        set { _sidebarArrowIcon = value; OnPropertyChanged(); }
+    }
+    public bool IsEditMode
+    {
+        get => _isEditMode;
+        set { _isEditMode = value; OnPropertyChanged(nameof(IsEditMode)); }
+    }
+    public int Rows
+    {
+        get => _rows;
+        set
+        {
+            if (_rows != value)
+            {
+                if (value < MinRows) value = MinRows;
+                _rows = value;
+                OnPropertyChanged(nameof(Rows));
+            }
+        }
+    }
+    public int Columns
+    {
+        get => _columns;
+        set
+        {
+            if (_columns != value)
+            {
+                if (value < MinColumns) value = MinColumns;
+                _columns = value;
+                OnPropertyChanged(nameof(Columns));
+            }
+        }
+    }
+    public int MinRows
+    {
+        get => _minRows;
+        set
+        {
+            if (_minRows != value)
+            {
+                _minRows = value;
+                OnPropertyChanged(nameof(MinRows));
+            }
+        }
+    }
+    public int MinColumns
+    {
+        get => _minColumns;
+        set
+        {
+            if (_minColumns != value)
+            {
+                _minColumns = value;
+                OnPropertyChanged(nameof(MinColumns));
+            }
+        }
+    }
+
+    //Blocks
+    private double _profileLeft;
+    public double ProfileLeft
+    {
+        get => _profileLeft;
+        set { _profileLeft = value; OnPropertyChanged(); }
+    }
+
+    private double _profileTop;
+    public double ProfileTop
+    {
+        get => _profileTop;
+        set { _profileTop = value; OnPropertyChanged(); }
+    }
+
+
+    public DashboardViewModel(DashboardView dashboardView)
+    {
+        _dashboardView = dashboardView;
+        Rows = _dashboardView.GetRows();
+        Columns = _dashboardView.GetColumns();
+
         _apiService = new ApiService();
+
         Skills = new ObservableCollection<HeroSkill>();
         Attributes = new ObservableCollection<HeroAttribute>();
         Quests = new ObservableCollection<Quest>();
+
+        SidebarExpanded = false;
+        SidebarWidth = _sidebarFoldedWidth;
+        SidebarArrowIcon = "ChevronLeft";
 
         OpenSkillModalCommand = new RelayCommand(_ => { AddSkillVisibility = Visibility.Visible; });
         CloseSkillModalCommand = new RelayCommand(_ => { AddSkillVisibility = Visibility.Collapsed; });
@@ -184,11 +296,14 @@ public class DashboardViewModel : ViewModelBase
         OpenQuestModalCommand = new RelayCommand(_ => { AddQuestVisibility = Visibility.Visible; });
         CloseQuestModalCommand = new RelayCommand(_ => { AddQuestVisibility = Visibility.Collapsed; });
 
-        ToggleEditModeCommand = new RelayCommand(_ => { IsEditMode = !IsEditMode; });
-
         AddSkillCommand = new RelayCommand(async _ => await AddSkill());
         AddAttributeCommand = new RelayCommand(async _ => await AddAttribute());
         //AddQuestCommand = new RelayCommand(async _ => await AddQuest());
+
+        //ToggleEditModeCommand = new RelayCommand(_ => { IsEditMode = !IsEditMode; });
+        ToggleMenuCommand = new RelayCommand(_ => ToggleSidebar());
+        ResetCommand = new RelayCommand(_ => ResetDashboard());
+        ApplyChangesCommand = new RelayCommand(_ => ApplyChanges());
 
         _ = LoadData();
     }
@@ -296,7 +411,12 @@ public class DashboardViewModel : ViewModelBase
 
                 if (responseObject?.Quests != null)
                 {
-                    Quests = new ObservableCollection<Quest>(responseObject.Quests);
+                    var filteredQuests = responseObject.Quests
+                    .Where(quest => quest.CQuestStatusId != 3)
+                    .ToList();
+
+                    Quests = new ObservableCollection<Quest>(filteredQuests);
+                    //Quests = new ObservableCollection<Quest>(responseObject.Quests);
                 }
                 else
                 {
@@ -342,6 +462,7 @@ public class DashboardViewModel : ViewModelBase
             MessageBox.Show(response.ToString(), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
+
     private async Task AddAttribute()
     {
         if (string.IsNullOrWhiteSpace(AttributeName))
@@ -371,5 +492,26 @@ public class DashboardViewModel : ViewModelBase
         {
             MessageBox.Show(response.ToString(), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+    }
+
+    private void ToggleSidebar()
+    {
+        IsEditMode = !IsEditMode;
+        SidebarExpanded = !SidebarExpanded;
+        SidebarWidth = SidebarExpanded ? _sidebarUnfoldedWidth : _sidebarFoldedWidth;
+        SidebarArrowIcon = SidebarExpanded ? "ChevronRight" : "ChevronLeft";
+    }
+    private void ResetDashboard()
+    {
+        _dashboardView.SetRows(6);
+        _dashboardView.SetColumns(9);
+        Rows = _dashboardView.GetRows();
+        Columns = _dashboardView.GetColumns();
+    }
+
+    private void ApplyChanges()
+    {
+        _dashboardView.SetRows(Rows);
+        _dashboardView.SetColumns(Columns);
     }
 }

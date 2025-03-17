@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -20,15 +21,20 @@ namespace I_am_Hero_WPF.Views
         private Grid _draggedElement;
         private readonly Dictionary<Grid, (Point, Point)> _relativePositions = new Dictionary<Grid, (Point, Point)>();
         private readonly Dictionary<Grid, Point> _originalPositions = new Dictionary<Grid, Point>();
-        private readonly int _columns = 9;
-        private readonly int _rows = 6;
+
+        private int _rows = 6;
+        private int _columns = 9;
+        private readonly int MinRows = 6;
+        private readonly int MinColumns = 9;
+        private const double MinGridWidth = 180;
+        private const double MinGridHeight = 120;
         private readonly double _thumbMargin = 10;
         private DashboardViewModel ViewModel => DataContext as DashboardViewModel;
 
         public DashboardView()
         {
             InitializeComponent();
-            DataContext = new DashboardViewModel();
+            DataContext = new DashboardViewModel(this);
         }
 
         private void Block_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -93,6 +99,7 @@ namespace I_am_Hero_WPF.Views
                 Canvas.SetTop(_draggedElement, originalPos.Y);
             }
             _draggedElement = null;
+            LayoutManager.SaveLayout(MainCanvas);
         }
 
         private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
@@ -119,6 +126,7 @@ namespace I_am_Hero_WPF.Views
                     double canvasHeight = MainCanvas.ActualHeight;
                     _relativePositions[grid] = (new Point(left / canvasWidth, top / canvasHeight),
                                                 new Point(nearestBottomRight.X / canvasWidth, nearestBottomRight.Y / canvasHeight));
+                    LayoutManager.SaveLayout(MainCanvas);
                 }
             }
         }
@@ -129,7 +137,6 @@ namespace I_am_Hero_WPF.Views
 
             foreach (var grid in MainCanvas.Children.OfType<Grid>())
             {
-                if (grid.Name == "EditModeBlock") continue;
                 if (grid == element) continue;
                 double gridLeft = Canvas.GetLeft(grid);
                 double gridTop = Canvas.GetTop(grid);
@@ -145,42 +152,124 @@ namespace I_am_Hero_WPF.Views
 
         private void MainCanvas_Loaded(object sender, RoutedEventArgs e)
         {
-            DrawGridLines();
+            double blockWidth = MainCanvas.ActualWidth * 0.33;
+            double blockHeight = MainCanvas.ActualHeight * 0.5;
+
+            Canvas.SetLeft(ProfileBlock, 10);
+            Canvas.SetTop(ProfileBlock, 10);
+
+            Canvas.SetLeft(SkillsBlock, MainCanvas.ActualWidth * 0.33);
+            Canvas.SetTop(SkillsBlock, 10);
+
+            Canvas.SetLeft(AttributesBlock, MainCanvas.ActualWidth * 0.66);
+            Canvas.SetTop(AttributesBlock, 10);
+
+            Canvas.SetLeft(CalendarBlock, 10);
+            Canvas.SetTop(CalendarBlock, MainCanvas.ActualHeight * 0.5);
+
+            Canvas.SetLeft(QuestsBlock, MainCanvas.ActualWidth * 0.33);
+            Canvas.SetTop(QuestsBlock, MainCanvas.ActualHeight * 0.5);
+
+            ProfileBlock.Width = blockWidth;
+            ProfileBlock.Height = blockHeight;
+
+            SkillsBlock.Width = blockWidth;
+            SkillsBlock.Height = blockHeight;
+
+            AttributesBlock.Width = blockWidth;
+            AttributesBlock.Height = blockHeight;
+
+            CalendarBlock.Width = blockWidth;
+            CalendarBlock.Height = blockHeight;
+
+            QuestsBlock.Width = blockWidth;
+            QuestsBlock.Height = blockHeight;
+
             AlignBlocksToGrid();
+
+            LayoutManager.LoadLayout(MainCanvas); 
             SaveRelativePositions();
+            var scrollViewer = FindParent<ScrollViewer>(MainCanvas);
+            if (scrollViewer != null)
+            {
+                scrollViewer.SizeChanged += ScrollViewer_SizeChanged;
+            }            
+        }
+        private void ScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            DrawGridLinesAdaptive();
+            RestorePositions();
+            AlignBlocksToGrid();
+            LayoutManager.SaveLayout(MainCanvas);
         }
 
         private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            DrawGridLines();
+            DrawGridLinesAdaptive();
             RestorePositions();
             AlignBlocksToGrid();
+            LayoutManager.SaveLayout(MainCanvas);
         }
 
         private void OnEditModeButtonClick(object sender, RoutedEventArgs e)
         {
             Dispatcher.InvokeAsync(() =>
             {
-                DrawGridLines();
+                DrawGridLinesAdaptive();
             }, System.Windows.Threading.DispatcherPriority.Background);
         }
 
-        private void DrawGridLines()
+        //private void DrawGridLines()
+        //{
+        //    if (MainCanvas == null) return;
+        //    var savedGrids = MainCanvas.Children.OfType<Grid>().ToList();
+        //    MainCanvas.Children.Clear();
+        //    double width = MainCanvas.ActualWidth, height = MainCanvas.ActualHeight;
+        //    if (ViewModel?.IsEditMode == true)
+        //    {
+        //        for (int i = 1; i < _columns; i++) AddGridLine(i * width / _columns, 0, i * width / _columns, height);
+        //        for (int i = 1; i < _rows; i++) AddGridLine(0, i * height / _rows, width, i * height / _rows);
+        //    }
+        //    savedGrids.ForEach(grid => MainCanvas.Children.Add(grid));
+
+        //    MainCanvas.UpdateLayout();
+        //    Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
+        //}
+        private void DrawGridLinesAdaptive()
         {
-            if (MainCanvas == null) return;
+            if (MainCanvas == null || ScrollViewerContainer == null) return;
+
             var savedGrids = MainCanvas.Children.OfType<Grid>().ToList();
             MainCanvas.Children.Clear();
-            double width = MainCanvas.ActualWidth, height = MainCanvas.ActualHeight;
+
+            double width = MainCanvas.ActualWidth;
+            double scrollViewerHeight = ScrollViewerContainer.ActualHeight;
+            double minRowHeight = 50;
+            double requiredHeight = _rows * minRowHeight;
+
+            MainCanvas.Height = Math.Max(scrollViewerHeight, requiredHeight);
+
             if (ViewModel?.IsEditMode == true)
             {
-                for (int i = 1; i < _columns; i++) AddGridLine(i * width / _columns, 0, i * width / _columns, height);
-                for (int i = 1; i < _rows; i++) AddGridLine(0, i * height / _rows, width, i * height / _rows);
-            }
-            savedGrids.ForEach(grid => MainCanvas.Children.Add(grid));
+                for (int i = 1; i < _columns; i++)
+                {
+                    double x = i * width / _columns;
+                    AddGridLine(x, 0, x, MainCanvas.Height);
+                }
 
+                for (int i = 1; i < _rows; i++)
+                {
+                    double height = Math.Max(minRowHeight, scrollViewerHeight / _rows);
+                    double y = i * height;
+                    AddGridLine(0, y, width, y);
+                }
+            }
+
+            savedGrids.ForEach(grid => MainCanvas.Children.Add(grid));
             MainCanvas.UpdateLayout();
             Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
         }
+
 
         private void AddGridLine(double x1, double y1, double x2, double y2)
         {
@@ -207,7 +296,6 @@ namespace I_am_Hero_WPF.Views
         {
             foreach (var grid in MainCanvas.Children.OfType<Grid>())
             {
-                if (grid.Name == "EditModeBlock") continue;
                 double left = Canvas.GetLeft(grid);
                 double top = Canvas.GetTop(grid);
                 Point nearestTopLeft = GetNearestGridPoint(left, top);
@@ -227,7 +315,6 @@ namespace I_am_Hero_WPF.Views
             _relativePositions.Clear();
             foreach (var grid in MainCanvas.Children.OfType<Grid>())
             {
-                if (grid.Name == "EditModeBlock") continue;
                 _relativePositions[grid] = (new Point(Canvas.GetLeft(grid) / width, Canvas.GetTop(grid) / height),
                                             new Point((Canvas.GetLeft(grid) + grid.Width) / width, (Canvas.GetTop(grid) + grid.Height) / height));
             }
@@ -249,5 +336,69 @@ namespace I_am_Hero_WPF.Views
                 grid.Clip = new RectangleGeometry(new Rect(0, 0, grid.Width, grid.Height), 10, 10);
             }
         }
+
+        public int GetRows() => _rows;
+        public int GetColumns() => _columns;
+        public double GetMainCanvasWidth() => MainCanvas.ActualWidth;
+        public double GetMainCanvasHeight() => MainCanvas.ActualHeight;
+
+        public void SetRows(int value)
+        {
+            _rows = value;
+            DrawGridLinesAdaptive();
+            RestorePositions();
+            AlignBlocksToGrid();
+        }
+        public void SetColumns(int value)
+        {
+            _columns = value;
+            DrawGridLinesAdaptive();
+            RestorePositions();
+            AlignBlocksToGrid();
+        }
+
+        private void NumericTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (!int.TryParse(e.Text, out int newNumber))
+            {
+                e.Handled = true;
+                return;
+            }
+
+            var textBox = sender as TextBox;
+            string fullText = textBox.Text.Insert(textBox.SelectionStart, e.Text);
+
+            if (textBox.Tag is int minValue && int.TryParse(fullText, out int result) && result < minValue)
+            {
+                e.Handled = true;
+            }
+        }
+        private void NumericTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            var textBox = sender as TextBox;
+
+            if (e.Key == Key.Back || e.Key == Key.Delete)
+            {
+                if (textBox.Text.Length == 1 ||
+                    (int.TryParse(textBox.Text, out int value) &&
+                     textBox.Tag is int minValue && value <= minValue))
+                {
+                    e.Handled = true;
+                }
+            }
+        }
+
+        private static T FindParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            DependencyObject parent = VisualTreeHelper.GetParent(child);
+            while (parent != null)
+            {
+                if (parent is T correctlyTyped)
+                    return correctlyTyped;
+                parent = VisualTreeHelper.GetParent(parent);
+            }
+            return null;
+        }
+
     }
 }
