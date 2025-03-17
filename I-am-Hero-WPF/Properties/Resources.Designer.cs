@@ -160,6 +160,204 @@ namespace I_am_Hero_WPF.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Achievements.
+        /// </summary>
+        public static string MainPageMenuAchievements {
+            get {
+                return ResourceManager.GetString("MainPageMenuAchievements", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Attributes.
+        /// </summary>
+        public static string MainPageMenuAttributes {
+            get {
+                return ResourceManager.GetString("MainPageMenuAttributes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Collapse.
+        /// </summary>
+        public static string MainPageMenuCollapse {
+            get {
+                return ResourceManager.GetString("MainPageMenuCollapse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Dailies.
+        /// </summary>
+        public static string MainPageMenuDailies {
+            get {
+                return ResourceManager.GetString("MainPageMenuDailies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Dashboard.
+        /// </summary>
+        public static string MainPageMenuDashboard {
+            get {
+                return ResourceManager.GetString("MainPageMenuDashboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Effects.
+        /// </summary>
+        public static string MainPageMenuEffects {
+            get {
+                return ResourceManager.GetString("MainPageMenuEffects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Profile.
+        /// </summary>
+        public static string MainPageMenuProfile {
+            get {
+                return ResourceManager.GetString("MainPageMenuProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Habbits.
+        /// </summary>
+        public static string MainPageMenuQuestHabbits {
+            get {
+                return ResourceManager.GetString("MainPageMenuQuestHabbits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Quest Lines.
+        /// </summary>
+        public static string MainPageMenuQuestLines {
+            get {
+                return ResourceManager.GetString("MainPageMenuQuestLines", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Quests.
+        /// </summary>
+        public static string MainPageMenuQuests {
+            get {
+                return ResourceManager.GetString("MainPageMenuQuests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Skills.
+        /// </summary>
+        public static string MainPageMenuSkills {
+            get {
+                return ResourceManager.GetString("MainPageMenuSkills", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на About.
+        /// </summary>
+        public static string MainPageSettingsAbout {
+            get {
+                return ResourceManager.GetString("MainPageSettingsAbout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Level calculation type.
+        /// </summary>
+        public static string MainPageSettingsCalculationType {
+            get {
+                return ResourceManager.GetString("MainPageSettingsCalculationType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Language.
+        /// </summary>
+        public static string MainPageSettingsLanguage {
+            get {
+                return ResourceManager.GetString("MainPageSettingsLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Log Out.
+        /// </summary>
+        public static string MainPageSettingsLogout {
+            get {
+                return ResourceManager.GetString("MainPageSettingsLogout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Cancel.
+        /// </summary>
+        public static string MainPageSettingsLogoutCancel {
+            get {
+                return ResourceManager.GetString("MainPageSettingsLogoutCancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Log out.
+        /// </summary>
+        public static string MainPageSettingsLogoutConfirm {
+            get {
+                return ResourceManager.GetString("MainPageSettingsLogoutConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Are you sure you want to log out?.
+        /// </summary>
+        public static string MainPageSettingsLogoutTitle {
+            get {
+                return ResourceManager.GetString("MainPageSettingsLogoutTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Close.
+        /// </summary>
+        public static string MainPageSettingsModalClose {
+            get {
+                return ResourceManager.GetString("MainPageSettingsModalClose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Settings.
+        /// </summary>
+        public static string MainPageSettingsModalTitle {
+            get {
+                return ResourceManager.GetString("MainPageSettingsModalTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Notifications.
+        /// </summary>
+        public static string MainPageSettingsNotifications {
+            get {
+                return ResourceManager.GetString("MainPageSettingsNotifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Support developers.
+        /// </summary>
+        public static string MainPageSettingsSupport {
+            get {
+                return ResourceManager.GetString("MainPageSettingsSupport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Confirm password.
         /// </summary>
         public static string RegisterPageConfirmPass {
